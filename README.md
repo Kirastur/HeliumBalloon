@@ -20,4 +20,5 @@ For a quick test do the following:
 1. Login as a player with OP permissions
 2. Enter "/balloon gui"
 3. Select a pet
+
 As a result you see a Balloon following your player
