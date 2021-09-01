@@ -11,7 +11,7 @@ The "Fallong Blocks" are a native part of minecraft. They looks like a solid blo
 5. Pet assignments are saved across sessions.
 7. Extrem stable because a lot of checks are implemented to make the balloons reliable.
 6. Multiworld support by using Regex for the worldname.
-8. Powerfoll API to control almost everything with function calls.
+8. Powerful API to control almost everything with function calls.
 9. Multi-Language support.
 10. This plugin does not use NMS or ProtocolLib, only plain Spigot API. So it is very compatible across minecraft versions.
 
