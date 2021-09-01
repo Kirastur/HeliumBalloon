@@ -1,0 +1,212 @@
+# Welcome to the HeliumBalloon configuration settings
+#
+# - The configuration is not simple, so please read the documentation first
+# -
+# - Please see our Github Wiki for Documentation
+# -      https://github.com/Kirastur/HeliumBalloon/wiki
+# -
+# - For support you can contact us at discord.
+# -      A link to discord can be found on the Github Wiki
+# -
+# - For a quick test do the following:
+# -   1. Login as a player with OP permissions
+# -   2. Enter "/balloon gui"
+# -   3. Select a pet
+# - As a result you see a Balloon following your player
+#
+# - There is another file "messages.yml" where you can
+# - configure the enduser's output for different languages
+
+startup:
+
+   # Use Passive mode
+   #
+   # - In passive mode the plugin engine is not initialized,
+   # - only the Java objects are avail.
+   # - You had to instanciate your own orchestratator
+   # - and regsiter it as API.
+   # - Us this option only if you customize the Java objects itself 
+   passiveMode: false
+   
+   # Initial debug
+   #
+   # - You can set the debug during runtime using
+   # - "/balloon debugenable" and "/balloon debugdisable"
+   # - Hiere you definie only the initial value.
+   debug: false
+   
+   # Exception Quota
+   #
+   # - This plugin has a scheduler to check all balloons periodically.
+   # - If the number of exceptions during a timeframe reaches this value
+   # - the plugin disables itself for security.
+   exceptionQuota: 10
+
+
+# This plugin supports you to be GDPR/DSGVO compliant
+#
+# - This plugin stores player-related data
+# - (the player's UUID and the pet he selected).
+# - We had to remove this personal information if the
+# - associan is no longer needed.
+# - So this plugin deletes all information from players
+# - who has not logged in for a while.
+GDPR:
+   keepPlayerDays: 30
+   runPurgeHour: 5
+   
+
+# Worlds where the player can summon pets
+#
+# - Exclude takes precedence over include
+worlds:
+    includeAllWorlds: true
+#    include:
+#        - demoincludeworld
+#    exclude:
+#        - demoexcludeworld        
+
+
+# Rule definition
+#
+# - Rules carry the mathematical informations
+# - how the pet should be handled.
+# - Only one rule can be markled as as default.
+# - The default rule is used if in the template
+# - definition no rule is given.
+
+rules:
+    default:
+        isDefault: true
+#        highAbovePlayer: 3.0
+#        distanceFromPlayer: 1.0
+#        angleFromPlayerDirection: 120
+#        normalSpeed: 0.1
+#        switchToFastSpeedAtDistance: 5.0
+#        enableRisingYWorkaround: true
+
+    demo1:
+        highAbovePlayer: 0.2
+        distanceFromPlayer: 1.5
+        angleFromPlayerDirection: 180
+
+
+# Temnplates are the definitions for the pets.
+# Please see the Github wiki for a list of allowed parameters.
+# Here are only a few examples.
+#
+# Attention: If you delete a single line inside a demo template,
+# this line will still exisis inside the jar and therefor is still active.
+# But you can delete a complete demo template if you do not need it.
+
+templates:
+    demo1:
+        rule: demo1
+        animal:
+            type: EVOKER
+            leash: true
+        elements:
+            top:
+                material: GLASS
+                y: +1
+            down:
+                material: GLASS
+
+    demo2:
+        elements:
+            body:
+                material: LANTERN
+            rope:
+                material: CHAIN
+                y: -1
+
+    demo3:
+        animal:
+           type: CAT
+           leash: true
+           hidden: true
+        elements:
+            north:
+                material: RED_NETHER_BRICK_STAIRS
+                face: NORTH
+                z: 0.5
+            south:
+                material: RED_NETHER_BRICK_STAIRS
+                face: SOUTH
+                z: -0.5
+            bottom:
+                material: DARK_PRISMARINE_SLAB
+                slab: TOP
+                y: -1.0
+
+    demo4:
+        animal:
+            type: CAT
+            cattype: CALICO
+        elements:
+            floor:
+                material: RED_CARPET
+                y: -0.06
+
+    demo5:
+        elements:
+            top:
+                material: BLACK_CONCRETE
+                y: +1
+            middle:
+                material: RED_CONCRETE
+                y: 0
+            bottom:
+                material: YELLOW_CONCRETE
+                y: -1
+
+
+# Walls are blocks were you can walk through
+# e.g. for building a hidden passage.
+# The "worlds" is a Regex and must start with "^".
+walls: 
+    demo1:
+        template: demo5
+        worlds: ^world$
+        x: -171
+        y: 89
+        z: 339
+        
+
+# Using the API you can build you own GUI.
+# This GUI here is only an example.
+# Localized Strings can have two or five chars
+# (e.g. "de" and "de_de").        
+gui:
+    title: "Pets"
+    title_de: "Haustiere"
+    items:
+       demo1:
+           template: demo1
+           title: "Caged Evoker"
+           title_de: "Gefangener Magier"
+           description: "Look what I have captured"
+           description_de: "Seht her was ich gefangen habe"
+           icon: GLASS
+       demo2:
+           template: demo2
+           title: "Lantern"
+           title_de: "Laterne"
+           description: "Flying lantern"
+           description_de: "Fliegende Laterne"
+           icon: LANTERN
+       demo3:
+           template: demo3
+           title: "Stone Balloon"
+           title_de: "Steinballon"
+           description: "A hovering stoneblock with a leash"
+           description: "Ein schwebender Steinblock mit Leine"
+           icon: STONE
+       demo4:
+           template: demo4
+           title: "Cat"
+           title_de: "Katze"
+           description: "A sweet kitten"
+           description: "Ein süßes Kätzchen"
+           icon: RED_CARPET
+ 

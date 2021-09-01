@@ -1,0 +1,99 @@
+name: HeliumBalloon
+version: 1.0
+description: Build secret pathways, balloons and pets following you (using Falling Blocks, no NMS or ProtocolLib)
+author: Kirastur
+
+
+api-version: 1.16
+load: POSTWORLD
+main: de.polarwolf.heliumballoon.main.Main
+
+
+commands:
+    balloon:
+        description: Manage balloons and pets
+        usage: "Usage: '/balloon help"
+        permission: balloon.command
+        permission-message: You don't have the permission to use balloons
+
+
+permissions:
+  balloon.command:
+    description: Can use the balloon command
+    default: true
+
+  balloon.command.*:
+    description: Can use all balloon actions.
+    default: op
+    children:
+      balloon.command: true
+      balloon.command.help: true
+      balloon.command.debugenable: true
+      balloon.command.debugdisable: true
+      balloon.command.assign: true
+      balloon.command.assignother: true
+      balloon.command.deassign: true
+      balloon.command.deassignother: true
+      balloon.command.check: true
+      balloon.command.checkother: true
+      balloon.command.list: true
+      balloon.command.listall: true
+      balloon.command.info: true
+      balloon.command.worlds: true
+      balloon.command.reload: true
+      balloon.command.purge: true
+      balloon.command.gui: true
+
+  balloon.command.help:
+    description: Can use balloon help.
+    default: true
+  balloon.command.debugenable:
+    description: Can enable the output of debug messages.
+    default: op
+  balloon.command.debugdisable:
+    description: Can disable the output of debug messages.
+    default: op
+  balloon.command.assign:
+    description: Can assign a pet to yourself.
+    default: true
+  balloon.command.assignother:
+    description: Can assign a pet to others.
+    default: op
+  balloon.command.deassign:
+    description: Can deassign a pet from yourself.
+    default: true
+  balloon.command.deassignother:
+    description: Can deassign a pet from others.
+    default: op
+  balloon.command.check:
+    description: Can get the templatename of your own pet.
+    default: true
+  balloon.command.checkother:
+    description: Can get the templatename of other player's pet.
+    default: op
+  balloon.command.list:
+    description: Can list all available pet templates you have the permission for.
+    default: true
+  balloon.command.listall:
+    description: Can list all pet templates.
+    default: op
+  balloon.command.info:
+    description: Can display various system counters.
+    default: op
+  balloon.command.worlds:
+    description: Can display all worlds where pets are allowed..
+    default: op
+  balloon.command.reload:
+    description: Can relod the configuration.
+    default: op
+  balloon.command.purge:
+    description: Can purge old assigns manually.
+    default: op
+  balloon.command.gui:
+    description: Can open the GUI to select a pet.
+    default: true
+    
+  balloon.template:
+    description: Have permissions for templates.
+    default: op
+  
