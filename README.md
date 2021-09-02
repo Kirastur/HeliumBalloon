@@ -9,7 +9,7 @@ The "Fallong Blocks" are a native part of minecraft. They looks like a solid blo
 3. Permission-System to specity which pet balloon a player is allowed to use.
 4. GUI (Graphical User Interface) to let the player select his pet.
 5. Pet assignments are saved across sessions.
-7. Extrem stable because a lot of checks are implemented to make the balloons reliable.
+7. Extreme stable because a lot of checks are implemented to make the balloons reliable.
 6. Multiworld support by using Regex for the worldname.
 8. Powerful API to control almost everything with function calls.
 9. Multi-Language support.
