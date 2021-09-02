@@ -5,7 +5,7 @@ The "Fallong Blocks" are a native part of minecraft. They looks like a solid blo
 
 ## Features
 1. Build balloons and let them follow the player like a pet (with rope). You can also combine them with other living entities to build e.g. a caged illager following you.
-2. Build hidden pathways by placing Faling Blocks at a fixed position to simulate a solid wall.
+2. Build hidden pathways by placing Falling Blocks at a fixed position to simulate a solid wall.
 3. Permission-System to specity which pet balloon a player is allowed to use.
 4. GUI (Graphical User Interface) to let the player select his pet.
 5. Pet assignments are saved across sessions.
