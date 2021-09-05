@@ -1,7 +1,7 @@
 # HeliumBalloon
 
 ## Introduction
-The "Fallong Blocks" are a native part of minecraft. They looks like a solid block, but can pass through most entities without colliding. Their position is not limit to block boundaries. Normally a Falling Block is the entity form of block that appears when a gravity-affected block loses its support. But you can make other funny stuff with them, e.g. let them fly around or simulate a solid but passable wall. This plugin uses Falling Blocks for some powerfull effects.
+The "Falling Blocks" are a native part of minecraft. They looks like a solid block, but can pass through most entities without colliding. Their position is not limit to block boundaries. Normally a Falling Block is the entity form of block that appears when a gravity-affected block loses its support. But you can make other funny stuff with them, e.g. let them fly around or simulate a solid but passable wall. This plugin uses Falling Blocks for some powerfull effects.
 
 ## Features
 1. Build balloons and let them follow the player like a pet (with rope). You can also combine them with other living entities to build e.g. a caged illager following you.
