@@ -11,21 +11,21 @@ import org.bukkit.util.Vector;
 import de.polarwolf.heliumballoon.config.ConfigElement;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class CompoundElement implements Element {
 
 	private final ConfigTemplate template;
 	private final Player player;
-	protected final HeliumModifier heliumModifier;
+	protected final SpawnModifier spawnModifier;
 	protected List<Element> elements = new ArrayList<>();
 	
 	
-	public CompoundElement(Player player, ConfigTemplate template, HeliumModifier heliumModifier) {
+	public CompoundElement(Player player, ConfigTemplate template, SpawnModifier spawnModifier) {
 		this.player=player;
 		this.template=template;
-		this.heliumModifier = heliumModifier;
+		this.spawnModifier = spawnModifier;
 		buildElements();
 	}
 	
@@ -33,7 +33,7 @@ public class CompoundElement implements Element {
 	protected void buildElements() {
 		elements.clear();
 		for(ConfigElement myConfigElement : getTemplate().enumElements()) {
-			elements.add(new FallingBlockElement(player, getRule(), myConfigElement, heliumModifier));
+			elements.add(new FallingBlockElement(player, getRule(), myConfigElement, spawnModifier));
 		}
 	}
 	

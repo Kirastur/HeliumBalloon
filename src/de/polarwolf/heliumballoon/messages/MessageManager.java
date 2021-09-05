@@ -3,8 +3,8 @@ package de.polarwolf.heliumballoon.messages;
 import org.bukkit.command.CommandSender;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
-import de.polarwolf.heliumballoon.system.IntlText;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumText;
 
 public class MessageManager {
 	
@@ -19,8 +19,8 @@ public class MessageManager {
 	
 	
 	public String getMessage(CommandSender sender, Message messageId, String replacementString) {
-		IntlText intlMessage = configManager.getMessage(messageId);
-		String messageText = intlMessage.findLocalizedforSender(sender);
+		HeliumText heliumMessage = configManager.getMessage(messageId);
+		String messageText = heliumMessage.findLocalizedforSender(sender);
 		if ((messageText == null) || messageText.isEmpty()) {
 			messageText = messageId.getMessageText();
 		}

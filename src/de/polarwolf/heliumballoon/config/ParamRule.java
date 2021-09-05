@@ -1,6 +1,8 @@
 package de.polarwolf.heliumballoon.config;
 
-public enum ParamRule {
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+
+public enum ParamRule implements HeliumParam {
 
 	IS_DEFAULT ("isDefault"),
 	HIGH_ABOVE_PLAYER ("highAbovePlayer"),
@@ -18,6 +20,13 @@ public enum ParamRule {
 	}
 
 
+	@Override
+	public boolean isSection() {
+		return false;
+	}
+
+	
+	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}

@@ -10,7 +10,7 @@ import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.config.ConfigWall;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 
 public class WallManager {
 	

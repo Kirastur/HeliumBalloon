@@ -2,32 +2,21 @@ package de.polarwolf.heliumballoon.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.system.IntlText;
 
 public class ConfigSection {
-	
-	public static final String SECTION_WORLDS = "worlds";
-	public static final String SECTION_RULES = "rules";
-	public static final String SECTION_TEMPLATES = "templates";
-	public static final String SECTION_WALLS = "walls";
-	public static final String SECTION_GUI = "gui";
-	public static final String SECTION_ITEMS = "items";
 	
 	protected List<ConfigRule> rules = new ArrayList<>();
 	protected ConfigWorld worlds = new ConfigWorld();
 	protected List<ConfigTemplate> templates = new ArrayList<>();
 	protected List<ConfigWall> walls = new ArrayList<>();
-	protected Map<String,ConfigGuiItem> guiItems = new TreeMap<>();
-	protected IntlText guiTitle = new IntlText("title");
+	protected ConfigGuiMenu guiMenu = new ConfigGuiMenu(ParamSection.GUI.getAttributeName());
 	
 
 	// Rules
@@ -47,7 +36,7 @@ public class ConfigSection {
 				return myRule;
 			}
 		}
-		throw new BalloonException(SECTION_RULES, "No default rule found", null);
+		throw new BalloonException(ParamSection.RULES.getAttributeName(), "No default rule found", null);
 	}
 	
 	
@@ -155,55 +144,54 @@ public class ConfigSection {
 	
 	// GUI
 	public String getGuiTitle(CommandSender sender) {
-		return guiTitle.findLocalizedforSender(sender);
+		return guiMenu.getGuiTitle(sender);
 	}
 	
 	public List<ConfigGuiItem> enumGuiItems() {
-		return new ArrayList<>(guiItems.values());
+		return guiMenu.enumGuiItems();
 	}
 	
 
+	public boolean hasGuiDeassign() {
+		return guiMenu.hasDeassign();
+	}
+	
+	
+	public String getGuiDeassignTitle(CommandSender sender) {
+		return guiMenu.getDeassignTitle(sender);
+	}
+	
+
+	public String getGuiDeassignDescription(CommandSender sender) {
+		return guiMenu.getDeassignDescription(sender);
+	}
+
+	
 	protected void loadGui(ConfigurationSection fileSectionGui) throws BalloonException {
-		guiTitle = new IntlText(fileSectionGui, ParamGuiMenu.TITLE.getAttributeName());
-		guiItems.clear();
-		
-		if (!fileSectionGui.contains(SECTION_ITEMS) || !fileSectionGui.isConfigurationSection(SECTION_ITEMS)) {
-			throw new BalloonException (null, "No GUI Item section found", null);			
-		}
-		ConfigurationSection fileSectionGuiItems = fileSectionGui.getConfigurationSection(SECTION_ITEMS);
-		
-		for (String myItemName : fileSectionGuiItems.getKeys(false)) {
-			if (!fileSectionGuiItems.contains(myItemName, true)) { //ignore default from jar
-				continue;
-			}
-			if (!fileSectionGuiItems.isConfigurationSection(myItemName)) {
-				throw new BalloonException (null, "Illegal GUI items secton", myItemName);
-			}
-			guiItems.put(myItemName, new ConfigGuiItem(fileSectionGuiItems.getConfigurationSection(myItemName), this));
-		}
+		guiMenu = new ConfigGuiMenu(fileSectionGui, this); 
 	}
 	
 
 	public void loadConfig(ConfigurationSection fileSection) throws BalloonException {
 		
-		loadWorlds(fileSection.getConfigurationSection(SECTION_WORLDS));
+		loadWorlds(fileSection.getConfigurationSection(ParamSection.WORLDS.getAttributeName()));
 
-		if (!fileSection.isConfigurationSection(SECTION_RULES)) {
+		if (!fileSection.contains(ParamSection.RULES.getAttributeName(), true) || !fileSection.isConfigurationSection(ParamSection.RULES.getAttributeName())) {
 			throw new BalloonException(null, "Rules definition is missing", null);
 		}
-		loadRules(fileSection.getConfigurationSection(SECTION_RULES));
+		loadRules(fileSection.getConfigurationSection(ParamSection.RULES.getAttributeName()));
 
-		if (!fileSection.isConfigurationSection(SECTION_TEMPLATES)) {
+		if (!fileSection.contains(ParamSection.TEMPLATES.getAttributeName(), true) || !fileSection.isConfigurationSection(ParamSection.TEMPLATES.getAttributeName())) {
 			throw new BalloonException(null, "Templates definition is missing", null);
 		}
-		loadTemplates(fileSection.getConfigurationSection(SECTION_TEMPLATES));
+		loadTemplates(fileSection.getConfigurationSection(ParamSection.TEMPLATES.getAttributeName()));
 		
-		if (fileSection.isConfigurationSection(SECTION_WALLS)) {
-			loadWalls(fileSection.getConfigurationSection(SECTION_WALLS));
+		if (fileSection.contains(ParamSection.WALLS.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.WALLS.getAttributeName())) {
+			loadWalls(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
 		} // Can be empty
 		
-		if (fileSection.isConfigurationSection(SECTION_GUI)) {
-			loadGui(fileSection.getConfigurationSection(SECTION_GUI));
+		if (fileSection.contains(ParamSection.GUI.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.GUI.getAttributeName())) {
+			loadGui(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
 		} // Can be empty
 	}
 		

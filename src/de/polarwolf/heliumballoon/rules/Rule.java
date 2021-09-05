@@ -1,4 +1,4 @@
-package de.polarwolf.heliumballoon.system;
+package de.polarwolf.heliumballoon.rules;
 
 public class Rule {
 

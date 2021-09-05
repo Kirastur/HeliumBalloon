@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 
 public class PlayerManager extends BukkitRunnable {
 	
@@ -73,10 +73,10 @@ public class PlayerManager extends BukkitRunnable {
 	
 	public int purgeOldPlayers() {
 		int count = 0;
-		if (configManager.getKeepPayerDays() == 0) {
+		if (configManager.getKeepPlayerDays() == 0) {
 			return 0;
 		}
-		Instant cutoverTime = Instant.now().minus(configManager.getKeepPayerDays(), ChronoUnit.DAYS);
+		Instant cutoverTime = Instant.now().minus(configManager.getKeepPlayerDays(), ChronoUnit.DAYS);
 		for (UUID playerUUID : configManager.getAllPlayerPersistentPetUUIDs()) {
 			try {
 				PlayerPersistentPet playerPersistentPet = configManager.findPlayerPersistentPet(playerUUID);

@@ -44,8 +44,12 @@ public class GuiListener implements Listener {
         }
         
         Player player = (Player) e.getWhoClicked();
-        if (petManager.hasTemplatePermission(player, templateName)) {
-        	petManager.assign(player, templateName);
+        if (templateName.equals("!")) {
+        	petManager.deassign(player);
+        } else {
+        	if (petManager.hasTemplatePermission(player, templateName)) {
+        		petManager.assign(player, templateName);
+        	}
         }
         
         player.closeInventory();

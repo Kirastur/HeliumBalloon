@@ -1,9 +1,12 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.Arrays;
+
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.rules.Rule;
 
 public class ConfigRule extends Rule {
 	
@@ -45,13 +48,15 @@ public class ConfigRule extends Rule {
 	
 	
 	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		setDefaultRule(fileSection.getBoolean(ParamRule.IS_DEFAULT.getAttributeName(), isDefaultRule()));
-		setHighAbovePlayer(fileSection.getDouble(ParamRule.HIGH_ABOVE_PLAYER.getAttributeName(), getHighAbovePlayer()));
-		setDistanceFromPlayer(fileSection.getDouble(ParamRule.DISTANCE_FROM_PLAYER.getAttributeName(), getDistanceFromPlayer()));
-		setAngleFromPlayerDirection(fileSection.getDouble(ParamRule.ANGLE_FROM_PLAYER_DIRECTION.getAttributeName(), getAngleFromPlayerDirection()));
-		setNormalSpeed(fileSection.getDouble(ParamRule.NORMAL_SPEED.getAttributeName(), getNormalSpeed()));
-		setSwitchToFastSpeedAtDistance(fileSection.getDouble(ParamRule.SWITCH_TO_FAST_SPEED_AT_DISTANCE.getAttributeName(), getSwitchToFastSpeedAtDistance()));
-		setEnableRisingYWorkaround(fileSection.getBoolean(ParamRule.ENABLE_RISING_Y_WORKAROUND.getAttributeName(), isEnableRisingYWorkaround()));
+		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamRule.values()));
+		
+		setDefaultRule(heliumSection.getBoolean(ParamRule.IS_DEFAULT, isDefaultRule()));
+		setHighAbovePlayer(heliumSection.getDouble(ParamRule.HIGH_ABOVE_PLAYER, getHighAbovePlayer()));
+		setDistanceFromPlayer(heliumSection.getDouble(ParamRule.DISTANCE_FROM_PLAYER, getDistanceFromPlayer()));
+		setAngleFromPlayerDirection(heliumSection.getDouble(ParamRule.ANGLE_FROM_PLAYER_DIRECTION, getAngleFromPlayerDirection()));
+		setNormalSpeed(heliumSection.getDouble(ParamRule.NORMAL_SPEED, getNormalSpeed()));
+		setSwitchToFastSpeedAtDistance(heliumSection.getDouble(ParamRule.SWITCH_TO_FAST_SPEED_AT_DISTANCE, getSwitchToFastSpeedAtDistance()));
+		setEnableRisingYWorkaround(heliumSection.getBoolean(ParamRule.ENABLE_RISING_Y_WORKAROUND, isEnableRisingYWorkaround()));
 		
 		validateConfig();	
 	}

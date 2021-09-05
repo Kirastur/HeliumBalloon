@@ -1,4 +1,4 @@
-package de.polarwolf.heliumballoon.system;
+package de.polarwolf.heliumballoon.helium;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,18 +7,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-public class IntlText {
+public class HeliumText {
 	
 	private final String name;
 	protected Map<String,String> textMap = new HashMap<>();
 
 	
-	public IntlText(String name) {
+	public HeliumText(String name) {
 		this.name = name;
 	}
 		
 
-	public IntlText(ConfigurationSection fileSection, String paramName) {
+	public HeliumText(ConfigurationSection fileSection, String paramName) {
 		this.name = paramName;
 		loadConfig(fileSection);
 	}

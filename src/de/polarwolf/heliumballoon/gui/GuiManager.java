@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -45,21 +46,43 @@ public class GuiManager {
        	return container.get(getTemplateNamespace(), PersistentDataType.STRING);
     }
     
-
-    public ItemStack createItemStack(Player player, ConfigGuiItem guiItem) {
-		ItemStack itemStack = new ItemStack(guiItem.getIcon(), 1);
+    
+    protected ItemStack createItemStack(Material material, String actionName, String title, String description) {
+		ItemStack itemStack = new ItemStack(material, 1);
 		ItemMeta itemMeta = itemStack.getItemMeta();
-		String templateName = guiItem.getTemplate().getName();
-		itemMeta.getPersistentDataContainer().set(getTemplateNamespace(), PersistentDataType.STRING, templateName);
-		itemMeta.setDisplayName(guiItem.getTitle(player));
-		List<String> lore = new ArrayList<>();
-		lore.add(guiItem.getDescription(player));
-		itemMeta.setLore(lore);								
+		itemMeta.getPersistentDataContainer().set(getTemplateNamespace(), PersistentDataType.STRING, actionName);
+		itemMeta.setDisplayName(title);
+		if ((description != null) && !description.isEmpty()) {
+			List<String> lore = new ArrayList<>();
+			lore.add(description);
+			itemMeta.setLore(lore);
+		}
 		itemStack.setItemMeta(itemMeta);
-		return itemStack;		
-	}
-	
-	
+		return itemStack;		    	
+    }
+    
+
+    public ItemStack createTemplateItemStack(Player player, ConfigGuiItem guiItem) {
+    	Material material = guiItem.getIcon();
+    	String templateName = guiItem.getTemplate().getName();
+    	String title = guiItem.getTitle(player);
+    	String description = guiItem.getDescription(player);
+    	return createItemStack(material, templateName, title, description);
+    }
+    
+    
+    public ItemStack createDeassignItemStack(Player player) {
+    	if (!configManager.hasGuiDeassign()) {
+    		return null;
+    	}
+    	Material material = Material.BARRIER;
+    	String actionName = "!";
+    	String title = configManager.getGuiDeassignTitle(player);
+    	String description = configManager.getGuiDeassignDescription(player);
+    	return createItemStack(material, actionName, title, description);
+    }
+
+
 	public List<ConfigGuiItem> enumGuiItemConfigs(Player player) {
 		List<ConfigGuiItem> newGuiItems = new ArrayList<>();
 		for (ConfigGuiItem myGuiItem : configManager.enumGuiItems()) {
@@ -74,7 +97,7 @@ public class GuiManager {
 	public List<ItemStack> enumGuiItemStacks(Player player) {
 		List<ItemStack> newItemStacks = new ArrayList<>();
 		for (ConfigGuiItem myGuiItem : enumGuiItemConfigs(player)) {
-			ItemStack myItemStack = createItemStack(player, myGuiItem);
+			ItemStack myItemStack = createTemplateItemStack(player, myGuiItem);
 			newItemStacks.add(myItemStack);
 		}
 		return newItemStacks;
@@ -88,6 +111,9 @@ public class GuiManager {
 		}
 
 		int size = itemStackList.size();
+		if (configManager.hasGuiDeassign()) {
+			size = size +2;
+		}
 		while ((size % 9) > 0) {
 			size = size +1;
 		}
@@ -95,6 +121,10 @@ public class GuiManager {
 		Inventory newInventory = Bukkit.createInventory(null, size, configManager.getGuiTitle(player));
 		for (ItemStack myItemStack : enumGuiItemStacks(player)) {
 			newInventory.addItem(myItemStack);
+		}
+		if (configManager.hasGuiDeassign()) {
+			ItemStack deassignItemStack = createDeassignItemStack(player);
+			newInventory.setItem(size-1, deassignItemStack);
 		}
 		player.openInventory(newInventory);
 		return newInventory;

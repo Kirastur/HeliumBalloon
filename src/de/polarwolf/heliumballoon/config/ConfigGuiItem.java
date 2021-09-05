@@ -4,15 +4,15 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.system.IntlText;
+import de.polarwolf.heliumballoon.helium.HeliumText;
 
 public class ConfigGuiItem {
 	
 	private final String name;
 	private ConfigTemplate template;
 	private Material icon;
-	protected IntlText title;
-	private IntlText description;
+	protected HeliumText title;
+	private HeliumText description;
 
 
 	public ConfigGuiItem(String name) {
@@ -73,6 +73,9 @@ public class ConfigGuiItem {
 	}
 
 		
+	// The GUI is not participating in HeliumParam
+	// because the HeliumParam syntax checker is incompatible with HeliumMessages.
+	// This will be resolved in a future version.
 	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		String templateName = fileSection.getString(ParamGuiItem.TEMPLATE.getAttributeName());
 		setTemplate(getTemplateFromName(templateName, balloonSection));
@@ -80,8 +83,8 @@ public class ConfigGuiItem {
 		String iconName =  fileSection.getString(ParamGuiItem.ICON.getAttributeName());
 		setIcon(ConfigUtils.getMaterialFromName(getName(), iconName));
 
-		title = new IntlText(fileSection, ParamGuiItem.TITLE.getAttributeName());
-		description = new IntlText(fileSection, ParamGuiItem.DESCRIPTION.getAttributeName());
+		title = new HeliumText(fileSection, ParamGuiItem.TITLE.getAttributeName());
+		description = new HeliumText(fileSection, ParamGuiItem.DESCRIPTION.getAttributeName());
 		
 	}
 }

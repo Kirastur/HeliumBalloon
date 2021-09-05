@@ -10,8 +10,8 @@ import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigAnimal;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class AnimalElement extends SimpleElement {
 
@@ -19,8 +19,8 @@ public class AnimalElement extends SimpleElement {
 	protected LivingEntity livingEntity = null;
 	
 
-	public AnimalElement(Player player, Rule rule, ConfigAnimal config, HeliumModifier heliumModifier) {
-		super(player, rule, heliumModifier);
+	public AnimalElement(Player player, Rule rule, ConfigAnimal config, SpawnModifier spawnModifier) {
+		super(player, rule, spawnModifier);
 		this.config = config;
 	}
 	
@@ -127,17 +127,19 @@ public class AnimalElement extends SimpleElement {
 		mv.setY(0);
 		pv.setY(0);
 		pv.subtract(mv);
-		pv.normalize();
-		double angle = Math.asin(pv.getZ());
-		angle = Math.toDegrees(angle);
-		if (pv.getX() < 0) {
-			angle = 180 - angle;
+		if (pv.length() > 0.1) {
+			pv.normalize();
+			double angle = Math.asin(pv.getZ());
+			angle = Math.toDegrees(angle);
+			if (pv.getX() < 0) {
+				angle = 180 - angle;
+			}
+			angle = angle + 270.0;
+			if (angle >= 360.0) {
+				angle = angle - 360.0;
+			}
+			monster.setRotation((float) angle, 0);
 		}
-		angle = angle + 270.0;
-		if (angle >= 360.0) {
-			angle = angle - 360.0;
-		}
-		monster.setRotation((float) angle, 0);		
 	}
 	
 	

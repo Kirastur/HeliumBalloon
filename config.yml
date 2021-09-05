@@ -95,10 +95,6 @@ rules:
 # Please see the Github wiki for a list of allowed parameters.
 # Here are only a few examples.
 #
-# Attention: If you delete a single line inside a demo template,
-# this line will still exisis inside the jar and therefor is still active.
-# But you can delete a complete demo template if you do not need it.
-
 templates:
     demo1:
         rule: demo1
@@ -165,7 +161,7 @@ templates:
 # e.g. for building a hidden passage.
 # The "worlds" is a Regex and must start with "^".
 walls: 
-    demo1:
+    demowall1:
         template: demo5
         worlds: ^world$
         x: -171
@@ -180,33 +176,38 @@ walls:
 gui:
     title: "Pets"
     title_de: "Haustiere"
+    deassign:
+        title: "No pet"
+        title_de: "Kein Haustier"
+        description: "deassign the actual pet"
+        description_de: "Schickt das aktuelle Haustier zurück in den Stall"       
     items:
-       demo1:
-           template: demo1
-           title: "Caged Evoker"
-           title_de: "Gefangener Magier"
-           description: "Look what I have captured"
-           description_de: "Seht her was ich gefangen habe"
-           icon: GLASS
-       demo2:
-           template: demo2
-           title: "Lantern"
-           title_de: "Laterne"
-           description: "Flying lantern"
-           description_de: "Fliegende Laterne"
-           icon: LANTERN
-       demo3:
-           template: demo3
-           title: "Stone Balloon"
-           title_de: "Steinballon"
-           description: "A hovering stoneblock with a leash"
-           description: "Ein schwebender Steinblock mit Leine"
-           icon: STONE
-       demo4:
-           template: demo4
-           title: "Cat"
-           title_de: "Katze"
-           description: "A sweet kitten"
-           description: "Ein süßes Kätzchen"
-           icon: RED_CARPET
+        demo1:
+            template: demo1
+            title: "Caged Evoker"
+            title_de: "Gefangener Magier"
+            description: "Look what I have captured"
+            description_de: "Seht her was ich gefangen habe"
+            icon: GLASS
+        demo2:
+            template: demo2
+            title: "Lantern"
+            title_de: "Laterne"
+            description: "Flying lantern"
+            description_de: "Fliegende Laterne"
+            icon: LANTERN
+        demo3:
+            template: demo3
+            title: "Stone Balloon"
+            title_de: "Steinballon"
+            description: "A hovering stoneblock with a leash"
+            description: "Ein schwebender Steinblock mit Leine"
+            icon: STONE
+        demo4:
+            template: demo4
+            title: "Cat"
+            title_de: "Katze"
+            description: "A sweet kitten"
+            description: "Ein süßes Kätzchen"
+            icon: RED_CARPET
  

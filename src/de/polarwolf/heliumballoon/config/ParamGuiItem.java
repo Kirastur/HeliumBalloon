@@ -1,6 +1,8 @@
 package de.polarwolf.heliumballoon.config;
 
-public enum ParamGuiItem {
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+
+public enum ParamGuiItem implements HeliumParam {
 
 	TEMPLATE ("template"),
 	TITLE ("title"),
@@ -15,6 +17,13 @@ public enum ParamGuiItem {
 	}
 
 
+	@Override
+	public boolean isSection() {
+		return false;
+	}
+
+	
+	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}

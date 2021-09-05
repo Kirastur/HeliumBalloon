@@ -9,8 +9,8 @@ import org.bukkit.util.Vector;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public abstract class SimpleBalloon implements Balloon {
 	
@@ -29,13 +29,13 @@ public abstract class SimpleBalloon implements Balloon {
 	}
 	
 	
-	protected abstract Element createElement(HeliumModifier heliumModifier);
+	protected abstract Element createElement(SpawnModifier spawnModifier);
 	
 
 	@Override
-	public void prepare(HeliumModifier heliumModifier) {
+	public void prepare(SpawnModifier spawnModifier) {
 		if (element == null) {
-			element = createElement(heliumModifier);
+			element = createElement(spawnModifier);
 		}
 	}
 			

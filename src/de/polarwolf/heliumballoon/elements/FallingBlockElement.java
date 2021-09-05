@@ -13,8 +13,8 @@ import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class FallingBlockElement extends SimpleElement {
 	
@@ -22,8 +22,8 @@ public class FallingBlockElement extends SimpleElement {
 	protected FallingBlock fallingBlock = null;
 	
 
-	public FallingBlockElement(Player player, Rule rule, ConfigElement config, HeliumModifier heliumModifier) {
-		super(player, rule, heliumModifier);
+	public FallingBlockElement(Player player, Rule rule, ConfigElement config, SpawnModifier spawnModifier) {
+		super(player, rule, spawnModifier);
 		this.config = config;
 	}
 	
@@ -60,6 +60,7 @@ public class FallingBlockElement extends SimpleElement {
 		modifyBlockDataBisected(blockData);
 		modifyBlockDataSlab(blockData);
 		modifyBlockDataDirectional(blockData);
+		spawnModifier.modifyBlockData(this, blockData);
 		return blockData;	
 	}
 	

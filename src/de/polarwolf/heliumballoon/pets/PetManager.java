@@ -18,7 +18,7 @@ import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.players.PlayerManager;
 
 public class PetManager extends BukkitRunnable {

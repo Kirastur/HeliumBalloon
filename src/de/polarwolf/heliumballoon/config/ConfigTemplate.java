@@ -1,10 +1,12 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigTemplate {
 	
@@ -72,27 +74,12 @@ public class ConfigTemplate {
 	
 	
 	protected void loadAnimalConfig(ConfigurationSection fileSection) throws BalloonException {
-		if (!fileSection.contains(ParamTemplate.ANIMAL.getAttributeName(), true)) { // ignore default from jar
-			return;
-		}
-
-		if (!fileSection.isConfigurationSection(ParamTemplate.ANIMAL.getAttributeName())) {
-			throw new BalloonException (getName(), "Illegal animal section", null);
-		}
 		ConfigurationSection fileSectionAnimal = fileSection.getConfigurationSection(ParamTemplate.ANIMAL.getAttributeName());
-
 		animal = new ConfigAnimal (fileSectionAnimal);
 	}
 	
 	
 	protected void loadElementsConfig(ConfigurationSection fileSection) throws BalloonException {
-		if (!fileSection.contains(ParamTemplate.ELEMENTS.getAttributeName(), true)) { // ignore default from jar
-			return;
-		}
-
-		if (!fileSection.isConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName())) {
-			throw new BalloonException (getName(), "Illegal elements section", null);
-		}
 		ConfigurationSection fileSectionElements = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
 		
 		List<ConfigElement> myElements = new ArrayList<>();
@@ -110,7 +97,9 @@ public class ConfigTemplate {
 
 
 	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		String ruleName = fileSection.getString(ParamTemplate.RULE.getAttributeName());
+		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamTemplate.values()));
+
+		String ruleName = heliumSection.getString(ParamTemplate.RULE);
 		if ((ruleName == null) || (ruleName.isEmpty())) {
 			setRule(balloonSection.getDefaultRule());
 		} else {
@@ -121,10 +110,14 @@ public class ConfigTemplate {
 			setRule(myRule);
 		}
 		
-		loadAnimalConfig(fileSection);
-		loadElementsConfig(fileSection);
+		if (heliumSection.isSection(ParamTemplate.ANIMAL)) {
+			loadAnimalConfig(fileSection);
+		}
+		if (heliumSection.isSection(ParamTemplate.ELEMENTS)) {
+			loadElementsConfig(fileSection);
+		}
 						
-		setCustom(fileSection.getString(ParamTemplate.CUSTOM.getAttributeName()));
+		setCustom(heliumSection.getString(ParamTemplate.CUSTOM));
 	}
 
 }

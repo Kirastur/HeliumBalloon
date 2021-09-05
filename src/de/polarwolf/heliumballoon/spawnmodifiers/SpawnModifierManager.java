@@ -3,10 +3,11 @@ package de.polarwolf.heliumballoon.spawnmodifiers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.block.data.BlockData;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.elements.Element;
 
-public class SpawnModifierManager implements HeliumModifier {
+public class SpawnModifierManager implements SpawnModifier {
 	
 	protected List<SpawnModifier> modifiers = new ArrayList<>();
 	
@@ -29,10 +30,16 @@ public class SpawnModifierManager implements HeliumModifier {
 	
 	
 	@Override
-	public void modify(Element element) {
+	public void modifyEntity(Element element) {
 		for (SpawnModifier myModifier : modifiers) {
-			myModifier.modify(element);
+			myModifier.modifyEntity(element);
 		}
 	}
 
+	@Override
+	public void modifyBlockData(Element element, BlockData blockData) {
+		for (SpawnModifier myModifier : modifiers) {
+			myModifier.modifyBlockData(element, blockData);
+		}
+	}
 }

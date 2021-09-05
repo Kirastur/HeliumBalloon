@@ -10,7 +10,7 @@ import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.CompoundElement;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class CompoundPlayerBalloon extends PlayerBalloon {
 	
@@ -24,8 +24,8 @@ public class CompoundPlayerBalloon extends PlayerBalloon {
 
 	
 	@Override
-	protected Element createElement(HeliumModifier heliumModifier) {
-		return new CompoundElement (getPlayer(), getTemplate(), heliumModifier);
+	protected Element createElement(SpawnModifier spawnModifier) {
+		return new CompoundElement (getPlayer(), getTemplate(), spawnModifier);
 	}
 	
 	

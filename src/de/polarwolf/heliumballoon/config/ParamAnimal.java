@@ -1,6 +1,8 @@
 package de.polarwolf.heliumballoon.config;
 
-public enum ParamAnimal {
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+
+public enum ParamAnimal implements HeliumParam {
 
 	TYPE ("type"),
 	X ("x"),
@@ -19,8 +21,15 @@ public enum ParamAnimal {
 	private ParamAnimal(String attributeName) {
 		this.attributeName = attributeName;
 	}
+	
+	
+	@Override
+	public boolean isSection() {
+		return false;
+	}
 
 
+	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}

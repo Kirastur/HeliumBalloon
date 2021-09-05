@@ -6,20 +6,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
-import de.polarwolf.heliumballoon.system.Rule;
+import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public abstract class SimpleElement implements Element{
 
 	private final Player player;
 	private final Rule rule;
-	protected final HeliumModifier heliumModifier;
+	protected final SpawnModifier spawnModifier;
 	
 
-	protected SimpleElement(Player player, Rule rule, HeliumModifier heliumModifier) {
+	protected SimpleElement(Player player, Rule rule, SpawnModifier spawnModifier) {
 		this.player = player;
 		this.rule=rule;
-		this.heliumModifier = heliumModifier;
+		this.spawnModifier = spawnModifier;
 	}
 	
 			
@@ -54,7 +54,7 @@ public abstract class SimpleElement implements Element{
 		}
 
 		spawn(targetLocation);
-		heliumModifier.modify(this);
+		spawnModifier.modifyEntity(this);
 	}
 	
 	

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.AnimalElement;
 import de.polarwolf.heliumballoon.elements.Element;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class AnimalPlayerBalloon extends PlayerBalloon {
 
@@ -18,8 +18,8 @@ public class AnimalPlayerBalloon extends PlayerBalloon {
 
 	
 	@Override
-	protected Element createElement(HeliumModifier heliumModifier) {
-		return new AnimalElement(getPlayer(), getTemplate().getRule(), getTemplate().getAnimal(), heliumModifier);
+	protected Element createElement(SpawnModifier spawnModifier) {
+		return new AnimalElement(getPlayer(), getTemplate().getRule(), getTemplate().getAnimal(), spawnModifier);
 	}
 	
 

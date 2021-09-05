@@ -1,15 +1,14 @@
-package de.polarwolf.heliumballoon.logger;
+package de.polarwolf.heliumballoon.helium;
 
 import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
-import de.polarwolf.heliumballoon.system.IntlText;
 
 public class HeliumLogger {
 	
 	private final int exceptionQuota;
 	private boolean debug = true;
-	private IntlText petErrorMessage;
+	private HeliumText petErrorMessage;
 	protected final Plugin plugin;
 	
 	
@@ -52,12 +51,12 @@ public class HeliumLogger {
 	}
 
 
-	public IntlText getPetErrorMessage() {
+	public HeliumText getPetErrorMessage() {
 		return petErrorMessage;
 	}
 
 
-	public void setPetErrorMessage(IntlText petErrorMessage) {
+	public void setPetErrorMessage(HeliumText petErrorMessage) {
 		this.petErrorMessage = petErrorMessage;
 	}
 	

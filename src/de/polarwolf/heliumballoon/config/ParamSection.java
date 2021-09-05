@@ -2,19 +2,19 @@ package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 
-public enum ParamTemplate implements HeliumParam {
+public enum ParamSection implements HeliumParam {
 
-	RULE (false, "rule"),
-	ANIMAL (true, "animal"),
-	ELEMENTS (true, "elements"),
-	CUSTOM (false, "custom");
-		
-	
+	WORLDS (true, "worlds"),
+	RULES (true, "rules"),
+	TEMPLATES (true, "templates"),
+	WALLS (true, "walls"),
+	GUI (true, "gui");
+
 	private final String attributeName;
 	private final boolean section;
 	
 
-	private ParamTemplate(boolean section, String attributeName) {
+	private ParamSection(boolean section, String attributeName) {
 		this.attributeName = attributeName;
 		this.section = section;
 	}
@@ -30,5 +30,5 @@ public enum ParamTemplate implements HeliumParam {
 	public String getAttributeName() {
 		return attributeName;
 	}
-	
+
 }

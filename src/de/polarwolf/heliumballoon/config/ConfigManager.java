@@ -12,10 +12,10 @@ import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumText;
 import de.polarwolf.heliumballoon.messages.Message;
 import de.polarwolf.heliumballoon.players.PlayerPersistentPet;
-import de.polarwolf.heliumballoon.system.IntlText;
 
 public class ConfigManager {
 
@@ -32,6 +32,9 @@ public class ConfigManager {
 	public static final int DEFAULT_EXCEPTION_QUOTA = 10;
 	public static final int DEFAULT_KEEP_PLAYER_DAYS = 30;
 	public static final int DEFAULT_RUN_PURGE_HOUR = 5;
+	
+	private final int keepPlayerDays;
+	private final int runPurgeHour;
 
 
 	protected final Plugin plugin;
@@ -47,6 +50,8 @@ public class ConfigManager {
 		section = new ConfigSection();
 		configPlayer = buildConfigPlayer();
 		configMessage = buildConfigMessage();		
+		keepPlayerDays = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS, DEFAULT_KEEP_PLAYER_DAYS);
+		runPurgeHour = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_RUN_PURGE_HOUR, DEFAULT_RUN_PURGE_HOUR);
 	}
 	
 	
@@ -65,13 +70,13 @@ public class ConfigManager {
 	}
 
 	
-	public int getKeepPayerDays() {
-		return plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS, DEFAULT_KEEP_PLAYER_DAYS);
+	public int getKeepPlayerDays() {
+		return keepPlayerDays;
 	}
 
 	
 	public int getRunPurgeHour() {
-		return plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_RUN_PURGE_HOUR, DEFAULT_RUN_PURGE_HOUR);
+		return runPurgeHour;
 	}
 
 	
@@ -120,6 +125,21 @@ public class ConfigManager {
 	}
 	
 
+	public boolean hasGuiDeassign() {
+		return section.hasGuiDeassign();
+	}
+	
+	
+	public String getGuiDeassignTitle(CommandSender sender) {
+		return section.getGuiDeassignTitle(sender);
+	}
+	
+
+	public String getGuiDeassignDescription(CommandSender sender) {
+		return section.getGuiDeassignDescription(sender);
+	}
+
+	
 	public void reload() throws BalloonException {
 		ConfigurationSection fileSection = plugin.getConfig().getRoot();
 		ConfigSection newSection = new ConfigSection();
@@ -206,11 +226,11 @@ public class ConfigManager {
 	}
 	
 
-	public IntlText getMessage(Message messageId) {
+	public HeliumText getMessage(Message messageId) {
 		if (configMessage != null) {
 			return configMessage.getMessage(messageId);
 		}
-		return new IntlText("");
+		return new HeliumText("");
 	}
 
 

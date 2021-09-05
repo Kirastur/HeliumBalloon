@@ -1,5 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.Arrays;
+
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Cat;
@@ -7,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigAnimal {
 
@@ -107,21 +110,23 @@ public class ConfigAnimal {
 
 
 	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		String livingEntityName = fileSection.getString(ParamAnimal.TYPE.getAttributeName());
+		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamAnimal.values()));
+
+		String livingEntityName = heliumSection.getString(ParamAnimal.TYPE);
 		setEntityType(ConfigUtils.getLivingEntityTypeFromName(getName(), livingEntityName));
 		
-		setHidden(fileSection.getBoolean(ParamAnimal.HIDDEN.getAttributeName(), isHidden()));
-		setLeash(fileSection.getBoolean(ParamAnimal.LEASH.getAttributeName(), hasLeash()));
+		setHidden(heliumSection.getBoolean(ParamAnimal.HIDDEN, isHidden()));
+		setLeash(heliumSection.getBoolean(ParamAnimal.LEASH, hasLeash()));
 		
-		setColor(ConfigUtils.getDyeColorFromName(getName(), fileSection.getString(ParamAnimal.COLOR.getAttributeName())));
-		setCatType(ConfigUtils.getCatTypeFromName(getName(), fileSection.getString(ParamAnimal.CATTYPE.getAttributeName())));
+		setColor(ConfigUtils.getDyeColorFromName(getName(), heliumSection.getString(ParamAnimal.COLOR)));
+		setCatType(ConfigUtils.getCatTypeFromName(getName(), heliumSection.getString(ParamAnimal.CATTYPE)));
 
-		Double x = fileSection.getDouble(ParamAnimal.X.getAttributeName());
-		Double y = fileSection.getDouble(ParamAnimal.Y.getAttributeName());
-		Double z = fileSection.getDouble(ParamAnimal.Z.getAttributeName());
+		Double x = heliumSection.getDouble(ParamAnimal.X, getOffset().getX());
+		Double y = heliumSection.getDouble(ParamAnimal.Y, getOffset().getY());
+		Double z = heliumSection.getDouble(ParamAnimal.Z, getOffset().getZ());
 		setOffset(new Vector(x, y, z));
 		
-		setCustom(fileSection.getString(ParamAnimal.CUSTOM.getAttributeName()));
+		setCustom(heliumSection.getString(ParamAnimal.CUSTOM));
 	}
 
 }

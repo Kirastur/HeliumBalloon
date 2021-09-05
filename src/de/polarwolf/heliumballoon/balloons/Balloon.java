@@ -6,11 +6,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public interface Balloon {
 	
-	public abstract void prepare(HeliumModifier heliumModifier);
+	public abstract void prepare(SpawnModifier spawnModifier);
 	
 	public abstract String getName();
 	

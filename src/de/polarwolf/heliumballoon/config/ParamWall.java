@@ -1,6 +1,8 @@
 package de.polarwolf.heliumballoon.config;
 
-public enum ParamWall {
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+
+public enum ParamWall implements HeliumParam {
 
 	TEMPLATE ("template"),
 	WORLDS ("worlds"),
@@ -16,6 +18,13 @@ public enum ParamWall {
 	}
 
 
+	@Override
+	public boolean isSection() {
+		return false;
+	}
+
+
+	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}

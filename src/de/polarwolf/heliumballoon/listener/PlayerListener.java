@@ -20,7 +20,7 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.pets.PetManager;
 import de.polarwolf.heliumballoon.players.PlayerManager;
 

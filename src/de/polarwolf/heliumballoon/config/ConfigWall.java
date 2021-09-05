@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigWall {
 	
@@ -105,11 +107,13 @@ public class ConfigWall {
 
 		
 	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		String templateName = fileSection.getString(ParamWall.TEMPLATE.getAttributeName());
-		String worldName = fileSection.getString(ParamWall.WORLDS.getAttributeName(), DEFAULT_WORLDS);
-		Double x = fileSection.getDouble(ParamWall.X.getAttributeName());
-		Double y = fileSection.getDouble(ParamWall.Y.getAttributeName());
-		Double z = fileSection.getDouble(ParamWall.Z.getAttributeName());
+		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamWall.values()));
+
+		String templateName = heliumSection.getString(ParamWall.TEMPLATE);
+		String worldName = heliumSection.getString(ParamWall.WORLDS, DEFAULT_WORLDS);
+		Double x = heliumSection.getDouble(ParamWall.X, getAbsolutePosition().getX());
+		Double y = heliumSection.getDouble(ParamWall.Y, getAbsolutePosition().getY());
+		Double z = heliumSection.getDouble(ParamWall.Z, getAbsolutePosition().getZ());
 		
 		setTemplate(getTemplateFromName(templateName, balloonSection));		
 		setAbsolutePosition(new Vector(x, y, z));

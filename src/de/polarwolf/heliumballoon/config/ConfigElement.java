@@ -1,5 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
@@ -8,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigElement {
 	
@@ -97,17 +100,20 @@ public class ConfigElement {
 
 
 	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		setMaterial(ConfigUtils.getMaterialFromName(getName(), fileSection.getString(ParamElement.MATERIAL.getAttributeName())));
-		setBisectedHalf(ConfigUtils.getHalfFromName(getName(), fileSection.getString(ParamElement.HALF.getAttributeName())));
-		setSlabType(ConfigUtils.getSlabTypeFromName(getName(), fileSection.getString(ParamElement.SLAB.getAttributeName())));
-		setBlockFace(ConfigUtils.getBlockFaceFromName(getName(), fileSection.getString(ParamElement.FACE.getAttributeName())));
+		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamElement.values()));
 
-		Double x = fileSection.getDouble(ParamElement.X.getAttributeName());
-		Double y = fileSection.getDouble(ParamElement.Y.getAttributeName());
-		Double z = fileSection.getDouble(ParamElement.Z.getAttributeName());
+		
+		setMaterial(ConfigUtils.getMaterialFromName(getName(), heliumSection.getString(ParamElement.MATERIAL)));
+		setBisectedHalf(ConfigUtils.getHalfFromName(getName(), heliumSection.getString(ParamElement.HALF)));
+		setSlabType(ConfigUtils.getSlabTypeFromName(getName(), heliumSection.getString(ParamElement.SLAB)));
+		setBlockFace(ConfigUtils.getBlockFaceFromName(getName(), heliumSection.getString(ParamElement.FACE)));
+
+		Double x = heliumSection.getDouble(ParamElement.X, getOffset().getX());
+		Double y = heliumSection.getDouble(ParamElement.Y, getOffset().getY());
+		Double z = heliumSection.getDouble(ParamElement.Z, getOffset().getZ());
 		setOffset(new Vector(x, y, z));
 
-		setCustom(fileSection.getString(ParamElement.CUSTOM.getAttributeName()));
+		setCustom(heliumSection.getString(ParamElement.CUSTOM));
 	}
 
 }

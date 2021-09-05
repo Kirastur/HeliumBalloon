@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.walls.WallManager;
 
 public class WorldListener implements Listener {

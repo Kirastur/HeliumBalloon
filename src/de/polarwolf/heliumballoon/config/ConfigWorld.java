@@ -33,6 +33,8 @@ public class ConfigWorld {
 	}
 	
 	
+	// The GUI is not participating in HeliumParam
+	// because the HeliumParam syntax checker is incompatible with entries of type List
 	protected void loadConfig(ConfigurationSection fileSection) {
 		includeAllWorlds = fileSection.getBoolean(PARAM_INCLUDE_ALL_WORLDS, true);
 

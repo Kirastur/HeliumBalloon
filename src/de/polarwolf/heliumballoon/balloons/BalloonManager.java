@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
 
 public class BalloonManager extends BukkitRunnable {

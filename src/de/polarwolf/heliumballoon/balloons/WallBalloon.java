@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import de.polarwolf.heliumballoon.config.ConfigWall;
 import de.polarwolf.heliumballoon.elements.CompoundElement;
 import de.polarwolf.heliumballoon.elements.Element;
-import de.polarwolf.heliumballoon.spawnmodifiers.HeliumModifier;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class WallBalloon extends SimpleBalloon {
 	
@@ -33,8 +33,8 @@ public class WallBalloon extends SimpleBalloon {
 
 
 	@Override
-	protected Element createElement(HeliumModifier heliumModifier) {
-		return new CompoundElement(null, getTemplate(), heliumModifier);
+	protected Element createElement(SpawnModifier spawnModifier) {
+		return new CompoundElement(null, getTemplate(), spawnModifier);
 	}
 	
 }

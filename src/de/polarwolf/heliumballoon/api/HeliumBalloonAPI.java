@@ -20,7 +20,7 @@ import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.gui.GuiManager;
-import de.polarwolf.heliumballoon.logger.HeliumLogger;
+import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.messages.Message;
 import de.polarwolf.heliumballoon.messages.MessageManager;
 import de.polarwolf.heliumballoon.pets.PetManager;
@@ -169,9 +169,14 @@ public class HeliumBalloonAPI {
     	return guiManager.findTemplateFromItemStack(itemStack);
     }
     
-    public ItemStack createItemStack(Player player, ConfigGuiItem guiItem) {
-    	return guiManager.createItemStack(player, guiItem);
+    public ItemStack createTemplateItemStack(Player player, ConfigGuiItem guiItem) {
+    	return guiManager.createTemplateItemStack(player, guiItem);
     }
+    
+    public ItemStack createDeassignItemStack(Player player) {
+    	return guiManager.createDeassignItemStack(player);
+    }
+
     
 	public List<ConfigGuiItem> getGuiItemConfigs(Player player) {
 		return guiManager.enumGuiItemConfigs(player);

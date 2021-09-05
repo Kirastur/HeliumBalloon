@@ -1,6 +1,8 @@
 package de.polarwolf.heliumballoon.config;
 
-public enum ParamElement {
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+
+public enum ParamElement implements HeliumParam {
 
 	MATERIAL ("material"),
 	HALF ("half"),
@@ -19,6 +21,13 @@ public enum ParamElement {
 	}
 
 
+	@Override
+	public boolean isSection() {
+		return false;
+	}
+
+	
+	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}

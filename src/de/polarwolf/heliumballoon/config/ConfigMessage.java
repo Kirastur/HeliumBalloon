@@ -5,8 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import de.polarwolf.heliumballoon.helium.HeliumText;
 import de.polarwolf.heliumballoon.messages.Message;
-import de.polarwolf.heliumballoon.system.IntlText;
 
 public class ConfigMessage {
 	
@@ -26,9 +26,9 @@ public class ConfigMessage {
 	}
 	
 	
-	public IntlText getMessage(Message messageId) {
+	public HeliumText getMessage(Message messageId) {
 		String messageName = messageId.getMessageName();
-		return new IntlText(messageFileConfiguration, messageName);
+		return new HeliumText(messageFileConfiguration, messageName);
 	}
 	
 }
