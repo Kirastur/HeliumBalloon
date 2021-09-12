@@ -25,7 +25,7 @@ public class CompoundPlayerBalloon extends PlayerBalloon {
 	
 	@Override
 	protected Element createElement(SpawnModifier spawnModifier) {
-		return new CompoundElement (getPlayer(), getTemplate(), spawnModifier);
+		return new CompoundElement (getPlayer(), getTemplate().getRule(), getTemplate().getCompound(), spawnModifier);
 	}
 	
 	

@@ -54,7 +54,6 @@ public abstract class SimpleElement implements Element{
 		}
 
 		spawn(targetLocation);
-		spawnModifier.modifyEntity(this);
 	}
 	
 	

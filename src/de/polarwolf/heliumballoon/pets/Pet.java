@@ -75,11 +75,11 @@ public class Pet {
 	
 	public void show() throws BalloonException {
 		try {
-			if ((template.getAnimal() != null) && ((balloonAnimal == null) || balloonAnimal.isCancelled())) {
+			if (template.hasAnimal() && ((balloonAnimal == null) || balloonAnimal.isCancelled())) {
 				balloonAnimal = new AnimalPlayerBalloon(player, template);
 				balloonManager.addBalloon(balloonAnimal);
 				}
-			if ((!template.enumElements().isEmpty()) && ((balloonCompound == null) || balloonCompound.isCancelled())) {
+			if (template.hasCompound() && ((balloonCompound == null) || balloonCompound.isCancelled())) {
 				balloonCompound = new CompoundPlayerBalloon(player, template);
 				balloonManager.addBalloon(balloonCompound);
 			}

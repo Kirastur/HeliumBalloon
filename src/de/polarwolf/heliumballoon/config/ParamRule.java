@@ -10,6 +10,8 @@ public enum ParamRule implements HeliumParam {
 	ANGLE_FROM_PLAYER_DIRECTION ("angleFromPlayerDirection"),
 	NORMAL_SPEED ("normalSpeed"),
 	SWITCH_TO_FAST_SPEED_AT_DISTANCE ("switchToFastSpeedAtDistance"),
+	MAX_ALLOWED_DISTANCE ("maxAllowedDistance"),
+	ADJUST_ILLAGER_Y ("adjustIllagerY"),
 	ENABLE_RISING_Y_WORKAROUND("enableRisingYWorkaround");
 		
 	private final String attributeName;

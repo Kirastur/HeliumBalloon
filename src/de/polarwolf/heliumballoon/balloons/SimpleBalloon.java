@@ -102,7 +102,7 @@ public abstract class SimpleBalloon implements Balloon {
 		Double distance = targetPosition.distance(currentPosition);
 		
 		// A leash has a maximum length of 10
-		if (distance > 9.9) {
+		if (distance > getRule().getMaxAllowedDistance()) {
 			// Teleport
 			return null;			
 		}	

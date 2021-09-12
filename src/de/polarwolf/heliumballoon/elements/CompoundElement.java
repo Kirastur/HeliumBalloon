@@ -8,23 +8,25 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.config.ConfigCompound;
 import de.polarwolf.heliumballoon.config.ConfigElement;
-import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class CompoundElement implements Element {
 
-	private final ConfigTemplate template;
+	private final Rule rule;
+	private final ConfigCompound compound;
 	private final Player player;
 	protected final SpawnModifier spawnModifier;
 	protected List<Element> elements = new ArrayList<>();
 	
 	
-	public CompoundElement(Player player, ConfigTemplate template, SpawnModifier spawnModifier) {
-		this.player=player;
-		this.template=template;
+	public CompoundElement(Player player, Rule rule, ConfigCompound compound, SpawnModifier spawnModifier) {
+		this.player = player;
+		this.rule = rule;
+		this.compound = compound;
 		this.spawnModifier = spawnModifier;
 		buildElements();
 	}
@@ -32,7 +34,7 @@ public class CompoundElement implements Element {
 	
 	protected void buildElements() {
 		elements.clear();
-		for(ConfigElement myConfigElement : getTemplate().enumElements()) {
+		for(ConfigElement myConfigElement : getCompound().enumElements()) {
 			elements.add(new FallingBlockElement(player, getRule(), myConfigElement, spawnModifier));
 		}
 	}
@@ -79,13 +81,13 @@ public class CompoundElement implements Element {
 	}
 	
 
-	public ConfigTemplate getTemplate() {
-		return template;
-	}
-	
-	
 	public Rule getRule() {
-		return  getTemplate().getRule();
+		return rule;
+	}
+
+
+	public ConfigCompound getCompound() {
+		return compound;
 	}
 
 
@@ -159,7 +161,7 @@ public class CompoundElement implements Element {
 			// A correction of the element position is done in setVelocity
 			// so this is only a fail safe here.
 			Double distance = currentLocation.distance(myLocation);
-			if (distance > 9.9) {
+			if (distance > getRule().getMaxAllowedDistance()) {
 				return null;
 			}
 		}

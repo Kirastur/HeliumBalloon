@@ -55,11 +55,20 @@ public class FallingBlockElement extends SimpleElement {
 	}
 	
 	
-	protected BlockData createBlockData() {
-		BlockData blockData = Bukkit.createBlockData(config.getMaterial());
+	protected BlockData createBaseBlockData() {
+		return Bukkit.createBlockData(config.getMaterial());
+	}
+	
+	
+	protected void modifyBlockData(BlockData blockData) {
 		modifyBlockDataBisected(blockData);
 		modifyBlockDataSlab(blockData);
 		modifyBlockDataDirectional(blockData);
+	}
+	
+	protected BlockData createBlockData() {
+		BlockData blockData = createBaseBlockData();
+		modifyBlockData(blockData);
 		spawnModifier.modifyBlockData(this, blockData);
 		return blockData;	
 	}
@@ -81,9 +90,8 @@ public class FallingBlockElement extends SimpleElement {
 		return fallingBlock;
 	}
 	
-	
-	@Override
-	protected void spawn(Location targetLocation) throws BalloonException {
+
+	protected void spawnBaseFallingBlock(Location targetLocation) {
 		fallingBlock = targetLocation.getWorld().spawnFallingBlock(targetLocation, createBlockData());
 		fallingBlock.setPersistent(false);
 		fallingBlock.setHurtEntities(false);
@@ -92,6 +100,19 @@ public class FallingBlockElement extends SimpleElement {
 		fallingBlock.setSilent(true);
 		fallingBlock.setVelocity(new Vector());
 	}
+	
+	
+	protected void modifySpawn() {
+		// Nothing to to
+	}
+
+	
+	@Override
+	protected void spawn(Location targetLocation) throws BalloonException {
+		spawnBaseFallingBlock(targetLocation);
+		modifySpawn();		
+		spawnModifier.modifyEntity(this);
+}
 	
 	
 	@Override

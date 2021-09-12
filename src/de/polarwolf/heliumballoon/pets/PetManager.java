@@ -264,6 +264,18 @@ public class PetManager extends BukkitRunnable {
 	
 	
 	//
+	// Reload
+	//
+	public void reload() {
+		List<Pet> petList = new ArrayList<>(pets);
+		for (Pet myPet : petList) {
+			Player myPlayer = myPet.getPlayer();
+			hideNow(myPlayer);
+		}		
+	}
+	
+	
+	//
 	// Do scheduled tasks
 	//
 	

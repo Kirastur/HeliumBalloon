@@ -8,7 +8,9 @@ public class Rule {
 
 	private double normalSpeed = 0.1;
 	private double switchToFastSpeedAtDistance = 5.0;
+	private double maxAllowedDistance = 9.9;
 	
+	private double adjustIllagerY = 0.0;
 	private boolean enableRisingYWorkaround = true;
 	
 
@@ -60,6 +62,26 @@ public class Rule {
 	
 	protected void setSwitchToFastSpeedAtDistance(double switchToFastSpeedAtDistance) {
 		this.switchToFastSpeedAtDistance = switchToFastSpeedAtDistance;
+	}
+
+
+	public double getMaxAllowedDistance() {
+		return maxAllowedDistance;
+	}
+
+
+	protected void setMaxAllowedDistance(double maxAllowedDistance) {
+		this.maxAllowedDistance = maxAllowedDistance;
+	}
+
+
+	public double getAdjustIllagerY() {
+		return adjustIllagerY;
+	}
+
+
+	protected void setAdjustIllagerY(double adjustIllagerY) {
+		this.adjustIllagerY = adjustIllagerY;
 	}
 
 

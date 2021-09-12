@@ -6,6 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -52,6 +53,16 @@ public class EntityListener implements Listener {
 		}
 				
 	}
+	
+	
+	protected void handleEntityDamageByEntityEvent (EntityDamageByEntityEvent event) {
+		Entity entity = event.getDamager();
+		Balloon balloon = balloonManager.findBalloonByEntity(entity);
+		if (balloon != null) {
+			logger.printDebug("Cancelling EntityDrop for Balloon Element " + balloon.getName());
+			event.setCancelled(true);
+		}		
+	}
 
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -73,4 +84,13 @@ public class EntityListener implements Listener {
 		}
 	}
 
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+		try {
+			handleEntityDamageByEntityEvent(event);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

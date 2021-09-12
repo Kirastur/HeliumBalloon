@@ -7,6 +7,14 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Llama;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Panda;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.TropicalFish;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
 
@@ -128,7 +136,45 @@ public class ConfigUtils {
 			myColor = null;
 		}
 		if (myColor == null) { // exception or null return
-			throw new BalloonException(contextName, "Unknown color", colorName);
+			throw new BalloonException(contextName, "Unknown dye or collar color", colorName);
+		}
+				
+		return myColor;
+	}
+
+	
+	public static Horse.Color getHorseColorFromName(String contextName, String colorName) throws BalloonException {
+		if ((colorName == null) || (colorName.isEmpty())) {
+			return null;
+		}
+
+		Horse.Color myColor = null;
+		try {
+			myColor = Horse.Color.valueOf(colorName);
+		} catch (Exception e) {
+			myColor = null;
+		}
+		if (myColor == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown horse color", colorName);
+		}
+				
+		return myColor;
+	}
+
+	
+	public static Llama.Color getLlamaColorFromName(String contextName, String colorName) throws BalloonException {
+		if ((colorName == null) || (colorName.isEmpty())) {
+			return null;
+		}
+
+		Llama.Color myColor = null;
+		try {
+			myColor = Llama.Color.valueOf(colorName);
+		} catch (Exception e) {
+			myColor = null;
+		}
+		if (myColor == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown llama color", colorName);
 		}
 				
 		return myColor;
@@ -153,4 +199,136 @@ public class ConfigUtils {
 		return myCatType;
 	}
 
+
+	public static Fox.Type getFoxTypeFromName(String contextName, String foxTypeName) throws BalloonException {
+		if ((foxTypeName == null) || (foxTypeName.isEmpty())) {
+			return null;
+		}
+
+		Fox.Type myFoxType = null;
+		try {
+			myFoxType = Fox.Type.valueOf(foxTypeName);
+		} catch (Exception e) {
+			myFoxType = null;
+		}
+		if (myFoxType == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown fox type", foxTypeName);
+		}
+				
+		return myFoxType;
+	}
+
+	
+	public static Horse.Style getHorseStyleFromName(String contextName, String horseStyleName) throws BalloonException {
+		if ((horseStyleName == null) || (horseStyleName.isEmpty())) {
+			return null;
+		}
+
+		Horse.Style myHorseStyle = null;
+		try {
+			myHorseStyle = Horse.Style.valueOf(horseStyleName);
+		} catch (Exception e) {
+			myHorseStyle = null;
+		}
+		if (myHorseStyle == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown horse style", horseStyleName);
+		}
+				
+		return myHorseStyle;
+	}
+
+	
+	public static MushroomCow.Variant getMushroomCowVariantFromName(String contextName, String mushroomCowVariantName) throws BalloonException {
+		if ((mushroomCowVariantName == null) || (mushroomCowVariantName.isEmpty())) {
+			return null;
+		}
+
+		MushroomCow.Variant myMushroomCowVariant = null;
+		try {
+			myMushroomCowVariant = MushroomCow.Variant.valueOf(mushroomCowVariantName);
+		} catch (Exception e) {
+			myMushroomCowVariant = null;
+		}
+		if (myMushroomCowVariant == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown mushroom cow variant", mushroomCowVariantName);
+		}
+				
+		return myMushroomCowVariant;
+	}
+
+
+	public static Panda.Gene getPandaGeneFromName(String contextName, String pandaGeneName) throws BalloonException {
+		if ((pandaGeneName == null) || (pandaGeneName.isEmpty())) {
+			return null;
+		}
+
+		Panda.Gene myPandaGene = null;
+		try {
+			myPandaGene = Panda.Gene.valueOf(pandaGeneName);
+		} catch (Exception e) {
+			myPandaGene = null;
+		}
+		if (myPandaGene == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown panda gene", pandaGeneName);
+		}
+				
+		return myPandaGene;
+	}
+
+	
+	public static Parrot.Variant getParrotVariantFromName(String contextName, String parrotVariantName) throws BalloonException {
+		if ((parrotVariantName == null) || (parrotVariantName.isEmpty())) {
+			return null;
+		}
+
+		Parrot.Variant myParrotVariant = null;
+		try {
+			myParrotVariant = Parrot.Variant.valueOf(parrotVariantName);
+		} catch (Exception e) {
+			myParrotVariant = null;
+		}
+		if (myParrotVariant == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown parrot variant", parrotVariantName);
+		}
+				
+		return myParrotVariant;
+	}
+
+
+	public static Rabbit.Type getRabbitTypeFromName(String contextName, String rabbitTypeName) throws BalloonException {
+		if ((rabbitTypeName == null) || (rabbitTypeName.isEmpty())) {
+			return null;
+		}
+
+		Rabbit.Type myRabbitType = null;
+		try {
+			myRabbitType = Rabbit.Type.valueOf(rabbitTypeName);
+		} catch (Exception e) {
+			myRabbitType = null;
+		}
+		if (myRabbitType == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown rabbit type", rabbitTypeName);
+		}
+				
+		return myRabbitType;
+	}
+
+	
+	public static TropicalFish.Pattern getTropicalFishPatternFromName(String contextName, String tropicalFishPatternName) throws BalloonException {
+		if ((tropicalFishPatternName == null) || (tropicalFishPatternName.isEmpty())) {
+			return null;
+		}
+
+		TropicalFish.Pattern myTropicalFishPattern = null;
+		try {
+			myTropicalFishPattern = TropicalFish.Pattern.valueOf(tropicalFishPatternName);
+		} catch (Exception e) {
+			myTropicalFishPattern = null;
+		}
+		if (myTropicalFishPattern == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown rabbit type", tropicalFishPatternName);
+		}
+				
+		return myTropicalFishPattern;
+	}
 }

@@ -56,6 +56,8 @@ public class ConfigRule extends Rule {
 		setAngleFromPlayerDirection(heliumSection.getDouble(ParamRule.ANGLE_FROM_PLAYER_DIRECTION, getAngleFromPlayerDirection()));
 		setNormalSpeed(heliumSection.getDouble(ParamRule.NORMAL_SPEED, getNormalSpeed()));
 		setSwitchToFastSpeedAtDistance(heliumSection.getDouble(ParamRule.SWITCH_TO_FAST_SPEED_AT_DISTANCE, getSwitchToFastSpeedAtDistance()));
+		setMaxAllowedDistance(heliumSection.getDouble(ParamRule.MAX_ALLOWED_DISTANCE, getMaxAllowedDistance()));
+		setAdjustIllagerY(heliumSection.getDouble(ParamRule.ADJUST_ILLAGER_Y, getAdjustIllagerY()));
 		setEnableRisingYWorkaround(heliumSection.getBoolean(ParamRule.ENABLE_RISING_Y_WORKAROUND, isEnableRisingYWorkaround()));
 		
 		validateConfig();	

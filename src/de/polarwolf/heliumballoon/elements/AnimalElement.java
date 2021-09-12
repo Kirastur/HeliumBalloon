@@ -3,9 +3,22 @@ package de.polarwolf.heliumballoon.elements;
 import org.bukkit.Location;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Illager;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Llama;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Panda;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Wolf;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigAnimal;
@@ -15,8 +28,12 @@ import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class AnimalElement extends SimpleElement {
 
+	public static final double MAX_PITCH_PER_STEP = 5;
+	
 	private final ConfigAnimal config;
+	protected boolean isAware = true;
 	protected LivingEntity livingEntity = null;
+	protected double lastPitch = 0;
 	
 
 	public AnimalElement(Player player, Rule rule, ConfigAnimal config, SpawnModifier spawnModifier) {
@@ -56,12 +73,32 @@ public class AnimalElement extends SimpleElement {
 	}
 	
 	
+	public void disableAware() {
+		isAware = false;
+		if (livingEntity instanceof Mob) {
+			Mob mob = (Mob) livingEntity;
+			mob.setAware(false);
+		}
+	}
+	
+	
 	protected void modifySpawnMonster() {
 		if (!(livingEntity instanceof Monster)) {
 			return;
 		}
-		Monster monster = (Monster) livingEntity;
-		monster.setAware(false);
+		disableAware();
+	}
+	
+	
+	protected void modifySpawnTamed() {
+		if (!(livingEntity instanceof Tameable) || !getConfig().isTamed()) {
+			return;
+		}
+		Tameable tameable = (Tameable) livingEntity;
+		tameable.setTamed(true);
+		if (getPlayer() != null) {
+			tameable.setOwner(getPlayer());
+		}
 	}
 
 
@@ -70,8 +107,8 @@ public class AnimalElement extends SimpleElement {
 			return;
 		}
 		Cat cat = (Cat) livingEntity;
-		if (config.getColor() != null) {
-			cat.setCollarColor(config.getColor());
+		if (config.getCollarColor() != null) {
+			cat.setCollarColor(config.getCollarColor());
 		}
 		if (config.getCatType() != null) {
 			cat.setCatType(config.getCatType());
@@ -79,8 +116,129 @@ public class AnimalElement extends SimpleElement {
 	}
 
 
-	@Override
-	protected void spawn(Location targetLocation) throws BalloonException {
+	protected void modifySpawnFox() {
+		if (!(livingEntity instanceof Fox)) {
+			return;
+		}
+		Fox fox = (Fox) livingEntity;
+		if (config.getFoxType() != null) {
+			fox.setFoxType(config.getFoxType());
+		}
+	}
+	
+	
+	protected void modifySpawnHorse() {
+		if (!(livingEntity instanceof Horse)) {
+			return;
+		}
+		Horse horse = (Horse) livingEntity;
+		if (config.getHorseColor() != null) {
+			horse.setColor(config.getHorseColor());
+		}
+		if (config.getHorseStyle() != null) {
+			horse.setStyle(config.getHorseStyle());
+		}
+	}
+
+	
+	protected void modifySpawnLlama() {
+		if (!(livingEntity instanceof Llama)) {
+			return;
+		}
+		Llama llama = (Llama) livingEntity;
+		if (config.getLlamaColor() != null) {
+			llama.setColor(config.getLlamaColor());
+		}
+	}
+
+	
+	protected void modifySpawnMushroomCow() {
+		if (!(livingEntity instanceof MushroomCow)) {
+			return;
+		}
+		MushroomCow mushroomCow = (MushroomCow) livingEntity;
+		if (config.getMushroomCowVariant() != null) {
+			mushroomCow.setVariant(config.getMushroomCowVariant());
+		}
+	}
+
+	
+	protected void modifySpawnPanda() {
+		if (!(livingEntity instanceof Panda)) {
+			return;
+		}
+		Panda panda = (Panda) livingEntity;
+		if (config.getPandaMainGene() != null) {
+			panda.setMainGene(config.getPandaMainGene());
+		}
+		if (config.getPandaHiddenGene() != null) {
+			panda.setHiddenGene(config.getPandaHiddenGene());
+		}
+	}
+
+	
+	protected void modifySpawnParrot() {
+		if (!(livingEntity instanceof Parrot)) {
+			return;
+		}
+		Parrot parrot = (Parrot) livingEntity;
+		if (config.getParrotVariant() != null) {
+			parrot.setVariant(config.getParrotVariant());
+		}
+	}
+	
+	
+	protected void modifySpawnRabbit() {
+		if (!(livingEntity instanceof Rabbit)) {
+			return;
+		}
+		Rabbit rabbit = (Rabbit) livingEntity;
+		if (config.getRabbitType() != null) {
+			rabbit.setRabbitType(config.getRabbitType());
+		}
+	}
+
+	
+	protected void modifySpawnSheep() {
+		if (!(livingEntity instanceof Sheep)) {
+			return;
+		}
+		Sheep sheep = (Sheep) livingEntity;
+		if (config.getSheepColor() != null) {
+			sheep.setColor(config.getSheepColor());
+		}
+	}
+
+	
+	protected void modifySpawnTropicalFish() {
+		if (!(livingEntity instanceof TropicalFish)) {
+			return;
+		}
+		TropicalFish tropicalFish = (TropicalFish) livingEntity;
+		if (config.getTropicalFishBodyColor() != null) {
+			tropicalFish.setBodyColor(config.getTropicalFishBodyColor());
+		}
+		if (config.getTropicalFishPatternColor() != null) {
+			tropicalFish.setPatternColor(config.getTropicalFishPatternColor());
+		}
+		if (config.getTropicalFishPattern() != null) {
+			tropicalFish.setPattern(config.getTropicalFishPattern());
+		}
+	}
+
+	
+	protected void modifySpawnWolf() {
+		if (!(livingEntity instanceof Wolf)) {
+			return;
+		}
+		Wolf wolf = (Wolf) livingEntity;
+		if (config.getCollarColor() != null) {
+			wolf.setCollarColor(config.getCollarColor());
+		}
+	}
+	
+	
+	protected void spawnBaseEntity(Location targetLocation) throws BalloonException {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, config.getEntityType());
 		if (!(entity instanceof LivingEntity)) {
 			entity.remove();
@@ -100,10 +258,31 @@ public class AnimalElement extends SimpleElement {
 			livingEntity.setLeashHolder(getPlayer());
 		}
 		livingEntity.setVelocity(new Vector());
-		
+	}
+	
+	
+	protected void modifySpawn() {
 		modifySpawnMonster();
+		modifySpawnTamed();
 		modifySpawnCat();
-		
+		modifySpawnFox();
+		modifySpawnHorse();
+		modifySpawnLlama();
+		modifySpawnMushroomCow();
+		modifySpawnPanda();
+		modifySpawnParrot();
+		modifySpawnRabbit();
+		modifySpawnSheep();
+		modifySpawnTropicalFish();
+		modifySpawnWolf();
+	}
+
+
+	@Override
+	protected void spawn(Location targetLocation) throws BalloonException {
+		spawnBaseEntity(targetLocation);
+		modifySpawn();		
+		spawnModifier.modifyEntity(this);
 	}
 
 
@@ -118,27 +297,42 @@ public class AnimalElement extends SimpleElement {
 	
 	
 	protected void adjustMonsterDirection() {
-		if ((getPlayer() == null) || !(livingEntity instanceof Monster)) {
+		if ((getPlayer() == null) || isAware) {
 			return;
 		}
-		Monster monster = (Monster) livingEntity;
-		Vector mv = monster.getLocation().toVector();
-		Vector pv = getPlayer().getLocation().toVector();
-		mv.setY(0);
-		pv.setY(0);
-		pv.subtract(mv);
-		if (pv.length() > 0.1) {
-			pv.normalize();
-			double angle = Math.asin(pv.getZ());
-			angle = Math.toDegrees(angle);
-			if (pv.getX() < 0) {
-				angle = 180 - angle;
+		Vector entityVector = livingEntity.getEyeLocation().toVector();
+		Vector playerVector = getPlayer().getEyeLocation().toVector();
+		
+		double high = entityVector.getY() - playerVector.getY();
+		entityVector.setY(0);
+		playerVector.setY(0);
+		Vector distanceVector = playerVector.subtract(entityVector);
+		double distance = distanceVector.length();
+		if (distance > 0.1) {
+			distanceVector.normalize();
+			double yaw = -Math.asin(distanceVector.getX());
+			yaw = Math.toDegrees(yaw);
+			if (distanceVector.getZ() < 0.0) {
+				yaw = 180.0 - yaw;
 			}
-			angle = angle + 270.0;
-			if (angle >= 360.0) {
-				angle = angle - 360.0;
+
+			double pitch = 0.0;
+			if (livingEntity instanceof Illager) {
+				high = high + getRule().getAdjustIllagerY();
+				pitch = Math.atan(Math.abs(high)/distance);
+				pitch = Math.toDegrees(pitch);
+				pitch = pitch * Math.signum(high);
 			}
-			monster.setRotation((float) angle, 0);
+			
+			if ((pitch - lastPitch) > MAX_PITCH_PER_STEP) {
+				pitch = lastPitch + MAX_PITCH_PER_STEP;
+			}
+			if ((pitch - lastPitch) < -MAX_PITCH_PER_STEP) {
+				pitch = lastPitch - MAX_PITCH_PER_STEP;
+			}
+			lastPitch = pitch;
+			
+			livingEntity.setRotation((float) yaw, (float) pitch);
 		}
 	}
 	

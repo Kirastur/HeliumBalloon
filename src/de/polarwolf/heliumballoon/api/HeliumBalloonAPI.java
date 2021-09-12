@@ -82,6 +82,7 @@ public class HeliumBalloonAPI {
 	public void reload() throws BalloonException {
 		plugin.reloadConfig();
 		configManager.reload();
+		petManager.reload();
 		wallManager.reload();
 	}
 	

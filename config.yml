@@ -83,12 +83,15 @@ rules:
 #        angleFromPlayerDirection: 120
 #        normalSpeed: 0.1
 #        switchToFastSpeedAtDistance: 5.0
+#        maxAllowedDistance: 9.9
+#        adjustIllagerY: 0.0
 #        enableRisingYWorkaround: true
 
     demo1:
         highAbovePlayer: 0.2
         distanceFromPlayer: 1.5
         angleFromPlayerDirection: 180
+        adjustIllagerY: -0.2
 
 
 # Temnplates are the definitions for the pets.
@@ -139,6 +142,8 @@ templates:
         animal:
             type: CAT
             cattype: CALICO
+            collarColor: BLUE
+            tamed: true
         elements:
             floor:
                 material: RED_CARPET

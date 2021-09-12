@@ -34,7 +34,7 @@ public class WallBalloon extends SimpleBalloon {
 
 	@Override
 	protected Element createElement(SpawnModifier spawnModifier) {
-		return new CompoundElement(null, getTemplate(), spawnModifier);
+		return new CompoundElement(null, getTemplate().getRule(), getTemplate().getCompound(), spawnModifier);
 	}
 	
 }

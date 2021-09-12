@@ -1,9 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
@@ -12,8 +9,8 @@ public class ConfigTemplate {
 	
 	private final String name;
 	private ConfigRule rule;
-	private ConfigAnimal animal;
-	private List<ConfigElement> elements = new ArrayList<>();
+	private ConfigAnimal animal = null;;
+	private ConfigCompound compound = null;
 	private String custom;
 	
 	
@@ -43,6 +40,11 @@ public class ConfigTemplate {
 	}
 
 
+	public boolean hasAnimal() {
+		return (animal != null);
+	}
+	
+	
 	public ConfigAnimal getAnimal() {
 		return animal;
 	}
@@ -53,15 +55,20 @@ public class ConfigTemplate {
 	}
 
 
-	public List<ConfigElement> enumElements() {
-		return new ArrayList<>(elements);
+	public boolean hasCompound() {
+		return ((compound != null)  && (!compound.isEmpty()));
 	}
 	
 	
-	protected void replaceElements(List<ConfigElement> newElements) {
-		this.elements = newElements;
+	public ConfigCompound getCompound() {
+		return compound;
 	}
-	
+
+
+	protected void setCompound(ConfigCompound compound) {
+		this.compound = compound;
+	}
+
 
 	public String getCustom() {
 		return custom;
@@ -80,19 +87,8 @@ public class ConfigTemplate {
 	
 	
 	protected void loadElementsConfig(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionElements = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
-		
-		List<ConfigElement> myElements = new ArrayList<>();
-		for (String elementName : fileSectionElements.getKeys(false)) {
-			if (!fileSectionElements.contains(elementName, true)) { // ignore default from jar
-				continue;
-			}
-			if (!fileSectionElements.isConfigurationSection(elementName)) {
-				throw new BalloonException (getName(), "Illegal elements section", elementName);
-			}
-			myElements.add(new ConfigElement(fileSectionElements.getConfigurationSection(elementName)));
-		}
-		replaceElements(myElements);
+		ConfigurationSection fileSectionCompound = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
+		compound = new ConfigCompound (fileSectionCompound);
 	}
 
 
