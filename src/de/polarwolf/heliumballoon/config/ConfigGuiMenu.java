@@ -71,7 +71,7 @@ public class ConfigGuiMenu {
 	// because the HeliumParam syntax checker is incompatible with HeliumMessages.
 	// This will be resolved in a future version.
 	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		guiTitle = new HeliumText(fileSection, ParamGuiMenu.TITLE.getAttributeName());
+		guiTitle = new HeliumText(ParamGuiMenu.TITLE.getAttributeName(), fileSection);
 		guiItems.clear();
 		
 		if (!fileSection.contains(ParamGuiMenu.ITEMS.getAttributeName(), true) || !fileSection.isConfigurationSection(ParamGuiMenu.ITEMS.getAttributeName())) {
@@ -91,8 +91,8 @@ public class ConfigGuiMenu {
 		
 		if (fileSection.contains(ParamGuiMenu.DEASSIGN.getAttributeName(), true) && fileSection.isConfigurationSection(ParamGuiMenu.DEASSIGN.getAttributeName())) {
 			ConfigurationSection fileSectionGuiDeassign = fileSection.getConfigurationSection(ParamGuiMenu.DEASSIGN.getAttributeName());
-			deassignTitle = new HeliumText(fileSectionGuiDeassign, ParamGuiItem.TITLE.getAttributeName());
-			deassignDescription = new HeliumText(fileSectionGuiDeassign, ParamGuiItem.DESCRIPTION.getAttributeName());
+			deassignTitle = new HeliumText(ParamGuiItem.TITLE.getAttributeName(), fileSectionGuiDeassign);
+			deassignDescription = new HeliumText(ParamGuiItem.DESCRIPTION.getAttributeName(), fileSectionGuiDeassign);
 		}	
 	}
 	

@@ -28,6 +28,7 @@ import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class AnimalElement extends SimpleElement {
 
+	public static final double MIN_DISTANCE = 0.5;
 	public static final double MAX_PITCH_PER_STEP = 5;
 	
 	private final ConfigAnimal config;
@@ -296,6 +297,11 @@ public class AnimalElement extends SimpleElement {
 	}
 	
 	
+	protected boolean isPitchableEntity() {
+		return (livingEntity instanceof Illager);
+	}
+	
+	
 	protected void adjustMonsterDirection() {
 		if ((getPlayer() == null) || isAware) {
 			return;
@@ -308,7 +314,7 @@ public class AnimalElement extends SimpleElement {
 		playerVector.setY(0);
 		Vector distanceVector = playerVector.subtract(entityVector);
 		double distance = distanceVector.length();
-		if (distance > 0.1) {
+		if (distance > MIN_DISTANCE) {
 			distanceVector.normalize();
 			double yaw = -Math.asin(distanceVector.getX());
 			yaw = Math.toDegrees(yaw);
@@ -317,7 +323,7 @@ public class AnimalElement extends SimpleElement {
 			}
 
 			double pitch = 0.0;
-			if (livingEntity instanceof Illager) {
+			if (isPitchableEntity()) {
 				high = high + getRule().getAdjustIllagerY();
 				pitch = Math.atan(Math.abs(high)/distance);
 				pitch = Math.toDegrees(pitch);

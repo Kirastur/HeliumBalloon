@@ -52,6 +52,11 @@ public class PlayerListener implements Listener {
 	}
 	
 	
+	protected void wakeupBalloons(Player player) {
+		balloonManager.wakeupBalloonByPlayer(player);
+	}
+	
+	
 	public void handlePlayerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		logger.printDebug("Init: PlayerJoin " + player.getName());
@@ -71,7 +76,9 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 		Location toLocation = event.getFrom();
 		Location fromLocation = event.getTo();
-		if (!toLocation.getWorld().equals(fromLocation.getWorld())) {
+		if (toLocation.getWorld().equals(fromLocation.getWorld())) {
+			wakeupBalloons(player);
+		} else {
 			logger.printDebug("Resync: PlayerMove " + player.getName());
 			resyncPlayer(player);
 		}

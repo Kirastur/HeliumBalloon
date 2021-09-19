@@ -28,7 +28,7 @@ public class ConfigMessage {
 	
 	public HeliumText getMessage(Message messageId) {
 		String messageName = messageId.getMessageName();
-		return new HeliumText(messageFileConfiguration, messageName);
+		return new HeliumText(messageName, messageFileConfiguration);
 	}
 	
 }

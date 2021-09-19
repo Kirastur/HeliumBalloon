@@ -84,8 +84,11 @@ rules:
 #        normalSpeed: 0.1
 #        switchToFastSpeedAtDistance: 5.0
 #        maxAllowedDistance: 9.9
+#        oscillatorPeriod: 100
+#        oscillatorAmplitude: 0.1
 #        adjustIllagerY: 0.0
 #        enableRisingYWorkaround: true
+#        enableWarnY64Walls
 
     demo1:
         highAbovePlayer: 0.2
@@ -112,6 +115,7 @@ templates:
                 material: GLASS
 
     demo2:
+        oscillating: true
         elements:
             body:
                 material: LANTERN
@@ -165,6 +169,7 @@ templates:
 # Walls are blocks were you can walk through
 # e.g. for building a hidden passage.
 # The "worlds" is a Regex and must start with "^".
+# A wall emement cannot be positioned between y=63.7 and y=64.1
 walls: 
     demowall1:
         template: demo5

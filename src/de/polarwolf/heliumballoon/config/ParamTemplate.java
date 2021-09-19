@@ -5,6 +5,7 @@ import de.polarwolf.heliumballoon.helium.HeliumParam;
 public enum ParamTemplate implements HeliumParam {
 
 	RULE (false, "rule"),
+	OSCILLATING (false, "oscillating"),
 	ANIMAL (true, "animal"),
 	ELEMENTS (true, "elements"),
 	CUSTOM (false, "custom");

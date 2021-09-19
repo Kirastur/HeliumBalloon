@@ -83,8 +83,8 @@ public class ConfigGuiItem {
 		String iconName =  fileSection.getString(ParamGuiItem.ICON.getAttributeName());
 		setIcon(ConfigUtils.getMaterialFromName(getName(), iconName));
 
-		title = new HeliumText(fileSection, ParamGuiItem.TITLE.getAttributeName());
-		description = new HeliumText(fileSection, ParamGuiItem.DESCRIPTION.getAttributeName());
+		title = new HeliumText(ParamGuiItem.TITLE.getAttributeName(), fileSection);
+		description = new HeliumText(ParamGuiItem.DESCRIPTION.getAttributeName(), fileSection);
 		
 	}
 }

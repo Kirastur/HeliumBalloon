@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
@@ -17,15 +18,18 @@ public abstract class SimpleBalloon implements Balloon {
 	private boolean cancelled = false;
 	private final Player player;
 	private final ConfigTemplate template;
+	private final Oscillator oscillator;
 	private Element element = null;
 	protected boolean highSpeedMode = false;
-	protected Vector lastTargetPosition = null;
+	protected boolean sleeping = false;
+	protected Vector lastPosition = null;
 	protected int refreshCounter = 0;
 	
 	
-	protected SimpleBalloon(Player player, ConfigTemplate template) {
+	protected SimpleBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
 		this.player = player;
 		this.template=template;
+		this.oscillator = oscillator;
 	}
 	
 	
@@ -52,6 +56,12 @@ public abstract class SimpleBalloon implements Balloon {
 
 	public Rule getRule() {
 		return  getTemplate().getRule();
+	}
+
+
+	@Override
+	public Oscillator getOscillator() {
+		return oscillator;
 	}
 
 
@@ -93,13 +103,29 @@ public abstract class SimpleBalloon implements Balloon {
 	
 
 	@Override
+	public boolean isSleeping() {
+		return sleeping;
+	}
+	
+	
+	@Override
+	public void wakeup() {
+		sleeping = false;
+	}
+
+
+	@Override
 	public boolean hasEntity(Entity entity) {
 		return element.hasEntity(entity);
 	}
 	
 	
 	protected Vector calculateVelocity(Vector currentPosition, Vector targetPosition) {
-		Double distance = targetPosition.distance(currentPosition);
+		Vector newPosition = targetPosition.clone();
+		if (getOscillator() != null) {
+			newPosition.add(getOscillator().getDeflection());
+		}
+		Double distance = newPosition.distance(currentPosition);
 		
 		// A leash has a maximum length of 10
 		if (distance > getRule().getMaxAllowedDistance()) {
@@ -107,23 +133,26 @@ public abstract class SimpleBalloon implements Balloon {
 			return null;			
 		}	
 		
-		// Do not move until steps are at least 0.01
-		if (distance < 0.01) {
-			lastTargetPosition = targetPosition;
+		// Do not move until steps are at least 0.0001
+		if (distance < 0.0001) {
+			lastPosition = newPosition;
+			if (!getTemplate().isOscillating()) {
+				sleeping = true;
+			}
 			return new Vector();
 		}
-		
+
 		double normalSpeed = getRule().getNormalSpeed();
 		double highSpeed = normalSpeed; 
-		if (lastTargetPosition != null) {
-			double lastTargetDistance = targetPosition.distance(lastTargetPosition);
-			if (lastTargetDistance > normalSpeed) {
-				highSpeed = lastTargetDistance;
+		if (lastPosition != null) {
+			double lastDistance = newPosition.distance(lastPosition);
+			if (lastDistance > normalSpeed) {
+				highSpeed = lastDistance;
 			}
 		}
-		lastTargetPosition = targetPosition;
+		lastPosition = newPosition;
 
-		Vector movingDirection = targetPosition.clone().subtract(currentPosition);
+		Vector movingDirection = newPosition.clone().subtract(currentPosition);
 		movingDirection.normalize();
 		
 		// Check for slow speed
@@ -133,10 +162,11 @@ public abstract class SimpleBalloon implements Balloon {
 		}
 
 		// Avoid tremble between HighSpeed and NormalSpeed
-		if (distance - getRule().getSwitchToFastSpeedAtDistance() > 0.25) {
+		double switchToFastSpeedAtDistance = getRule().getSwitchToFastSpeedAtDistance();
+		if (distance - switchToFastSpeedAtDistance > 0.25) {
 			highSpeedMode = true;
 		}
-		if (distance - getRule().getSwitchToFastSpeedAtDistance() <= -0.25) {  
+		if (distance - switchToFastSpeedAtDistance <= -0.25) {  
 			highSpeedMode = false;
 		}
 
@@ -159,8 +189,13 @@ public abstract class SimpleBalloon implements Balloon {
 		if (isCancelled()) {
 			return null;
 		}
-
+		
 		String resultText = "";
+		if (isSleeping()) {
+			element.keepAlive();
+			return resultText;
+		}
+
 		Vector newVelocity = null;
 		boolean mustRefresh = false;
 

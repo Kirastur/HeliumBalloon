@@ -10,8 +10,12 @@ public class Rule {
 	private double switchToFastSpeedAtDistance = 5.0;
 	private double maxAllowedDistance = 9.9;
 	
+	private int oscillatorPeriod = 100;
+	private double oscillatorAmplitude = 0.1;
+	
 	private double adjustIllagerY = 0.0;
 	private boolean enableRisingYWorkaround = true;
+	private boolean enableWarnY64Walls = true;
 	
 
 	
@@ -75,6 +79,26 @@ public class Rule {
 	}
 
 
+	public int getOscillatorPeriod() {
+		return oscillatorPeriod;
+	}
+
+
+	protected void setOscillatorPeriod(int oscillatorPeriod) {
+		this.oscillatorPeriod = oscillatorPeriod;
+	}
+
+
+	public double getOscillatorAmplitude() {
+		return oscillatorAmplitude;
+	}
+
+
+	protected void setOscillatorAmplitude(double oscillatorAmplitude) {
+		this.oscillatorAmplitude = oscillatorAmplitude;
+	}
+
+
 	public double getAdjustIllagerY() {
 		return adjustIllagerY;
 	}
@@ -92,6 +116,16 @@ public class Rule {
 
 	protected void setEnableRisingYWorkaround(boolean enableRisingYWorkaround) {
 		this.enableRisingYWorkaround = enableRisingYWorkaround;
+	}
+
+
+	public boolean isEnableWarnY64Walls() {
+		return enableWarnY64Walls;
+	}
+
+
+	protected void setEnableWarnY64Walls(boolean enableWarnY64Walls) {
+		this.enableWarnY64Walls = enableWarnY64Walls;
 	}
 
 }

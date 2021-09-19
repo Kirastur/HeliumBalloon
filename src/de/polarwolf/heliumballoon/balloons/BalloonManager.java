@@ -1,7 +1,9 @@
 package de.polarwolf.heliumballoon.balloons;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -11,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
 
 public class BalloonManager extends BukkitRunnable {
@@ -85,6 +88,17 @@ public class BalloonManager extends BukkitRunnable {
 	}
 	
 	
+	public void wakeupBalloonByPlayer(Player player) {
+		for (Balloon myBalloon : balloons) {
+			Player balloonPlayer = myBalloon.getPlayer();
+			if ((balloonPlayer != null) && (balloonPlayer.equals(player))) {
+				myBalloon.wakeup();
+			}
+		}
+		
+	}
+	
+	
 	public void cancelBalloonsByPlayer(Player player) {
 		for (Balloon myBalloon : balloons) {
 			Player balloonPlayer = myBalloon.getPlayer();
@@ -114,11 +128,25 @@ public class BalloonManager extends BukkitRunnable {
 		}
 		
 	}
-
+	
+	
+	protected void incrementOscillators() {
+		Set<Oscillator> oscillatorSet = new HashSet<>();
+		for (Balloon myBalloon : balloons) {
+			Oscillator oscillator = myBalloon.getOscillator();
+			if (oscillator != null) {					
+				oscillatorSet.add(oscillator);
+			}
+		}
+		for (Oscillator myOscillator : oscillatorSet) {
+			myOscillator.increment();
+		}		
+	}
+	
 	
 	protected void handleTick() throws BalloonException {
-		List<Balloon> balloonList = new ArrayList<>(balloons);
-		for (Balloon myBalloon : balloonList) {
+		incrementOscillators();		
+		for (Balloon myBalloon : enumAllBalloons()) {
 			try {
 				String resultMessage = myBalloon.move();
 				if (resultMessage == null) {

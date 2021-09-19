@@ -10,6 +10,7 @@ import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.CompoundElement;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class CompoundPlayerBalloon extends PlayerBalloon {
@@ -18,8 +19,8 @@ public class CompoundPlayerBalloon extends PlayerBalloon {
 	protected List<Location> targetLocationQueue = new ArrayList<>();
 
 
-	public CompoundPlayerBalloon(Player player, ConfigTemplate template) {
-		super(player, template);
+	public CompoundPlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
+		super(player, template, oscillator);
 	}
 
 	

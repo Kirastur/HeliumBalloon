@@ -5,12 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
 
 public abstract class PlayerBalloon extends SimpleBalloon {
 	
 
-	protected PlayerBalloon(Player player, ConfigTemplate template) {
-		super(player, template);
+	protected PlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
+		super(player, template, oscillator);
 	}
 
 
@@ -24,7 +25,9 @@ public abstract class PlayerBalloon extends SimpleBalloon {
 		
 	protected Vector calculateOffset() {
 		Vector newOffset = getPlayerXZDirection();
-		newOffset.rotateAroundY (getRule().getAngleFromPlayerDirection() / 57.295779513);
+		double angle = getRule().getAngleFromPlayerDirection();
+		angle = Math.toRadians(angle);
+		newOffset.rotateAroundY (angle);
 		newOffset.multiply(getRule().getDistanceFromPlayer());
 		newOffset.setY(getRule().getHighAbovePlayer());
 		return newOffset;

@@ -104,6 +104,20 @@ public class ConfigWall {
 			throw new BalloonException(getName(), "World Value is not RegEx", worldName);
 		}
 	}
+	
+	
+	protected void checkY64Bug() throws BalloonException {
+		if (!getTemplate().hasCompound() || !getTemplate().getRule().isEnableWarnY64Walls()) {
+			return;
+		}
+		double y = getAbsolutePosition().getY();
+		for (ConfigElement myConfigElement : getTemplate().getCompound().enumElements()) {
+			double eY = y + myConfigElement.getOffset().getY();
+			if ((eY > 63.7) && (eY < 64.1)) {
+				throw new BalloonException(getName(), "Due to a bug a wall element cannot be positioned between y=63.7 and y=64.1", null);
+			}	
+		}	
+	}
 
 		
 	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
@@ -117,7 +131,9 @@ public class ConfigWall {
 		
 		setTemplate(getTemplateFromName(templateName, balloonSection));		
 		setAbsolutePosition(new Vector(x, y, z));
-		setWorlds(getWorldPatternFromName(worldName));	
+		setWorlds(getWorldPatternFromName(worldName));
+		
+		checkY64Bug();
 	}
 
 }

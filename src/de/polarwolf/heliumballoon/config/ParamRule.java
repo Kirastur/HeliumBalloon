@@ -11,8 +11,11 @@ public enum ParamRule implements HeliumParam {
 	NORMAL_SPEED ("normalSpeed"),
 	SWITCH_TO_FAST_SPEED_AT_DISTANCE ("switchToFastSpeedAtDistance"),
 	MAX_ALLOWED_DISTANCE ("maxAllowedDistance"),
+	OSCILLATOR_PERIOD ("oscillatorPeriod"),
+	OSCILLATOR_AMPLITUDE ("oscillatorAmplitude"),
 	ADJUST_ILLAGER_Y ("adjustIllagerY"),
-	ENABLE_RISING_Y_WORKAROUND("enableRisingYWorkaround");
+	ENABLE_RISING_Y_WORKAROUND("enableRisingYWorkaround"),
+	ENABLE_WARN_Y64_WALLS("enableWarnY64Walls");
 		
 	private final String attributeName;
 	

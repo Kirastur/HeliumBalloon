@@ -97,6 +97,19 @@ public class HeliumSection {
 	}
 	
 	
+	public int getInt(HeliumParam param, int defaultValue) throws BalloonException {
+		String value = getString(param);
+		if ((value == null) || value.isEmpty()) {
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(value);
+		} catch (Exception e) {
+			throw new BalloonException (param.getAttributeName(), "Not an integer value", value);
+		}
+	}
+	
+	
 	public double getDouble(HeliumParam param, double defaultValue) throws BalloonException {
 		String value = getString(param);
 		if ((value == null) || value.isEmpty()) {

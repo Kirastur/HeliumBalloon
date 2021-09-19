@@ -12,8 +12,7 @@ public interface Element {
 	// Returns true if the Element is valid.
 	// If not, the Element must get refreshed by using "show".
 	public boolean isValid();
-	
-	
+		
 	// Check if the Element contains the given entity.
 	// This is needed because an Element can contain more than one Entity.
 	public boolean hasEntity(Entity entityToCheck);
@@ -35,13 +34,12 @@ public interface Element {
 	
 	// Get the offset from the central location
 	public Vector getOffset();
-
 	
 	// Hide the Entity by removing it.
 	public void hide();
 	
 	// Remove the old entity by calling "hide". 
-	// Then create a new  entity by calling "spawn".
+	// Then create a new  entity by spawning it.
 	public void show(Location centralLocation) throws BalloonException;
 	
 	// Set the Velocity (direction to travel to)

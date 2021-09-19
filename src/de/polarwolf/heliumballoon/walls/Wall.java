@@ -39,7 +39,7 @@ public class Wall {
 		int chunkX = location.getBlockX() / 16;
 		int chunkZ = location.getBlockZ() / 16;
 		world.addPluginChunkTicket(chunkX, chunkZ, plugin);
-		balloon = new WallBalloon(config, location);
+		balloon = new WallBalloon(config, location, null);
 		try {
 			balloonManager.addBalloon(balloon);
 		} catch (Exception e) {

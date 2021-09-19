@@ -29,18 +29,18 @@ public class HeliumLogger {
 	}
 
 
-	public void printDebug(String debugMessage) {
-		if (debug) {
-			plugin.getLogger().info("DEBUG " + debugMessage);
-		}
-	}
-	
-	
 	public int getExceptionQuota() {
 		return exceptionQuota;
 	}
 
 
+	public void printDebug(String debugMessage) {
+		if (isDebug()) {
+			plugin.getLogger().info(String.format("DEBUG %s", debugMessage));
+		}
+	}
+	
+	
 	public void printInfo(String infoMessage) {
 		plugin.getLogger().info(infoMessage);
 	}

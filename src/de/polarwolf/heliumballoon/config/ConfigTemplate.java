@@ -9,7 +9,8 @@ public class ConfigTemplate {
 	
 	private final String name;
 	private ConfigRule rule;
-	private ConfigAnimal animal = null;;
+	private boolean oscillating = false;
+	private ConfigAnimal animal = null;
 	private ConfigCompound compound = null;
 	private String custom;
 	
@@ -37,6 +38,16 @@ public class ConfigTemplate {
 
 	protected void setRule(ConfigRule rule) {
 		this.rule = rule;
+	}
+
+
+	public boolean isOscillating() {
+		return oscillating;
+	}
+
+
+	protected void setOscillating(boolean oscillating) {
+		this.oscillating = oscillating;
 	}
 
 
@@ -105,6 +116,8 @@ public class ConfigTemplate {
 			}
 			setRule(myRule);
 		}
+		
+		setOscillating(heliumSection.getBoolean(ParamTemplate.OSCILLATING, isOscillating()));
 		
 		if (heliumSection.isSection(ParamTemplate.ANIMAL)) {
 			loadAnimalConfig(fileSection);

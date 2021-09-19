@@ -8,11 +8,14 @@ import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.balloons.CompoundPlayerBalloon;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
+import de.polarwolf.heliumballoon.oscillators.VerticalOscillator;
 
 public class Pet {
 	
 	private final Player player;
 	private final ConfigTemplate template;
+	protected final Oscillator oscillator;
 	protected Balloon balloonAnimal = null;
 	protected Balloon balloonCompound = null;
 	protected final BalloonManager balloonManager;
@@ -21,7 +24,12 @@ public class Pet {
 	public Pet (Player player, BalloonManager balloonManager, ConfigTemplate template) {
 		this.player = player;
 		this.balloonManager = balloonManager;
-		this.template = template;		
+		this.template = template;
+		if (getTemplate().isOscillating()) {
+			oscillator = new VerticalOscillator(getTemplate().getRule());
+		} else {
+			oscillator = null;
+		}		
 	}
 	
 	
@@ -76,11 +84,11 @@ public class Pet {
 	public void show() throws BalloonException {
 		try {
 			if (template.hasAnimal() && ((balloonAnimal == null) || balloonAnimal.isCancelled())) {
-				balloonAnimal = new AnimalPlayerBalloon(player, template);
+				balloonAnimal = new AnimalPlayerBalloon(player, template, oscillator);
 				balloonManager.addBalloon(balloonAnimal);
 				}
 			if (template.hasCompound() && ((balloonCompound == null) || balloonCompound.isCancelled())) {
-				balloonCompound = new CompoundPlayerBalloon(player, template);
+				balloonCompound = new CompoundPlayerBalloon(player, template, oscillator);
 				balloonManager.addBalloon(balloonCompound);
 			}
 		} catch (Exception e) {
