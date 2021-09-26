@@ -1,9 +1,14 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.helium.HeliumText;
 
 public class ConfigGuiItem {
@@ -11,7 +16,7 @@ public class ConfigGuiItem {
 	private final String name;
 	private ConfigTemplate template;
 	private Material icon;
-	protected HeliumText title;
+	private HeliumText title;
 	private HeliumText description;
 
 
@@ -22,7 +27,7 @@ public class ConfigGuiItem {
 	
 	public ConfigGuiItem(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection, balloonSection);
+		loadConfigFromFile(fileSection, balloonSection);
 	}
 	
 	
@@ -46,8 +51,18 @@ public class ConfigGuiItem {
 	}
 
 	
+	protected void setTitle(HeliumText title) {
+		this.title = title;
+	}
+
+
 	public String getDescription(CommandSender sender) {
 		return description.findLocalizedforSender(sender);
+	}
+	
+	
+	protected void setDescription(HeliumText description) {
+		this.description = description;
 	}
 
 
@@ -59,6 +74,7 @@ public class ConfigGuiItem {
 	protected void setIcon(Material icon) {
 		this.icon = icon;
 	}
+
 
 	protected ConfigTemplate getTemplateFromName(String templateName, ConfigSection balloonSection) throws BalloonException {
 		if ((templateName == null) || (templateName.isEmpty())) {
@@ -73,18 +89,25 @@ public class ConfigGuiItem {
 	}
 
 		
-	// The GUI is not participating in HeliumParam
-	// because the HeliumParam syntax checker is incompatible with HeliumMessages.
-	// This will be resolved in a future version.
-	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		String templateName = fileSection.getString(ParamGuiItem.TEMPLATE.getAttributeName());
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamGuiItem.values());
+	}
+	
+	
+	protected void importHeliumSection(HeliumSection heliumSection, ConfigSection balloonSection) throws BalloonException { 
+		String templateName = heliumSection.getString(ParamGuiItem.TEMPLATE);
 		setTemplate(getTemplateFromName(templateName, balloonSection));
 		
-		String iconName =  fileSection.getString(ParamGuiItem.ICON.getAttributeName());
+		String iconName =  heliumSection.getString(ParamGuiItem.ICON);
 		setIcon(ConfigUtils.getMaterialFromName(getName(), iconName));
 
-		title = new HeliumText(ParamGuiItem.TITLE.getAttributeName(), fileSection);
-		description = new HeliumText(ParamGuiItem.DESCRIPTION.getAttributeName(), fileSection);
-		
+		setTitle(heliumSection.getHeliumText(ParamGuiItem.TITLE)); 
+		setDescription(heliumSection.getHeliumText(ParamGuiItem.DESCRIPTION));		
+	}
+	
+
+	protected void loadConfigFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
+		importHeliumSection(heliumSection, balloonSection);
 	}
 }

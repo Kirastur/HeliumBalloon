@@ -125,31 +125,20 @@ public class ConfigManager {
 	}
 	
 
-	public boolean hasGuiDeassign() {
-		return section.hasGuiDeassign();
+	public ConfigGuiDeassign getGuiDeassign() {
+		return section.getGuiDeassign();
 	}
 	
-	
-	public String getGuiDeassignTitle(CommandSender sender) {
-		return section.getGuiDeassignTitle(sender);
-	}
-	
-
-	public String getGuiDeassignDescription(CommandSender sender) {
-		return section.getGuiDeassignDescription(sender);
-	}
-
 	
 	public void reload() throws BalloonException {
 		ConfigurationSection fileSection = plugin.getConfig().getRoot();
-		ConfigSection newSection = new ConfigSection();
-		newSection.loadConfig(fileSection);
+		ConfigSection newSection = new ConfigSection(fileSection);
 		section = newSection;
 		
-		int ruleCount = section.getRuleNames().size();
-		int templateCount = section.getTemplateNames().size();
-		int wallCount = section.getWallNames().size();
-		int guiItemCount = section.enumGuiItems().size();
+		int ruleCount = getRuleNames().size();
+		int templateCount = getTemplateNames().size();
+		int wallCount = getWallNames().size();
+		int guiItemCount = enumGuiItems().size();
 		logger.printInfo(String.format("%d rules, %d templates, %d walls and %d GUI items loaded", ruleCount, templateCount, wallCount, guiItemCount));
 	}
 
@@ -232,6 +221,5 @@ public class ConfigManager {
 		}
 		return new HeliumText("");
 	}
-
 
 }

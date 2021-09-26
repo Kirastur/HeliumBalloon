@@ -13,6 +13,7 @@ public enum ParamRule implements HeliumParam {
 	MAX_ALLOWED_DISTANCE ("maxAllowedDistance"),
 	OSCILLATOR_PERIOD ("oscillatorPeriod"),
 	OSCILLATOR_AMPLITUDE ("oscillatorAmplitude"),
+	BLOCK_DELAY ("blockDelay"),
 	ADJUST_ILLAGER_Y ("adjustIllagerY"),
 	ENABLE_RISING_Y_WORKAROUND("enableRisingYWorkaround"),
 	ENABLE_WARN_Y64_WALLS("enableWarnY64Walls");

@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.config.ConfigGuiDeassign;
 import de.polarwolf.heliumballoon.config.ConfigGuiItem;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.pets.PetManager;
@@ -72,13 +73,14 @@ public class GuiManager {
     
     
     public ItemStack createDeassignItemStack(Player player) {
-    	if (!configManager.hasGuiDeassign()) {
+    	ConfigGuiDeassign configGuiDeassign= configManager.getGuiDeassign();
+    	if (configGuiDeassign == null) {
     		return null;
     	}
     	Material material = Material.BARRIER;
     	String actionName = "!";
-    	String title = configManager.getGuiDeassignTitle(player);
-    	String description = configManager.getGuiDeassignDescription(player);
+    	String title = configGuiDeassign.getTitle(player);
+    	String description = configGuiDeassign.getDescription(player);
     	return createItemStack(material, actionName, title, description);
     }
 
@@ -111,7 +113,7 @@ public class GuiManager {
 		}
 
 		int size = itemStackList.size();
-		if (configManager.hasGuiDeassign()) {
+		if (configManager.getGuiDeassign() != null) {
 			size = size +2;
 		}
 		while ((size % 9) > 0) {
@@ -122,7 +124,7 @@ public class GuiManager {
 		for (ItemStack myItemStack : enumGuiItemStacks(player)) {
 			newInventory.addItem(myItemStack);
 		}
-		if (configManager.hasGuiDeassign()) {
+		if (configManager.getGuiDeassign() != null) {
 			ItemStack deassignItemStack = createDeassignItemStack(player);
 			newInventory.setItem(size-1, deassignItemStack);
 		}

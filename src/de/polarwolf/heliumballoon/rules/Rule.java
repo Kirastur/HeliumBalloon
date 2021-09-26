@@ -12,6 +12,7 @@ public class Rule {
 	
 	private int oscillatorPeriod = 100;
 	private double oscillatorAmplitude = 0.1;
+	private int blockDelay = 4;
 	
 	private double adjustIllagerY = 0.0;
 	private boolean enableRisingYWorkaround = true;
@@ -96,6 +97,16 @@ public class Rule {
 
 	protected void setOscillatorAmplitude(double oscillatorAmplitude) {
 		this.oscillatorAmplitude = oscillatorAmplitude;
+	}
+
+
+	public int getBlockDelay() {
+		return blockDelay;
+	}
+
+
+	protected void setBlockDelay(int blockDelay) {
+		this.blockDelay = blockDelay;
 	}
 
 

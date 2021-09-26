@@ -1,5 +1,8 @@
 package de.polarwolf.heliumballoon.balloons;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -19,17 +22,20 @@ public abstract class SimpleBalloon implements Balloon {
 	private final Player player;
 	private final ConfigTemplate template;
 	private final Oscillator oscillator;
+	private final int delay;
 	private Element element = null;
 	protected boolean highSpeedMode = false;
 	protected boolean sleeping = false;
 	protected Vector lastPosition = null;
 	protected int refreshCounter = 0;
+	protected List<Vector> positionQueue = new ArrayList<>();
 	
 	
-	protected SimpleBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
+	protected SimpleBalloon(Player player, ConfigTemplate template, Oscillator oscillator, int delay) {
 		this.player = player;
-		this.template=template;
+		this.template = template;
 		this.oscillator = oscillator;
+		this.delay = delay;
 	}
 	
 	
@@ -62,6 +68,11 @@ public abstract class SimpleBalloon implements Balloon {
 	@Override
 	public Oscillator getOscillator() {
 		return oscillator;
+	}
+
+
+	public int getDelay() {
+		return delay;
 	}
 
 
@@ -120,11 +131,27 @@ public abstract class SimpleBalloon implements Balloon {
 	}
 	
 	
-	protected Vector calculateVelocity(Vector currentPosition, Vector targetPosition) {
+	protected Vector getNextPosition(Vector targetPosition) {
 		Vector newPosition = targetPosition.clone();
+
 		if (getOscillator() != null) {
 			newPosition.add(getOscillator().getDeflection());
 		}
+		
+		if (getDelay() > 0) {		
+			positionQueue.add(newPosition);
+			if (positionQueue.size() > getDelay()) {
+				positionQueue.remove(0);
+			}
+			newPosition = positionQueue.get(0);
+		}
+		
+		return newPosition;			
+	}
+	
+	
+	protected Vector calculateVelocity(Vector currentPosition, Vector targetPosition) {
+		Vector newPosition = getNextPosition(targetPosition);
 		Double distance = newPosition.distance(currentPosition);
 		
 		// A leash has a maximum length of 10
@@ -136,7 +163,7 @@ public abstract class SimpleBalloon implements Balloon {
 		// Do not move until steps are at least 0.0001
 		if (distance < 0.0001) {
 			lastPosition = newPosition;
-			if (!getTemplate().isOscillating()) {
+			if (!getTemplate().isOscillating() && (positionQueue.size() == getDelay())) {
 				sleeping = true;
 			}
 			return new Vector();

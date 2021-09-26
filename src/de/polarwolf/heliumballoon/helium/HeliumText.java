@@ -71,14 +71,19 @@ public class HeliumText {
 			}
 		}
 	}
+	
+	
+	protected boolean isValidDataType(String key, ConfigurationSection fileSection) {
+		return (fileSection.isBoolean(key) || fileSection.isInt(key) || fileSection.isDouble(key) || fileSection.isString(key));
+	}
 
 
 	protected void loadFromConfig(ConfigurationSection fileSection) {
 		for (String myKey : fileSection.getKeys(false)) {
-			if (matchKey(myKey) && fileSection.contains(myKey, true) && fileSection.isString(myKey)) {
+			if (matchKey(myKey) && fileSection.contains(myKey, true) && isValidDataType(myKey, fileSection)) {
 				String myValue = fileSection.getString(myKey);
-				String mylocale = getLocaleFromKey(myKey);
-				addText(mylocale, myValue);
+				String myLocale = getLocaleFromKey(myKey);
+				addText(myLocale, myValue);
 			}
 		}
 	}

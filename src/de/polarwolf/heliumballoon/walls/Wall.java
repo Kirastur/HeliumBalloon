@@ -8,12 +8,15 @@ import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.balloons.WallBalloon;
 import de.polarwolf.heliumballoon.config.ConfigWall;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.oscillators.Oscillator;
+import de.polarwolf.heliumballoon.oscillators.VerticalOscillator;
 
 public class Wall {
 	
-	protected Plugin plugin;
+	protected final Plugin plugin;
 	protected final BalloonManager balloonManager;
 	protected final ConfigWall config;
+	protected final Oscillator oscillator;
 	protected final World world;
 	protected WallBalloon balloon = null;
 	
@@ -23,15 +26,21 @@ public class Wall {
 		this.balloonManager = balloonManager;
 		this.config = config;
 		this.world = world;
+		if (config.getTemplate().isOscillating()) {
+			oscillator = new VerticalOscillator(config.getTemplate().getRule());
+		} else {
+			oscillator = null;
+		}		
+		
 	}
 	
 	
-	protected World getWorld() {
+	public World getWorld() {
 		return world;
 	}
 
 
-	protected void buildBalloon() throws BalloonException {
+	public void buildBalloon() throws BalloonException {
 		if (balloon != null) {
 			return;
 		}
@@ -39,7 +48,7 @@ public class Wall {
 		int chunkX = location.getBlockX() / 16;
 		int chunkZ = location.getBlockZ() / 16;
 		world.addPluginChunkTicket(chunkX, chunkZ, plugin);
-		balloon = new WallBalloon(config, location, null);
+		balloon = new WallBalloon(config, location, oscillator);
 		try {
 			balloonManager.addBalloon(balloon);
 		} catch (Exception e) {

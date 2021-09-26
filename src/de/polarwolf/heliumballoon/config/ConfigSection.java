@@ -12,11 +12,21 @@ import de.polarwolf.heliumballoon.exception.BalloonException;
 
 public class ConfigSection {
 	
-	protected List<ConfigRule> rules = new ArrayList<>();
-	protected ConfigWorld worlds = new ConfigWorld();
-	protected List<ConfigTemplate> templates = new ArrayList<>();
-	protected List<ConfigWall> walls = new ArrayList<>();
-	protected ConfigGuiMenu guiMenu = new ConfigGuiMenu(ParamSection.GUI.getAttributeName());
+	private List<ConfigRule> rules = new ArrayList<>();
+	private ConfigWorld worlds = null;
+	private List<ConfigTemplate> templates = new ArrayList<>();
+	private List<ConfigWall> walls = new ArrayList<>();
+	private ConfigGuiMenu guiMenu = null;
+	
+	
+	public ConfigSection() {
+		// Nothing to do
+	}
+	
+	
+	public ConfigSection(ConfigurationSection fileSection) throws BalloonException {
+		loadConfigFromFile(fileSection);
+	}
 	
 
 	// Rules
@@ -49,18 +59,10 @@ public class ConfigSection {
 	}
 	
 	
-	protected void loadRules(ConfigurationSection fileSectionRules) throws BalloonException {
-		rules.clear();
-		for (String myRuleName : fileSectionRules.getKeys(false)) {
-			if (!fileSectionRules.contains(myRuleName, true)) { //ignore default from jar
-				continue;
-			}
-			if (!fileSectionRules.isConfigurationSection(myRuleName)) {
-				throw new BalloonException (null, "Illegal rule secton", myRuleName);
-			}
-			rules.add(new ConfigRule(fileSectionRules.getConfigurationSection(myRuleName)));
-		}
+	protected void addRule(ConfigRule newRule) {
+		rules.add(newRule);
 	}
+	
 	
 	
 	// Templates
@@ -82,20 +84,11 @@ public class ConfigSection {
 		return templateNamesSet;
 	}
 	
-
-	protected void loadTemplates(ConfigurationSection fileSectionTemplates) throws BalloonException {
-		templates.clear();
-		for (String myTemplateName : fileSectionTemplates.getKeys(false)) {
-			if (!fileSectionTemplates.contains(myTemplateName, true)) { //ignore default from jar
-				continue;
-			}
-			if (!fileSectionTemplates.isConfigurationSection(myTemplateName)) {
-				throw new BalloonException (null, "Illegal template secton", myTemplateName);
-			}
-			templates.add(new ConfigTemplate(fileSectionTemplates.getConfigurationSection(myTemplateName), this));
-		}
+	
+	protected void addTemplate(ConfigTemplate newTemplate) {
+		templates.add(newTemplate);
 	}
-
+	
 	
 	// Walls
 	public ConfigWall findWall(String wallName) {
@@ -115,84 +108,166 @@ public class ConfigSection {
 		}
 		return wallNamesSet;
 	}
+	
+	
+	protected void addWall(ConfigWall newWall) {
+		walls.add(newWall);
+	}
+
+		
+	// Worlds
+	public boolean hasWorld(String worldName) {
+		if (worlds == null) {
+			return false;
+		} else {
+			return worlds.hasWorld(worldName);
+		}
+	}
+	
+	
+	protected void setWorlds(ConfigWorld newWorlds) {
+		worlds = newWorlds;
+	}
+	
+	
+	// GUI
+	public ConfigGuiMenu getGuiMenu() {
+		return guiMenu;
+	}
+	
+	
+	protected void setGuiMenu(ConfigGuiMenu newGuiMenu) {
+		guiMenu = newGuiMenu;
+	}
+	
+	
+	public String getGuiTitle(CommandSender sender) {
+		if (guiMenu == null) {
+			return "";
+		} else {
+			return guiMenu.getGuiTitle(sender);
+		}
+	}
+	
+	
+	public List<ConfigGuiItem> enumGuiItems() {
+		if (guiMenu == null) {
+			return new ArrayList<>();
+		} else {
+			return guiMenu.enumGuiItems();
+		}
+	}
+	
+
+	public ConfigGuiDeassign getGuiDeassign() {
+		if (guiMenu == null) {
+			return null;
+		} else {
+			return guiMenu.getGuiDeassign();
+		}
+	}
+	
+	
+	// LoadFromFile
+	protected ConfigRule buildConfigRuleFromFile(ConfigurationSection fileSection) throws BalloonException {
+		return new ConfigRule(fileSection);
+	}
+	
+	
+	protected void loadRulesFromFile(ConfigurationSection fileSectionRules) throws BalloonException {
+		for (String myRuleName : fileSectionRules.getKeys(false)) {
+			if (!fileSectionRules.contains(myRuleName, true)) { //ignore default from jar
+				continue;
+			}
+			if (!fileSectionRules.isConfigurationSection(myRuleName)) {
+				throw new BalloonException (null, "Illegal rule section", myRuleName);
+			}
+			addRule(buildConfigRuleFromFile(fileSectionRules.getConfigurationSection(myRuleName)));
+		}
+	}
+	
+	
+	protected ConfigTemplate buildConfigTemplateFromFile(ConfigurationSection fileSection) throws BalloonException {
+		return new ConfigTemplate(fileSection, this);
+	}
 
 	
-	protected void loadWalls(ConfigurationSection fileSectionWalls) throws BalloonException {
-		walls.clear();
+	protected void loadTemplatesFromFile(ConfigurationSection fileSectionTemplates) throws BalloonException {
+		for (String myTemplateName : fileSectionTemplates.getKeys(false)) {
+			if (!fileSectionTemplates.contains(myTemplateName, true)) { //ignore default from jar
+				continue;
+			}
+			if (!fileSectionTemplates.isConfigurationSection(myTemplateName)) {
+				throw new BalloonException (null, "Illegal template section", myTemplateName);
+			}
+			addTemplate(buildConfigTemplateFromFile(fileSectionTemplates.getConfigurationSection(myTemplateName)));
+		}
+	}
+	
+	
+	protected ConfigWall buildConfigWallFromFile(ConfigurationSection fileSection) throws BalloonException {
+		return new ConfigWall(fileSection, this);
+	}
+
+
+	protected void loadWallsFromFile(ConfigurationSection fileSectionWalls) throws BalloonException {
 		for (String myWallName : fileSectionWalls.getKeys(false)) {
 			if (!fileSectionWalls.contains(myWallName, true)) { //ignore default from jar
 				continue;
 			}
 			if (!fileSectionWalls.isConfigurationSection(myWallName)) {
-				throw new BalloonException (null, "Illegal wall secton", myWallName);
+				throw new BalloonException (null, "Illegal wall section", myWallName);
 			}
-			walls.add(new ConfigWall(fileSectionWalls.getConfigurationSection(myWallName), this));
+			addWall(buildConfigWallFromFile(fileSectionWalls.getConfigurationSection(myWallName)));
 		}
 	}
 
-	
-	// Worlds
-	public boolean hasWorld(String worldName) {
-		return worlds.hasWorld(worldName);
+
+	protected ConfigWorld buildConfigWorldFromFile(ConfigurationSection fileSection) {
+		return new ConfigWorld(fileSection);
 	}
 	
 	
-	protected void loadWorlds(ConfigurationSection fileSectionWorlds) {
-		worlds = new ConfigWorld(fileSectionWorlds);
+	protected void loadWorldsFromFile(ConfigurationSection fileSectionWorlds) {
+		setWorlds(buildConfigWorldFromFile(fileSectionWorlds));
 	}
 	
 	
-	// GUI
-	public String getGuiTitle(CommandSender sender) {
-		return guiMenu.getGuiTitle(sender);
+	protected ConfigGuiMenu buildConfigGuiMenuFromFile(ConfigurationSection fileSection) throws BalloonException {
+		return new ConfigGuiMenu(fileSection, this);
 	}
 	
-	public List<ConfigGuiItem> enumGuiItems() {
-		return guiMenu.enumGuiItems();
+	
+	protected void loadGuiFromFile(ConfigurationSection fileSectionGui) throws BalloonException {
+		setGuiMenu(buildConfigGuiMenuFromFile(fileSectionGui)); 
 	}
 	
 
-	public boolean hasGuiDeassign() {
-		return guiMenu.hasDeassign();
-	}
-	
-	
-	public String getGuiDeassignTitle(CommandSender sender) {
-		return guiMenu.getDeassignTitle(sender);
-	}
-	
-
-	public String getGuiDeassignDescription(CommandSender sender) {
-		return guiMenu.getDeassignDescription(sender);
-	}
-
-	
-	protected void loadGui(ConfigurationSection fileSectionGui) throws BalloonException {
-		guiMenu = new ConfigGuiMenu(fileSectionGui, this); 
-	}
-	
-
-	public void loadConfig(ConfigurationSection fileSection) throws BalloonException {
+	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		
-		loadWorlds(fileSection.getConfigurationSection(ParamSection.WORLDS.getAttributeName()));
+		if (fileSection.contains(ParamSection.WORLDS.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.WORLDS.getAttributeName())) {
+			loadWorldsFromFile(fileSection.getConfigurationSection(ParamSection.WORLDS.getAttributeName()));
+		}
 
-		if (!fileSection.contains(ParamSection.RULES.getAttributeName(), true) || !fileSection.isConfigurationSection(ParamSection.RULES.getAttributeName())) {
+		if (fileSection.contains(ParamSection.RULES.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.RULES.getAttributeName())) {
+			loadRulesFromFile(fileSection.getConfigurationSection(ParamSection.RULES.getAttributeName()));
+		} else {
 			throw new BalloonException(null, "Rules definition is missing", null);
 		}
-		loadRules(fileSection.getConfigurationSection(ParamSection.RULES.getAttributeName()));
 
-		if (!fileSection.contains(ParamSection.TEMPLATES.getAttributeName(), true) || !fileSection.isConfigurationSection(ParamSection.TEMPLATES.getAttributeName())) {
+		if (fileSection.contains(ParamSection.TEMPLATES.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.TEMPLATES.getAttributeName())) {
+			loadTemplatesFromFile(fileSection.getConfigurationSection(ParamSection.TEMPLATES.getAttributeName()));
+		} else {
 			throw new BalloonException(null, "Templates definition is missing", null);
 		}
-		loadTemplates(fileSection.getConfigurationSection(ParamSection.TEMPLATES.getAttributeName()));
 		
 		if (fileSection.contains(ParamSection.WALLS.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.WALLS.getAttributeName())) {
-			loadWalls(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
-		} // Can be empty
+			loadWallsFromFile(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
+		}
 		
 		if (fileSection.contains(ParamSection.GUI.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.GUI.getAttributeName())) {
-			loadGui(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
-		} // Can be empty
+			loadGuiFromFile(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
+		}
 	}
 		
 }

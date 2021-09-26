@@ -13,7 +13,7 @@ import de.polarwolf.heliumballoon.exception.BalloonException;
 public class HeliumSection {
 	
 	private final String name;
-	protected Map<HeliumParam,String> attributes = new HashMap<>();
+	protected Map<HeliumParam,HeliumText> attributes = new HashMap<>();
 	protected List<HeliumParam> sections = new ArrayList<>();
 	
 	
@@ -24,7 +24,7 @@ public class HeliumSection {
 	
 	public HeliumSection(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection, validParams);
+		loadFromConfig(fileSection, validParams);
 	}
 	
 	
@@ -46,12 +46,19 @@ public class HeliumSection {
 	}
 	
 	
-	protected void loadConfig(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
-		sections.clear();
-		attributes.clear();
+	public static boolean isValidLocalizedAttribute(String attributeName, List<HeliumParam> validParams) {
+		int separatorPosition = attributeName.indexOf("_");
+		if (separatorPosition <= 0) {
+			return false;
+		}
+		return (findParam(attributeName.substring(0, separatorPosition), validParams) != null);
+	}
+	
+	
+	protected void loadFromConfig(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
 		Set<String> attributeNames = fileSection.getKeys(false);
 		for (String myAttributeName : attributeNames) {
-			if (!fileSection.contains(myAttributeName, true)) { // ignore default from jar
+			if (!fileSection.contains(myAttributeName, true) || isValidLocalizedAttribute(myAttributeName, validParams)) { // ignore default from jar
 				continue;
 			}
 			HeliumParam myParam = findParam(myAttributeName, validParams);
@@ -65,8 +72,8 @@ public class HeliumSection {
 				}
 				sections.add(myParam);
 			} else {
-				String myAttributeValue = fileSection.getString(myAttributeName);
-				attributes.put(myParam, myAttributeValue);
+				HeliumText myHeliumText = new HeliumText(myAttributeName, fileSection); 
+				attributes.put(myParam, myHeliumText);
 			}
 		}
 	}
@@ -78,7 +85,12 @@ public class HeliumSection {
 	
 	
 	public String getString(HeliumParam param) {
-		return attributes.get(param);
+		HeliumText heliumText =  attributes.get(param);
+		if (heliumText == null) {
+			return null;
+		} else {
+			return heliumText.findText();
+		}
 	}
 
 
@@ -91,7 +103,7 @@ public class HeliumSection {
 			return true;
 		}
 		if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("no")) {
-			return true;
+			return false;
 		}
 		throw new BalloonException (param.getAttributeName(), "Not a boolean value", value);
 	}
@@ -130,5 +142,10 @@ public class HeliumSection {
 		} else {
 			return value;
 		}		
+	}
+	
+	
+	public HeliumText getHeliumText(HeliumParam param) {
+		return attributes.get(param);
 	}
 }

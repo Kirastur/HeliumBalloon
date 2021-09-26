@@ -1,9 +1,15 @@
 package de.polarwolf.heliumballoon.config;
 
+import org.bukkit.Axis;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Bell;
+import org.bukkit.block.data.type.Chest;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
@@ -44,6 +50,25 @@ public class ConfigUtils {
 	}
 
 		
+	public static Axis getAxisFromName(String contextName, String axisName) throws BalloonException {
+		if ((axisName == null) || (axisName.isEmpty())) {
+			return null;
+		}
+
+		Axis  myAxis = null;
+		try {
+			myAxis = Axis.valueOf(axisName);
+		} catch (Exception e) {
+			myAxis = null;
+		}
+		if (myAxis == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown axis", axisName);
+		}
+				
+		return myAxis;
+	}
+
+	
 	public static Bisected.Half getHalfFromName(String contextName, String halfName) throws BalloonException {
 		if ((halfName == null) || (halfName.isEmpty())) {
 			return null;
@@ -51,7 +76,7 @@ public class ConfigUtils {
 
 		Bisected.Half myHalf = null;
 		try {
-			myHalf= Bisected.Half.valueOf(halfName);
+			myHalf = Bisected.Half.valueOf(halfName);
 		} catch (Exception e) {
 			myHalf = null;
 		}
@@ -63,22 +88,22 @@ public class ConfigUtils {
 	}
 
 	
-	public static Slab.Type getSlabTypeFromName(String contextName, String slabName) throws BalloonException {
-		if ((slabName == null) || (slabName.isEmpty())) {
+	public static Bell.Attachment getBellAttachmentFromName(String contextName, String bellAttachmentName) throws BalloonException {
+		if ((bellAttachmentName == null) || (bellAttachmentName.isEmpty())) {
 			return null;
 		}
 
-		Slab.Type mySlab = null;
+		Bell.Attachment myBellAttachment = null;
 		try {
-			mySlab = Slab.Type.valueOf(slabName);
+			myBellAttachment = Bell.Attachment.valueOf(bellAttachmentName);
 		} catch (Exception e) {
-			mySlab = null;
+			myBellAttachment = null;
 		}
-		if (mySlab == null) { // exception or null return
-			throw new BalloonException(contextName, "Unknown slab type", slabName);
+		if (myBellAttachment == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown bell attachment", bellAttachmentName);
 		}
 				
-		return mySlab;
+		return myBellAttachment;
 	}
 
 	
@@ -101,6 +126,101 @@ public class ConfigUtils {
 	}
 	
 
+	public static Chest.Type getChestTypeFromName(String contextName, String chestTypeName) throws BalloonException {
+		if ((chestTypeName == null) || (chestTypeName.isEmpty())) {
+			return null;
+		}
+
+		Chest.Type myChestType = null;
+		try {
+			myChestType = Chest.Type.valueOf(chestTypeName);
+		} catch (Exception e) {
+			myChestType = null;
+		}
+		if (myChestType == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown chest type", chestTypeName);
+		}
+				
+		return myChestType;
+	}
+
+	
+	public static Door.Hinge getDoorHingeFromName(String contextName, String doorHingeName) throws BalloonException {
+		if ((doorHingeName == null) || (doorHingeName.isEmpty())) {
+			return null;
+		}
+
+		Door.Hinge myDoorHinge = null;
+		try {
+			myDoorHinge = Door.Hinge.valueOf(doorHingeName);
+		} catch (Exception e) {
+			myDoorHinge = null;
+		}
+		if (myDoorHinge == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown door hinge", doorHingeName);
+		}
+				
+		return myDoorHinge;
+	}
+
+	
+	public static FaceAttachable.AttachedFace getAttachedFaceFromName(String contextName, String attachedFaceName) throws BalloonException {
+		if ((attachedFaceName == null) || (attachedFaceName.isEmpty())) {
+			return null;
+		}
+
+		FaceAttachable.AttachedFace myAttachedFace = null;
+		try {
+			myAttachedFace = FaceAttachable.AttachedFace.valueOf(attachedFaceName);
+		} catch (Exception e) {
+			myAttachedFace = null;
+		}
+		if (myAttachedFace == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown attached face", attachedFaceName);
+		}
+				
+		return myAttachedFace;
+	}
+
+	
+	public static Slab.Type getSlabTypeFromName(String contextName, String slabName) throws BalloonException {
+		if ((slabName == null) || (slabName.isEmpty())) {
+			return null;
+		}
+
+		Slab.Type mySlab = null;
+		try {
+			mySlab = Slab.Type.valueOf(slabName);
+		} catch (Exception e) {
+			mySlab = null;
+		}
+		if (mySlab == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown slab type", slabName);
+		}
+				
+		return mySlab;
+	}
+
+	
+	public static Stairs.Shape getStairsShapeFromName(String contextName, String stairsShapeName) throws BalloonException {
+		if ((stairsShapeName == null) || (stairsShapeName.isEmpty())) {
+			return null;
+		}
+
+		Stairs.Shape myShape = null;
+		try {
+			myShape = Stairs.Shape.valueOf(stairsShapeName);
+		} catch (Exception e) {
+			myShape = null;
+		}
+		if (myShape == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown stairs shape", stairsShapeName);
+		}
+				
+		return myShape;
+	}
+
+	
 	public static EntityType getLivingEntityTypeFromName(String contextName, String livingEntityName) throws BalloonException {
 		if ((livingEntityName == null) || (livingEntityName.isEmpty())) {
 			throw new BalloonException(contextName, "EntityType is missing", null);

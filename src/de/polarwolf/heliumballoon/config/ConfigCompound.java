@@ -20,7 +20,7 @@ public class ConfigCompound {
 
 	public ConfigCompound(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection);
+		loadConfigFromFile(fileSection);
 	}
 
 	
@@ -39,16 +39,20 @@ public class ConfigCompound {
 	}
 	
 	
-	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		elements.clear();
-		for (String elementName : fileSection.getKeys(false)) {
-			if (!fileSection.contains(elementName, true)) { // ignore default from jar
+	protected void addElement(ConfigElement newElement) {
+		elements.add(newElement);
+	}
+	
+	
+	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		for (String myElementName : fileSection.getKeys(false)) {
+			if (!fileSection.contains(myElementName, true)) { // ignore default from jar
 				continue;
 			}
-			if (!fileSection.isConfigurationSection(elementName)) {
-				throw new BalloonException (getName(), "Illegal elements section", elementName);
+			if (!fileSection.isConfigurationSection(myElementName)) {
+				throw new BalloonException (getName(), "Illegal elements section", myElementName);
 			}
-			elements.add(new ConfigElement(fileSection.getConfigurationSection(elementName)));
+			addElement(new ConfigElement(fileSection.getConfigurationSection(myElementName)));
 		}
 	}
 

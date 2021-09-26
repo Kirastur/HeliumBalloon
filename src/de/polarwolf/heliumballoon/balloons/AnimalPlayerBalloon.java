@@ -14,7 +14,7 @@ public class AnimalPlayerBalloon extends PlayerBalloon {
 
 	
 	public AnimalPlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
-		super(player, template, oscillator);
+		super(player, template, oscillator, 0);
 	}
 
 	

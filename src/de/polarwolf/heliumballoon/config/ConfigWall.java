@@ -1,6 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigWall {
@@ -28,7 +30,7 @@ public class ConfigWall {
 
 	public ConfigWall(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection, balloonSection);
+		loadConfigFromFile(fileSection, balloonSection);
 	}
 
 	
@@ -72,7 +74,7 @@ public class ConfigWall {
 			return true;			
 		}
 		String worldName = world.getName();
-		Matcher matcher = worlds.matcher(worldName);
+		Matcher matcher = getWorlds().matcher(worldName);
 		return matcher.matches();
 	}
 
@@ -120,9 +122,12 @@ public class ConfigWall {
 	}
 
 		
-	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamWall.values()));
-
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamWall.values());
+	}
+	
+	
+	protected void importHeliumSection(HeliumSection heliumSection, ConfigSection balloonSection) throws BalloonException {
 		String templateName = heliumSection.getString(ParamWall.TEMPLATE);
 		String worldName = heliumSection.getString(ParamWall.WORLDS, DEFAULT_WORLDS);
 		Double x = heliumSection.getDouble(ParamWall.X, getAbsolutePosition().getX());
@@ -132,7 +137,12 @@ public class ConfigWall {
 		setTemplate(getTemplateFromName(templateName, balloonSection));		
 		setAbsolutePosition(new Vector(x, y, z));
 		setWorlds(getWorldPatternFromName(worldName));
-		
+	}
+	
+	
+	protected void loadConfigFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
+		importHeliumSection(heliumSection, balloonSection);
 		checkY64Bug();
 	}
 

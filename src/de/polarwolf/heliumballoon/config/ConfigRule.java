@@ -1,10 +1,12 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.rules.Rule;
 
@@ -21,7 +23,7 @@ public class ConfigRule extends Rule {
 
 	public ConfigRule(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection);
+		loadConfigFromFile(fileSection);
 	}
 
 	
@@ -40,16 +42,12 @@ public class ConfigRule extends Rule {
 	}
 	
 	
-	protected void validateConfig() throws BalloonException {
-		if ((getAngleFromPlayerDirection() < -180.0) || (getAngleFromPlayerDirection() >= 360.0)) {
-			throw new BalloonException (getName(), "AngleFromPlayerDirection out of range", Double.toString(getAngleFromPlayerDirection()));
-		}
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamRule.values());
 	}
 	
 	
-	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamRule.values()));
-		
+	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException {
 		setDefaultRule(heliumSection.getBoolean(ParamRule.IS_DEFAULT, isDefaultRule()));
 		setHighAbovePlayer(heliumSection.getDouble(ParamRule.HIGH_ABOVE_PLAYER, getHighAbovePlayer()));
 		setDistanceFromPlayer(heliumSection.getDouble(ParamRule.DISTANCE_FROM_PLAYER, getDistanceFromPlayer()));
@@ -59,10 +57,23 @@ public class ConfigRule extends Rule {
 		setMaxAllowedDistance(heliumSection.getDouble(ParamRule.MAX_ALLOWED_DISTANCE, getMaxAllowedDistance()));
 		setOscillatorPeriod(heliumSection.getInt(ParamRule.OSCILLATOR_PERIOD, getOscillatorPeriod()));
 		setOscillatorAmplitude(heliumSection.getDouble(ParamRule.OSCILLATOR_AMPLITUDE, getOscillatorAmplitude()));
+		setBlockDelay(heliumSection.getInt(ParamRule.BLOCK_DELAY, getBlockDelay()));
 		setAdjustIllagerY(heliumSection.getDouble(ParamRule.ADJUST_ILLAGER_Y, getAdjustIllagerY()));
 		setEnableRisingYWorkaround(heliumSection.getBoolean(ParamRule.ENABLE_RISING_Y_WORKAROUND, isEnableRisingYWorkaround()));
-		setEnableWarnY64Walls(heliumSection.getBoolean(ParamRule.ENABLE_WARN_Y64_WALLS, isEnableWarnY64Walls()));
-		
+		setEnableWarnY64Walls(heliumSection.getBoolean(ParamRule.ENABLE_WARN_Y64_WALLS, isEnableWarnY64Walls()));		
+	}
+	
+	
+	protected void validateConfig() throws BalloonException {
+		if ((getAngleFromPlayerDirection() < -180.0) || (getAngleFromPlayerDirection() >= 360.0)) {
+			throw new BalloonException (getName(), "AngleFromPlayerDirection out of range", Double.toString(getAngleFromPlayerDirection()));
+		}
+	}
+	
+	
+	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
+		importHeliumSection(heliumSection);		
 		validateConfig();	
 	}
 

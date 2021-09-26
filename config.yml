@@ -86,9 +86,10 @@ rules:
 #        maxAllowedDistance: 9.9
 #        oscillatorPeriod: 100
 #        oscillatorAmplitude: 0.1
+#        blockDelay: 4
 #        adjustIllagerY: 0.0
 #        enableRisingYWorkaround: true
-#        enableWarnY64Walls
+#        enableWarnY64Walls: true
 
     demo1:
         highAbovePlayer: 0.2
@@ -131,15 +132,15 @@ templates:
         elements:
             north:
                 material: RED_NETHER_BRICK_STAIRS
-                face: NORTH
+                blockFace: NORTH
                 z: 0.5
             south:
                 material: RED_NETHER_BRICK_STAIRS
-                face: SOUTH
+                blockFace: SOUTH
                 z: -0.5
             bottom:
                 material: DARK_PRISMARINE_SLAB
-                slab: TOP
+                slabType: TOP
                 y: -1.0
 
     demo4:
@@ -169,7 +170,7 @@ templates:
 # Walls are blocks were you can walk through
 # e.g. for building a hidden passage.
 # The "worlds" is a Regex and must start with "^".
-# A wall emement cannot be positioned between y=63.7 and y=64.1
+# A wall element cannot be positioned between y=63.7 and y=64.1
 walls: 
     demowall1:
         template: demo5

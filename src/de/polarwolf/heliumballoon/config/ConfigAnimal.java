@@ -1,6 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,6 +18,7 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigAnimal {
@@ -54,7 +56,7 @@ public class ConfigAnimal {
 
 	public ConfigAnimal(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection);
+		loadConfigFromFile(fileSection);
 	}
 
 	
@@ -272,13 +274,15 @@ public class ConfigAnimal {
 	protected void setCustom(String custom) {
 		this.custom = custom;
 	}
-
-
-	protected void loadConfig(ConfigurationSection fileSection) throws BalloonException {
-		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamAnimal.values()));
-
-		String livingEntityName = heliumSection.getString(ParamAnimal.TYPE);
-		setEntityType(ConfigUtils.getLivingEntityTypeFromName(getName(), livingEntityName));
+	
+	
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamAnimal.values());
+	}
+	
+	
+	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException { 
+		setEntityType(ConfigUtils.getLivingEntityTypeFromName(getName(), heliumSection.getString(ParamAnimal.TYPE)));
 		
 		setHidden(heliumSection.getBoolean(ParamAnimal.HIDDEN, isHidden()));
 		setLeash(heliumSection.getBoolean(ParamAnimal.LEASH, hasLeash()));
@@ -307,5 +311,11 @@ public class ConfigAnimal {
 		
 		setCustom(heliumSection.getString(ParamAnimal.CUSTOM));
 	}
+
+
+	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
+		importHeliumSection(heliumSection);
+		}
 
 }

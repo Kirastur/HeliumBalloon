@@ -10,8 +10,8 @@ import de.polarwolf.heliumballoon.oscillators.Oscillator;
 public abstract class PlayerBalloon extends SimpleBalloon {
 	
 
-	protected PlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator) {
-		super(player, template, oscillator);
+	protected PlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator, int delay) {
+		super(player, template, oscillator, delay);
 	}
 
 

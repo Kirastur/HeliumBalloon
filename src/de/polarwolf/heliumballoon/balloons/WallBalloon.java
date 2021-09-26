@@ -15,7 +15,7 @@ public class WallBalloon extends SimpleBalloon {
 	
 	
 	public WallBalloon(ConfigWall configWall, Location fixedLocation, Oscillator oscillator) {
-		super(null, configWall.getTemplate(), oscillator);
+		super(null, configWall.getTemplate(), oscillator, 0);
 		this.configWall = configWall;
 		this.fixedLocation = fixedLocation;
 	}

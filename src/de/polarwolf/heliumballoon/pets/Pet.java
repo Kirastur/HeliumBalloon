@@ -13,20 +13,20 @@ import de.polarwolf.heliumballoon.oscillators.VerticalOscillator;
 
 public class Pet {
 	
-	private final Player player;
-	private final ConfigTemplate template;
+	protected final Player player;
+	protected final BalloonManager balloonManager;
+	protected final ConfigTemplate template;
 	protected final Oscillator oscillator;
 	protected Balloon balloonAnimal = null;
 	protected Balloon balloonCompound = null;
-	protected final BalloonManager balloonManager;
 	
 	
 	public Pet (Player player, BalloonManager balloonManager, ConfigTemplate template) {
 		this.player = player;
 		this.balloonManager = balloonManager;
 		this.template = template;
-		if (getTemplate().isOscillating()) {
-			oscillator = new VerticalOscillator(getTemplate().getRule());
+		if (template.isOscillating()) {
+			oscillator = new VerticalOscillator(template.getRule());
 		} else {
 			oscillator = null;
 		}		
@@ -38,11 +38,6 @@ public class Pet {
 	}
 
 
-	public ConfigTemplate getTemplate() {
-		return template;
-	}
-	
-	
 	public String getName() {
 		return player.getName()+"."+template.getName();
 	}

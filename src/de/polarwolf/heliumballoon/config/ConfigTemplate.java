@@ -1,8 +1,11 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
 public class ConfigTemplate {
@@ -22,7 +25,7 @@ public class ConfigTemplate {
 	
 	public ConfigTemplate(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
-		loadConfig(fileSection, balloonSection);
+		loadConfigFromFile(fileSection, balloonSection);
 	}
 	
 	
@@ -91,42 +94,56 @@ public class ConfigTemplate {
 	}
 	
 	
-	protected void loadAnimalConfig(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionAnimal = fileSection.getConfigurationSection(ParamTemplate.ANIMAL.getAttributeName());
-		animal = new ConfigAnimal (fileSectionAnimal);
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamTemplate.values());
 	}
 	
 	
-	protected void loadElementsConfig(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionCompound = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
-		compound = new ConfigCompound (fileSectionCompound);
-	}
-
-
-	protected void loadConfig(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		HeliumSection heliumSection = new HeliumSection(fileSection, Arrays.asList(ParamTemplate.values()));
-
-		String ruleName = heliumSection.getString(ParamTemplate.RULE);
+	protected ConfigRule getRuleFromName(String ruleName, ConfigSection balloonSection) throws BalloonException {
 		if ((ruleName == null) || (ruleName.isEmpty())) {
-			setRule(balloonSection.getDefaultRule());
+			return balloonSection.getDefaultRule();
 		} else {
-			ConfigRule myRule = balloonSection.findRule(ruleName);
-			if (myRule == null) {
+			ConfigRule configRule = balloonSection.findRule(ruleName);
+			if (configRule == null) {
 				throw new BalloonException (getName(), "Unknown rule", ruleName);
 			}
-			setRule(myRule);
-		}
+			return configRule;
+		}		
+	}
+	
+	
+	protected void loadAnimalConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionAnimal = fileSection.getConfigurationSection(ParamTemplate.ANIMAL.getAttributeName());
+		setAnimal(new ConfigAnimal (fileSectionAnimal));
+	}
+	
+	
+	protected void loadElementsConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionCompound = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
+		setCompound(new ConfigCompound (fileSectionCompound));
+	}
+	
+	
+	protected void importHeliumSection(HeliumSection heliumSection, ConfigSection balloonSection) throws BalloonException { 
+		String ruleName = heliumSection.getString(ParamTemplate.RULE);
+		setRule(getRuleFromName(ruleName, balloonSection));
 		
 		setOscillating(heliumSection.getBoolean(ParamTemplate.OSCILLATING, isOscillating()));
+		setCustom(heliumSection.getString(ParamTemplate.CUSTOM));
+	}
+		
+
+	protected void loadConfigFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
+		importHeliumSection(heliumSection, balloonSection);
 		
 		if (heliumSection.isSection(ParamTemplate.ANIMAL)) {
-			loadAnimalConfig(fileSection);
+			loadAnimalConfigFromFile(fileSection);
 		}
+
 		if (heliumSection.isSection(ParamTemplate.ELEMENTS)) {
-			loadElementsConfig(fileSection);
-		}
-						
-		setCustom(heliumSection.getString(ParamTemplate.CUSTOM));
+			loadElementsConfigFromFile(fileSection);
+		}						
 	}
 
 }
