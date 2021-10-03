@@ -14,15 +14,20 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.elements.Element;
+import de.polarwolf.heliumballoon.elements.FallingBlockElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
-public class ConfigElement {
+public class ConfigElement implements ConfigPart {
 	
 	private final String name;
+	private final String fullName;
 	private Material material = Material.STONE;
 	private Vector offset = new Vector (0,0,0);	
 	private Axis axis = null;
@@ -42,19 +47,34 @@ public class ConfigElement {
 	private String custom = null;
 	
 	
-	public ConfigElement(String name) {
+	public ConfigElement(String name, String fullName) {
 		this.name = name;
+		this.fullName = fullName;
 	}
 
 
 	public ConfigElement(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
+		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection);
 	}
 
 	
+	@Override
 	public String getName() {
 		return name;
+	}
+
+	
+	@Override
+	public String getFullName() {
+		return fullName;
+	}
+
+	
+	@Override
+	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
+		return new FallingBlockElement(player, rule, this, spawnModifier);
 	}
 
 	
@@ -234,16 +254,16 @@ public class ConfigElement {
 	
 	
 	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException {
-		setMaterial(ConfigUtils.getMaterialFromName(getName(), heliumSection.getString(ParamElement.MATERIAL)));
-		setAxis(ConfigUtils.getAxisFromName(getName(), heliumSection.getString(ParamElement.AXIS)));
-		setBisectedHalf(ConfigUtils.getHalfFromName(getName(), heliumSection.getString(ParamElement.BISECTED_HALF)));
-		setBellAttachment(ConfigUtils.getBellAttachmentFromName(getName(), heliumSection.getString(ParamElement.BELL_ATTACHMENT)));
-		setBlockFace(ConfigUtils.getBlockFaceFromName(getName(), heliumSection.getString(ParamElement.BLOCK_FACE)));
-		setChestType(ConfigUtils.getChestTypeFromName(getName(), heliumSection.getString(ParamElement.CHEST_TYPE)));
-		setDoorHinge(ConfigUtils.getDoorHingeFromName(getName(), heliumSection.getString(ParamElement.DOOR_HINGE)));
-		setAttachedFace(ConfigUtils.getAttachedFaceFromName(getName(), heliumSection.getString(ParamElement.ATTACHED_FACE)));
-		setSlabType(ConfigUtils.getSlabTypeFromName(getName(), heliumSection.getString(ParamElement.SLAB_TYPE)));
-		setStairsShape(ConfigUtils.getStairsShapeFromName(getName(), heliumSection.getString(ParamElement.STAIRS_SHAPE)));
+		setMaterial(ConfigUtils.getBlockMaterialFromName(getFullName(), heliumSection.getString(ParamElement.MATERIAL)));
+		setAxis(ConfigUtils.getAxisFromName(getFullName(), heliumSection.getString(ParamElement.AXIS)));
+		setBisectedHalf(ConfigUtils.getHalfFromName(getFullName(), heliumSection.getString(ParamElement.BISECTED_HALF)));
+		setBellAttachment(ConfigUtils.getBellAttachmentFromName(getFullName(), heliumSection.getString(ParamElement.BELL_ATTACHMENT)));
+		setBlockFace(ConfigUtils.getBlockFaceFromName(getFullName(), heliumSection.getString(ParamElement.BLOCK_FACE)));
+		setChestType(ConfigUtils.getChestTypeFromName(getFullName(), heliumSection.getString(ParamElement.CHEST_TYPE)));
+		setDoorHinge(ConfigUtils.getDoorHingeFromName(getFullName(), heliumSection.getString(ParamElement.DOOR_HINGE)));
+		setAttachedFace(ConfigUtils.getAttachedFaceFromName(getFullName(), heliumSection.getString(ParamElement.ATTACHED_FACE)));
+		setSlabType(ConfigUtils.getSlabTypeFromName(getFullName(), heliumSection.getString(ParamElement.SLAB_TYPE)));
+		setStairsShape(ConfigUtils.getStairsShapeFromName(getFullName(), heliumSection.getString(ParamElement.STAIRS_SHAPE)));
 
 		setOpen(heliumSection.getBoolean(ParamElement.IS_OPEN, isOpen()));
 		setLit(heliumSection.getBoolean(ParamElement.IS_LIT, isLit()));

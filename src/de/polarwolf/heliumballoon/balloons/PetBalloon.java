@@ -4,14 +4,30 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.config.ConfigPart;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 
-public abstract class PlayerBalloon extends SimpleBalloon {
+public class PetBalloon extends SimpleBalloon {
+	
+	private final ConfigTemplate template;
 	
 
-	protected PlayerBalloon(Player player, ConfigTemplate template, Oscillator oscillator, int delay) {
-		super(player, template, oscillator, delay);
+	public PetBalloon(Player player, ConfigTemplate template, ConfigPart part, Oscillator oscillator) {
+		super(player, template.getRule(), part, oscillator);
+		this.template = template;
+	}
+	
+	
+	@Override
+	public String getName() {
+		return template.getName();
+	}
+	
+	
+	@Override
+	public String getFullName() {
+		return template.getFullName();
 	}
 
 

@@ -105,7 +105,7 @@ rules:
 templates:
     demo1:
         rule: demo1
-        animal:
+        living:
             type: EVOKER
             leash: true
         elements:
@@ -125,7 +125,7 @@ templates:
                 y: -1
 
     demo3:
-        animal:
+        living:
            type: CAT
            leash: true
            hidden: true
@@ -144,7 +144,7 @@ templates:
                 y: -1.0
 
     demo4:
-        animal:
+        living:
             type: CAT
             cattype: CALICO
             collarColor: BLUE
@@ -155,6 +155,16 @@ templates:
                 y: -0.06
 
     demo5:
+        rule: demo1
+        living:
+           type: CAT
+           leash: true
+           hidden: true
+        minecart:
+           load:
+               material: CARTOGRAPHY_TABLE
+ 
+    demo6:
         elements:
             top:
                 material: BLACK_CONCRETE
@@ -173,7 +183,7 @@ templates:
 # A wall element cannot be positioned between y=63.7 and y=64.1
 walls: 
     demowall1:
-        template: demo5
+        template: demo6
         worlds: ^world$
         x: -171
         y: 89
@@ -212,13 +222,19 @@ gui:
             title: "Stone Balloon"
             title_de: "Steinballon"
             description: "A hovering stoneblock with a leash"
-            description: "Ein schwebender Steinblock mit Leine"
+            description_de: "Ein schwebender Steinblock mit Leine"
             icon: STONE
         demo4:
             template: demo4
             title: "Cat"
             title_de: "Katze"
             description: "A sweet kitten"
-            description: "Ein süßes Kätzchen"
+            description_de: "Ein süßes Kätzchen"
             icon: RED_CARPET
+        demo5:
+            template: demo5
+            title: "Minecart"
+            description: "A minecart with a cartography table"
+            description_de: "Ein Minecart mit einem Kartentisch"
+            icon: MINECART
  

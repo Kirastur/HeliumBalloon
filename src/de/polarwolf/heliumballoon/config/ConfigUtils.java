@@ -21,6 +21,7 @@ import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Villager;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
 
@@ -31,7 +32,7 @@ public class ConfigUtils {
 	}
 	
 	
-	public static Material getMaterialFromName(String contextName, String materialName) throws BalloonException {
+	public static Material getAnyMaterialFromName(String contextName, String materialName) throws BalloonException {
 		if ((materialName == null) || (materialName.isEmpty())) {
 			throw new BalloonException(contextName, "Material is missing", null);
 		}
@@ -40,11 +41,17 @@ public class ConfigUtils {
 		if (myMaterial == null) {
 			throw new BalloonException(contextName, "Unknown material", materialName);
 		}
-		if (!myMaterial.isBlock()) {
-			throw new BalloonException(contextName, "Material is not a block", materialName);
-		}
 		if (myMaterial.isAir()) {
 			throw new BalloonException(contextName, "Material cannot be AIR", materialName);
+		}
+		return myMaterial;
+	}
+
+		
+	public static Material getBlockMaterialFromName(String contextName, String materialName) throws BalloonException {
+		Material myMaterial = getAnyMaterialFromName(contextName, materialName);
+		if (!myMaterial.isBlock()) {
+			throw new BalloonException(contextName, "Material is not a block", materialName);
 		}
 		return myMaterial;
 	}
@@ -451,4 +458,43 @@ public class ConfigUtils {
 				
 		return myTropicalFishPattern;
 	}
+
+
+	public static Villager.Type getVillagerTypeFromName(String contextName, String villagerTypeName) throws BalloonException {
+		if ((villagerTypeName == null) || (villagerTypeName.isEmpty())) {
+			return null;
+		}
+
+		Villager.Type myVillagerType = null;
+		try {
+			myVillagerType = Villager.Type.valueOf(villagerTypeName);
+		} catch (Exception e) {
+			myVillagerType = null;
+		}
+		if (myVillagerType == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown villager type", villagerTypeName);
+		}
+				
+		return myVillagerType;
+	}
+
+	
+	public static Villager.Profession getVillagerProfessionFromName(String contextName, String villagerProfessionName) throws BalloonException {
+		if ((villagerProfessionName == null) || (villagerProfessionName.isEmpty())) {
+			return null;
+		}
+
+		Villager.Profession myVillagerProfession = null;
+		try {
+			myVillagerProfession = Villager.Profession.valueOf(villagerProfessionName);
+		} catch (Exception e) {
+			myVillagerProfession = null;
+		}
+		if (myVillagerProfession == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown villager profession", villagerProfessionName);
+		}
+				
+		return myVillagerProfession;
+	}
 }
+

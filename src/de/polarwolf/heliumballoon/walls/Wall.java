@@ -31,7 +31,6 @@ public class Wall {
 		} else {
 			oscillator = null;
 		}		
-		
 	}
 	
 	

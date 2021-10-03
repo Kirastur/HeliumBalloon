@@ -5,32 +5,44 @@ import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
-public class ConfigTemplate {
+public class ConfigTemplate implements HeliumName {
 	
 	private final String name;
+	private final String fullName;
 	private ConfigRule rule;
 	private boolean oscillating = false;
-	private ConfigAnimal animal = null;
+	private ConfigLiving living = null;
 	private ConfigCompound compound = null;
+	private ConfigMinecart minecart = null;
 	private String custom;
 	
 	
-	public ConfigTemplate(String name) {
+	public ConfigTemplate(String name, String fullName) {
 		this.name = name;
+		this.fullName = fullName;
 	}
 	
 	
 	public ConfigTemplate(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
+		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection, balloonSection);
 	}
 	
 	
+	@Override
 	public String getName() {
 		return name;
+	}
+
+
+	@Override
+	public String getFullName() {
+		return fullName;
 	}
 
 
@@ -54,18 +66,18 @@ public class ConfigTemplate {
 	}
 
 
-	public boolean hasAnimal() {
-		return (animal != null);
+	public boolean hasLiving() {
+		return (living != null);
 	}
 	
 	
-	public ConfigAnimal getAnimal() {
-		return animal;
+	public ConfigLiving getLiving() {
+		return living;
 	}
 
 
-	protected void setAnimal(ConfigAnimal animal) {
-		this.animal = animal;
+	protected void setLiving(ConfigLiving living) {
+		this.living = living;
 	}
 
 
@@ -81,6 +93,21 @@ public class ConfigTemplate {
 
 	protected void setCompound(ConfigCompound compound) {
 		this.compound = compound;
+	}
+
+
+	public boolean hasMinecart() {
+		return (minecart != null);
+	}
+	
+	
+	public ConfigMinecart getMinecart() {
+		return minecart;
+	}
+
+
+	protected void setMinecart(ConfigMinecart minecart) {
+		this.minecart = minecart;
 	}
 
 
@@ -105,22 +132,28 @@ public class ConfigTemplate {
 		} else {
 			ConfigRule configRule = balloonSection.findRule(ruleName);
 			if (configRule == null) {
-				throw new BalloonException (getName(), "Unknown rule", ruleName);
+				throw new BalloonException (getFullName(), "Unknown rule", ruleName);
 			}
 			return configRule;
 		}		
 	}
 	
 	
-	protected void loadAnimalConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionAnimal = fileSection.getConfigurationSection(ParamTemplate.ANIMAL.getAttributeName());
-		setAnimal(new ConfigAnimal (fileSectionAnimal));
+	protected void loadLivingConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionLiving = fileSection.getConfigurationSection(ParamTemplate.LIVING.getAttributeName());
+		setLiving(new ConfigLiving (fileSectionLiving));
 	}
 	
 	
 	protected void loadElementsConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		ConfigurationSection fileSectionCompound = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
 		setCompound(new ConfigCompound (fileSectionCompound));
+	}
+	
+	
+	protected void loadMinecartConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionMinecart = fileSection.getConfigurationSection(ParamTemplate.MINECART.getAttributeName());
+		setMinecart(new ConfigMinecart (fileSectionMinecart));
 	}
 	
 	
@@ -137,12 +170,16 @@ public class ConfigTemplate {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection, balloonSection);
 		
-		if (heliumSection.isSection(ParamTemplate.ANIMAL)) {
-			loadAnimalConfigFromFile(fileSection);
+		if (heliumSection.isSection(ParamTemplate.LIVING)) {
+			loadLivingConfigFromFile(fileSection);
 		}
-
+			
 		if (heliumSection.isSection(ParamTemplate.ELEMENTS)) {
 			loadElementsConfigFromFile(fileSection);
+		}						
+
+		if (heliumSection.isSection(ParamTemplate.MINECART)) {
+			loadMinecartConfigFromFile(fileSection);
 		}						
 	}
 

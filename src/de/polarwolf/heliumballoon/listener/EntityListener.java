@@ -56,10 +56,16 @@ public class EntityListener implements Listener {
 	
 	
 	protected void handleEntityDamageByEntityEvent (EntityDamageByEntityEvent event) {
-		Entity entity = event.getDamager();
-		Balloon balloon = balloonManager.findBalloonByEntity(entity);
-		if (balloon != null) {
-			logger.printDebug("Cancelling EntityDrop for Balloon Element " + balloon.getName());
+		Entity takerEntity = event.getEntity();
+		Balloon balloonAsDamageTaker = balloonManager.findBalloonByEntity(takerEntity);
+		if (balloonAsDamageTaker != null) {
+			logger.printDebug("Cancelling EntityDamage for Balloon Element " + balloonAsDamageTaker.getName());
+			event.setCancelled(true);
+		}		
+		Entity damagerEntity = event.getDamager();
+		Balloon balloonAsDamager = balloonManager.findBalloonByEntity(damagerEntity);
+		if (balloonAsDamager != null) {
+			logger.printDebug("Cancelling EntityDamage for Balloon Element " + balloonAsDamager.getName());
 			event.setCancelled(true);
 		}		
 	}

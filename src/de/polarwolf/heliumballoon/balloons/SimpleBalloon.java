@@ -9,20 +9,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import de.polarwolf.heliumballoon.config.ConfigTemplate;
+import de.polarwolf.heliumballoon.config.ConfigPart;
+import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
-import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public abstract class SimpleBalloon implements Balloon {
 	
 	private boolean cancelled = false;
 	private final Player player;
-	private final ConfigTemplate template;
+	private final ConfigRule rule;
+	private final ConfigPart part;
 	private final Oscillator oscillator;
-	private final int delay;
 	private Element element = null;
 	protected boolean highSpeedMode = false;
 	protected boolean sleeping = false;
@@ -31,15 +31,17 @@ public abstract class SimpleBalloon implements Balloon {
 	protected List<Vector> positionQueue = new ArrayList<>();
 	
 	
-	protected SimpleBalloon(Player player, ConfigTemplate template, Oscillator oscillator, int delay) {
+	protected SimpleBalloon(Player player, ConfigRule rule, ConfigPart part, Oscillator oscillator) {
 		this.player = player;
-		this.template = template;
+		this.rule = rule;
+		this.part = part;
 		this.oscillator = oscillator;
-		this.delay = delay;
 	}
 	
 	
-	protected abstract Element createElement(SpawnModifier spawnModifier);
+	protected Element createElement(SpawnModifier spawnModifier) {
+		return getPart().createElement(getPlayer(), getRule(), spawnModifier);
+	}
 	
 
 	@Override
@@ -48,31 +50,32 @@ public abstract class SimpleBalloon implements Balloon {
 			element = createElement(spawnModifier);
 		}
 	}
-			
 	
+
 	protected Element getElement() {
 		return element;
 	}
 
 
-	public ConfigTemplate getTemplate() {
-		return template;
+	@Override
+	public Player getPlayer() {
+		return player;
+	}
+	
+
+	protected ConfigRule getRule() {
+		return  rule;
 	}
 
 
-	public Rule getRule() {
-		return  getTemplate().getRule();
+	protected ConfigPart getPart() {
+		return part;
 	}
 
 
 	@Override
 	public Oscillator getOscillator() {
 		return oscillator;
-	}
-
-
-	public int getDelay() {
-		return delay;
 	}
 
 
@@ -93,12 +96,6 @@ public abstract class SimpleBalloon implements Balloon {
 	@Override
 	public void cancel() {
 		setCancel();
-	}
-	
-
-	@Override
-	public Player getPlayer() {
-		return player;
 	}
 	
 
@@ -128,6 +125,18 @@ public abstract class SimpleBalloon implements Balloon {
 	@Override
 	public boolean hasEntity(Entity entity) {
 		return element.hasEntity(entity);
+	}
+	
+	
+	protected abstract Location getTargetLocation();
+	
+	
+	protected int getDelay() {
+		if (element.needDelay()) {
+			return getRule().getBlockDelay();
+		} else {
+			return 0;
+		}
 	}
 	
 	
@@ -163,7 +172,7 @@ public abstract class SimpleBalloon implements Balloon {
 		// Do not move until steps are at least 0.0001
 		if (distance < 0.0001) {
 			lastPosition = newPosition;
-			if (!getTemplate().isOscillating() && (positionQueue.size() == getDelay())) {
+			if ((getOscillator() == null)  && (positionQueue.size() == getDelay())) {
 				sleeping = true;
 			}
 			return new Vector();

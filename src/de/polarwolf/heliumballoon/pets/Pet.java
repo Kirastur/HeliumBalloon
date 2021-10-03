@@ -2,10 +2,9 @@ package de.polarwolf.heliumballoon.pets;
 
 import org.bukkit.entity.Player;
 
-import de.polarwolf.heliumballoon.balloons.AnimalPlayerBalloon;
 import de.polarwolf.heliumballoon.balloons.Balloon;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
-import de.polarwolf.heliumballoon.balloons.CompoundPlayerBalloon;
+import de.polarwolf.heliumballoon.balloons.PetBalloon;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
@@ -17,8 +16,9 @@ public class Pet {
 	protected final BalloonManager balloonManager;
 	protected final ConfigTemplate template;
 	protected final Oscillator oscillator;
-	protected Balloon balloonAnimal = null;
+	protected Balloon balloonLiving = null;
 	protected Balloon balloonCompound = null;
+	protected Balloon balloonMinecart = null;
 	
 	
 	public Pet (Player player, BalloonManager balloonManager, ConfigTemplate template) {
@@ -45,20 +45,23 @@ public class Pet {
 	
 	public boolean isCancelled() {
 		boolean myCancel = false;
-		if (balloonAnimal != null) {
-			myCancel = balloonAnimal.isCancelled();
+		if (balloonLiving != null) {
+			myCancel = balloonLiving.isCancelled();
 		}
 		if (balloonCompound != null) {
 			myCancel = myCancel || balloonCompound.isCancelled();
+		}
+		if (balloonMinecart != null) {
+			myCancel = balloonMinecart.isCancelled();
 		}
 		return myCancel;
 	}
 	
 	
-	protected void hideAnimal() {
-		if (balloonAnimal != null) {
-			balloonAnimal.cancel();
-			balloonAnimal = null;
+	protected void hideLiving() {
+		if (balloonLiving != null) {
+			balloonLiving.cancel();
+			balloonLiving = null;
 		}
 	}
 
@@ -70,21 +73,35 @@ public class Pet {
 		}
 	}
 
+	
+	protected void hideMinecart() {
+		if (balloonMinecart != null) {
+			balloonMinecart.cancel();
+			balloonMinecart = null;
+		}
+	}
+
+
 	public void hide() {
-		hideAnimal();
+		hideLiving();
 		hideCompound(); 
+		hideMinecart();
 	}
 	
 	
 	public void show() throws BalloonException {
 		try {
-			if (template.hasAnimal() && ((balloonAnimal == null) || balloonAnimal.isCancelled())) {
-				balloonAnimal = new AnimalPlayerBalloon(player, template, oscillator);
-				balloonManager.addBalloon(balloonAnimal);
+			if (template.hasLiving() && ((balloonLiving == null) || balloonLiving.isCancelled())) {
+				balloonLiving = new PetBalloon(player, template, template.getLiving(), oscillator); 
+				balloonManager.addBalloon(balloonLiving);
 				}
 			if (template.hasCompound() && ((balloonCompound == null) || balloonCompound.isCancelled())) {
-				balloonCompound = new CompoundPlayerBalloon(player, template, oscillator);
+				balloonCompound = new PetBalloon(player, template, template.getCompound(), oscillator);
 				balloonManager.addBalloon(balloonCompound);
+			}
+			if (template.hasMinecart() && ((balloonMinecart == null) || balloonMinecart.isCancelled())) {
+				balloonMinecart = new PetBalloon(player, template, template.getMinecart(), oscillator);
+				balloonManager.addBalloon(balloonMinecart);
 			}
 		} catch (Exception e) {
 			hide();

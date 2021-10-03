@@ -3,10 +3,7 @@ package de.polarwolf.heliumballoon.balloons;
 import org.bukkit.Location;
 
 import de.polarwolf.heliumballoon.config.ConfigWall;
-import de.polarwolf.heliumballoon.elements.CompoundElement;
-import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
-import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class WallBalloon extends SimpleBalloon {
 	
@@ -15,27 +12,27 @@ public class WallBalloon extends SimpleBalloon {
 	
 	
 	public WallBalloon(ConfigWall configWall, Location fixedLocation, Oscillator oscillator) {
-		super(null, configWall.getTemplate(), oscillator, 0);
+		super(null, configWall.getTemplate().getRule(), configWall.getTemplate().getCompound(), oscillator);
 		this.configWall = configWall;
 		this.fixedLocation = fixedLocation;
 	}
 	
 
 	@Override
+	public String getName() {
+		return configWall.getName();
+	}
+	
+	
+	@Override
+	public String getFullName() {
+		return configWall.getFullName();
+	}
+
+
+	@Override
 	public Location getTargetLocation() {
 		return fixedLocation;
 	}
 
-
-	@Override
-	public String getName() {
-		return configWall.getName();
-	}
-
-
-	@Override
-	protected Element createElement(SpawnModifier spawnModifier) {
-		return new CompoundElement(null, getTemplate().getRule(), getTemplate().getCompound(), spawnModifier);
-	}
-	
 }

@@ -89,7 +89,7 @@ public class ConfigSection {
 		templates.add(newTemplate);
 	}
 	
-	
+		
 	// Walls
 	public ConfigWall findWall(String wallName) {
 		for (ConfigWall myWall : walls) {

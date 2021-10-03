@@ -7,32 +7,43 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.helium.HeliumText;
 
-public class ConfigGuiItem {
+public class ConfigGuiItem implements HeliumName {
 	
 	private final String name;
+	private final String fullName;
 	private ConfigTemplate template;
 	private Material icon;
 	private HeliumText title;
 	private HeliumText description;
 
 
-	public ConfigGuiItem(String name) {
+	public ConfigGuiItem(String name, String fullName) {
 		this.name = name;
+		this.fullName = fullName;
 	}
 	
 	
 	public ConfigGuiItem(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
+		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection, balloonSection);
 	}
 	
 	
+	@Override
 	public String getName() {
 		return name;
+	}
+
+
+	@Override
+	public String getFullName() {
+		return fullName;
 	}
 
 
@@ -47,7 +58,11 @@ public class ConfigGuiItem {
 
 	
 	public String getTitle(CommandSender sender) {
-		return title.findLocalizedforSender(sender);
+		if (title == null) {
+			return null;
+		} else {
+			return title.findLocalizedforSender(sender);
+		}
 	}
 
 	
@@ -57,7 +72,11 @@ public class ConfigGuiItem {
 
 
 	public String getDescription(CommandSender sender) {
-		return description.findLocalizedforSender(sender);
+		if (description == null) {
+			return null;
+		} else {
+			return description.findLocalizedforSender(sender);
+		}
 	}
 	
 	
@@ -78,12 +97,12 @@ public class ConfigGuiItem {
 
 	protected ConfigTemplate getTemplateFromName(String templateName, ConfigSection balloonSection) throws BalloonException {
 		if ((templateName == null) || (templateName.isEmpty())) {
-			throw new BalloonException(getName(), "Template is missing", null);
+			throw new BalloonException(getFullName(), "Template is missing", null);
 		}
 
 		ConfigTemplate myTemplate = balloonSection.findTemplate(templateName);
 		if (myTemplate == null) {
-			throw new BalloonException(getName(), "Unknown template", templateName);
+			throw new BalloonException(getFullName(), "Unknown template", templateName);
 		}
 		return myTemplate;
 	}
@@ -99,7 +118,7 @@ public class ConfigGuiItem {
 		setTemplate(getTemplateFromName(templateName, balloonSection));
 		
 		String iconName =  heliumSection.getString(ParamGuiItem.ICON);
-		setIcon(ConfigUtils.getMaterialFromName(getName(), iconName));
+		setIcon(ConfigUtils.getAnyMaterialFromName(getFullName(), iconName));
 
 		setTitle(heliumSection.getHeliumText(ParamGuiItem.TITLE)); 
 		setDescription(heliumSection.getHeliumText(ParamGuiItem.DESCRIPTION));		

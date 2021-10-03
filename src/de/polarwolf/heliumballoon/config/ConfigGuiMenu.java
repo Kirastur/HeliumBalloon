@@ -10,31 +10,42 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.helium.HeliumText;
 
-public class ConfigGuiMenu {
+public class ConfigGuiMenu implements HeliumName {
 
 	private final String name;
+	private final String fullName;
 	private HeliumText guiTitle = new HeliumText("title");
 	private Map<String,ConfigGuiItem> guiItems = new TreeMap<>();
 	private ConfigGuiDeassign guiDeassign = null;
 	
 
-	public ConfigGuiMenu(String name) {
+	public ConfigGuiMenu(String name, String fullName) {
 		this.name = name;
+		this.fullName = fullName;
 	}
 	
 	
 	public ConfigGuiMenu(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
+		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection, balloonSection);
 	}
 	
 	
+	@Override
 	public String getName() {
 		return name;
+	}
+
+
+	@Override
+	public String getFullName() {
+		return fullName;
 	}
 
 
@@ -86,7 +97,7 @@ public class ConfigGuiMenu {
 				continue;
 			}
 			if (!fileSectionGuiItems.isConfigurationSection(myItemName)) {
-				throw new BalloonException (null, "Illegal GUI items secton", myItemName);
+				throw new BalloonException (getFullName(), "Illegal GUI items secton", myItemName);
 			}
 			addGuiItem(new ConfigGuiItem(fileSectionGuiItems.getConfigurationSection(myItemName), balloonSection));
 		}
@@ -106,7 +117,7 @@ public class ConfigGuiMenu {
 		if (heliumSection.isSection(ParamGuiMenu.ITEMS)) {
 			loadItemsFromFile(fileSection, balloonSection);
 		} else {
-			throw new BalloonException (null, "No GUI Item section found", null);			
+			throw new BalloonException (getFullName(), "No GUI Item section found", null);			
 		}
 		
 		if (heliumSection.isSection(ParamGuiMenu.DEASSIGN)) {

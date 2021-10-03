@@ -46,6 +46,10 @@ public interface Element {
 	// Should not be null. Use an empty Vector instead. 
 	public void setVelocity(Vector newVelocity);
 	
+	// Flag if the Element needs a delay to get synchronized
+	// with other Elements.
+	public boolean needDelay();
+	
 	// The supervising object should call this function on every Tick
 	// because the underlying Entity can have a limited lifetime.
 	public void keepAlive();

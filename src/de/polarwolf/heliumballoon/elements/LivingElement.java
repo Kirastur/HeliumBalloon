@@ -18,32 +18,33 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
 import org.bukkit.util.Vector;
 
-import de.polarwolf.heliumballoon.config.ConfigAnimal;
+import de.polarwolf.heliumballoon.config.ConfigLiving;
+import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
-public class AnimalElement extends SimpleElement {
+public class LivingElement extends SimpleElement {
 
 	public static final double MIN_DISTANCE = 0.5;
 	public static final double MAX_PITCH_PER_STEP = 5;
 	
-	private final ConfigAnimal config;
+	private final ConfigLiving config;
 	protected boolean isAware = true;
 	protected LivingEntity livingEntity = null;
 	protected double lastPitch = 0;
 	
 
-	public AnimalElement(Player player, Rule rule, ConfigAnimal config, SpawnModifier spawnModifier) {
+	public LivingElement(Player player, ConfigRule rule, ConfigLiving config, SpawnModifier spawnModifier) {
 		super(player, rule, spawnModifier);
 		this.config = config;
 	}
 	
 	
-	public ConfigAnimal getConfig() {
+	public ConfigLiving getConfig() {
 		return config;
 	}
 
@@ -60,6 +61,12 @@ public class AnimalElement extends SimpleElement {
 	}
 
 	
+	@Override
+	public boolean needDelay() {
+		return false;
+	}
+
+
 	@Override
 	public boolean isValid() {
 		if (!super.isValid()) {
@@ -239,6 +246,23 @@ public class AnimalElement extends SimpleElement {
 	}
 	
 	
+	protected void modifySpawnVillager() {
+		if (!(livingEntity instanceof Villager)) {
+			return;
+		}
+		Villager villager = (Villager) livingEntity;
+		if (config.getVillagerType() != null) {
+			villager.setVillagerType(config.getVillagerType());
+		}
+		if (config.getVillagerProfession() != null) {
+			villager.setProfession(config.getVillagerProfession());
+		}
+		if ((config.getVillagerLevel() >= 1) && (config.getVillagerLevel() <= 5)) {
+			villager.setVillagerLevel(config.getVillagerLevel());
+		}
+	}
+
+
 	protected void spawnBaseEntity(Location targetLocation) throws BalloonException {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, config.getEntityType());
 		if (!(entity instanceof LivingEntity)) {
@@ -255,7 +279,7 @@ public class AnimalElement extends SimpleElement {
 		livingEntity.setSilent(true);
 		livingEntity.setRemoveWhenFarAway(false);
 		livingEntity.setInvisible(config.isHidden());
-		if (config.hasLeash()) {
+		if (config.hasLeash() && !(entity instanceof Villager)) {
 			livingEntity.setLeashHolder(getPlayer());
 		}
 		livingEntity.setVelocity(new Vector());
@@ -276,6 +300,7 @@ public class AnimalElement extends SimpleElement {
 		modifySpawnSheep();
 		modifySpawnTropicalFish();
 		modifySpawnWolf();
+		modifySpawnVillager();
 	}
 
 

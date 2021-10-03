@@ -10,20 +10,20 @@ import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigCompound;
 import de.polarwolf.heliumballoon.config.ConfigElement;
+import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class CompoundElement implements Element {
 
-	private final Rule rule;
+	private final ConfigRule rule;
 	private final ConfigCompound compound;
 	private final Player player;
 	protected final SpawnModifier spawnModifier;
 	protected List<Element> elements = new ArrayList<>();
 	
 	
-	public CompoundElement(Player player, Rule rule, ConfigCompound compound, SpawnModifier spawnModifier) {
+	public CompoundElement(Player player, ConfigRule rule, ConfigCompound compound, SpawnModifier spawnModifier) {
 		this.player = player;
 		this.rule = rule;
 		this.compound = compound;
@@ -35,7 +35,7 @@ public class CompoundElement implements Element {
 	protected void buildElements() {
 		elements.clear();
 		for(ConfigElement myConfigElement : getCompound().enumElements()) {
-			elements.add(new FallingBlockElement(player, getRule(), myConfigElement, spawnModifier));
+			elements.add(myConfigElement.createElement(player, getRule(), spawnModifier));
 		}
 	}
 	
@@ -69,6 +69,12 @@ public class CompoundElement implements Element {
 	}
 
 
+	@Override
+	public boolean needDelay() {
+		return true;
+	}
+
+
 	protected void spawn(Location targetLocation) throws BalloonException {
 		try {
 			for (Element myElement : elements) {
@@ -81,7 +87,7 @@ public class CompoundElement implements Element {
 	}
 	
 
-	public Rule getRule() {
+	public ConfigRule getRule() {
 		return rule;
 	}
 

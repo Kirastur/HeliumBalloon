@@ -67,6 +67,9 @@ public class GuiManager {
     	Material material = guiItem.getIcon();
     	String templateName = guiItem.getTemplate().getName();
     	String title = guiItem.getTitle(player);
+    	if ((title == null) || title.isEmpty()) {
+    		title = guiItem.getName();
+    	}
     	String description = guiItem.getDescription(player);
     	return createItemStack(material, templateName, title, description);
     }
@@ -80,6 +83,9 @@ public class GuiManager {
     	Material material = Material.BARRIER;
     	String actionName = "!";
     	String title = configGuiDeassign.getTitle(player);
+    	if ((title == null) || title.isEmpty()) {
+    		title = configGuiDeassign.getName();
+    	}
     	String description = configGuiDeassign.getDescription(player);
     	return createItemStack(material, actionName, title, description);
     }

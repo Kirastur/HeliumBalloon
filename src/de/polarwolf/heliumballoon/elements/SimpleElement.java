@@ -5,25 +5,25 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public abstract class SimpleElement implements Element{
 
 	private final Player player;
-	private final Rule rule;
+	private final ConfigRule rule;
 	protected final SpawnModifier spawnModifier;
 	
 
-	protected SimpleElement(Player player, Rule rule, SpawnModifier spawnModifier) {
+	protected SimpleElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		this.player = player;
 		this.rule=rule;
 		this.spawnModifier = spawnModifier;
 	}
 	
 			
-	public Rule getRule() {
+	public ConfigRule getRule() {
 		return rule;
 	}
 	

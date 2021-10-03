@@ -53,7 +53,7 @@ public class PlayerListener implements Listener {
 	
 	
 	protected void wakeupBalloons(Player player) {
-		balloonManager.wakeupBalloonByPlayer(player);
+		balloonManager.wakeupBalloonsByPlayer(player);
 	}
 	
 	

@@ -29,7 +29,7 @@ public class ConfigPlayer {
 	public ConfigPlayer(Plugin plugin) throws BalloonException, IOException {
 		customPlayerFile = new File(plugin.getDataFolder(), PLAYER_FILE_NAME);
 		if (!customPlayerFile.exists() && !customPlayerFile.createNewFile()) {
-			throw new BalloonException (null, "Cannot create coinfig file", PLAYER_FILE_NAME);
+			throw new BalloonException (null, "Cannot create config file", PLAYER_FILE_NAME);
 		}
 		playerFileConfiguration = YamlConfiguration.loadConfiguration(customPlayerFile);	
 	}

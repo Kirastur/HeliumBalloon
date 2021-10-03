@@ -13,17 +13,23 @@ import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.elements.LivingElement;
+import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
-public class ConfigAnimal {
+public class ConfigLiving implements ConfigPart {
 
 	private final String name;
+	private final String fullName;
 	private EntityType entityType = EntityType.CAT;
 	private Vector offset = new Vector (0,0,0);
 	private boolean hidden = false;
@@ -44,24 +50,42 @@ public class ConfigAnimal {
 	private DyeColor tropicalFishBodyColor = null;
 	private DyeColor tropicalFishPatternColor = null;
 	private TropicalFish.Pattern tropicalFishPattern = null;
+	private Villager.Type villagerType = null;
+	private Villager.Profession  villagerProfession = null;
+	private int villagerLevel = 1;
 	
 
 	private String custom = null;
 	
 	
-	public ConfigAnimal(String name) {
+	public ConfigLiving(String name, String fullName) {
 		this.name = name;
+		this.fullName = fullName;
 	}
 
 
-	public ConfigAnimal(ConfigurationSection fileSection) throws BalloonException {
+	public ConfigLiving(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
+		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection);
 	}
 
 	
+	@Override
 	public String getName() {
 		return name;
+	}
+
+	
+	@Override
+	public String getFullName() {
+		return fullName;
+	}
+
+	
+	@Override
+	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
+		return new LivingElement(player, rule, this, spawnModifier);
 	}
 
 	
@@ -266,6 +290,36 @@ public class ConfigAnimal {
 	}
 
 
+	public Villager.Type getVillagerType() {
+		return villagerType;
+	}
+
+
+	protected void setVillagerType(Villager.Type villagerType) {
+		this.villagerType = villagerType;
+	}
+
+
+	public Villager.Profession getVillagerProfession() {
+		return villagerProfession;
+	}
+
+
+	protected void setVillagerProfession(Villager.Profession villagerProfession) {
+		this.villagerProfession = villagerProfession;
+	}
+
+
+	public int getVillagerLevel() {
+		return villagerLevel;
+	}
+
+
+	protected void setVillagerLevel(int villagerLevel) {
+		this.villagerLevel = villagerLevel;
+	}
+
+
 	public String getCustom() {
 		return custom;
 	}
@@ -277,45 +331,60 @@ public class ConfigAnimal {
 	
 	
 	protected List<HeliumParam> getValidParams() {
-		return  Arrays.asList(ParamAnimal.values());
+		return  Arrays.asList(ParamLiving.values());
 	}
 	
 	
 	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException { 
-		setEntityType(ConfigUtils.getLivingEntityTypeFromName(getName(), heliumSection.getString(ParamAnimal.TYPE)));
+		setEntityType(ConfigUtils.getLivingEntityTypeFromName(getFullName(), heliumSection.getString(ParamLiving.TYPE)));
 		
-		setHidden(heliumSection.getBoolean(ParamAnimal.HIDDEN, isHidden()));
-		setLeash(heliumSection.getBoolean(ParamAnimal.LEASH, hasLeash()));
-		setTamed(heliumSection.getBoolean(ParamAnimal.TAMED, isTamed()));
+		setHidden(heliumSection.getBoolean(ParamLiving.HIDDEN, isHidden()));
+		setLeash(heliumSection.getBoolean(ParamLiving.LEASH, hasLeash()));
+		setTamed(heliumSection.getBoolean(ParamLiving.TAMED, isTamed()));
 		
-		setCatType (ConfigUtils.getCatTypeFromName(getName(), heliumSection.getString(ParamAnimal.CATTYPE)));
-		setCollarColor (ConfigUtils.getDyeColorFromName(getName(), heliumSection.getString(ParamAnimal.COLLARCOLOR)));
-		setFoxType (ConfigUtils.getFoxTypeFromName(getName(), heliumSection.getString(ParamAnimal.FOXTYPE)));
-		setHorseColor (ConfigUtils.getHorseColorFromName(getName(), heliumSection.getString(ParamAnimal.HORSECOLOR)));
-		setHorseStyle (ConfigUtils.getHorseStyleFromName(getName(), heliumSection.getString(ParamAnimal.HORSESTYLE)));
-		setLlamaColor (ConfigUtils.getLlamaColorFromName(getName(), heliumSection.getString(ParamAnimal.LLAMACOLOR)));
-		setMushroomCowVariant (ConfigUtils.getMushroomCowVariantFromName(getName(), heliumSection.getString(ParamAnimal.MUSHROOMCOWVARIANT)));
-		setPandaMainGene (ConfigUtils.getPandaGeneFromName(getName(), heliumSection.getString(ParamAnimal.PANDAMAINGENE)));
-		setPandaHiddenGene (ConfigUtils.getPandaGeneFromName(getName(), heliumSection.getString(ParamAnimal.PANDAHIDDENGENE)));
-		setParrotVariant (ConfigUtils.getParrotVariantFromName(getName(), heliumSection.getString(ParamAnimal.PARROTVARIANT)));
-		setRabbitType (ConfigUtils.getRabbitTypeFromName(getName(), heliumSection.getString(ParamAnimal.RABBITTYPE)));
-		setSheepColor  (ConfigUtils.getDyeColorFromName(getName(), heliumSection.getString(ParamAnimal.SHEEPCOLOR)));
-		setTropicalFishBodyColor (ConfigUtils.getDyeColorFromName(getName(), heliumSection.getString(ParamAnimal.TROPICALFISHBODYCOLOR)));
-		setTropicalFishPatternColor  (ConfigUtils.getDyeColorFromName(getName(), heliumSection.getString(ParamAnimal.TROPICALFISHPATTERNCOLOR)));
-		setTropicalFishPattern  (ConfigUtils.getTropicalFishPatternFromName(getName(), heliumSection.getString(ParamAnimal.TROPICALFISHPATTERN)));
+		setCatType (ConfigUtils.getCatTypeFromName(getFullName(), heliumSection.getString(ParamLiving.CATTYPE)));
+		setCollarColor (ConfigUtils.getDyeColorFromName(getFullName(), heliumSection.getString(ParamLiving.COLLARCOLOR)));
+		setFoxType (ConfigUtils.getFoxTypeFromName(getFullName(), heliumSection.getString(ParamLiving.FOXTYPE)));
+		setHorseColor (ConfigUtils.getHorseColorFromName(getFullName(), heliumSection.getString(ParamLiving.HORSECOLOR)));
+		setHorseStyle (ConfigUtils.getHorseStyleFromName(getFullName(), heliumSection.getString(ParamLiving.HORSESTYLE)));
+		setLlamaColor (ConfigUtils.getLlamaColorFromName(getFullName(), heliumSection.getString(ParamLiving.LLAMACOLOR)));
+		setMushroomCowVariant (ConfigUtils.getMushroomCowVariantFromName(getFullName(), heliumSection.getString(ParamLiving.MUSHROOMCOWVARIANT)));
+		setPandaMainGene (ConfigUtils.getPandaGeneFromName(getFullName(), heliumSection.getString(ParamLiving.PANDAMAINGENE)));
+		setPandaHiddenGene (ConfigUtils.getPandaGeneFromName(getFullName(), heliumSection.getString(ParamLiving.PANDAHIDDENGENE)));
+		setParrotVariant (ConfigUtils.getParrotVariantFromName(getFullName(), heliumSection.getString(ParamLiving.PARROTVARIANT)));
+		setRabbitType (ConfigUtils.getRabbitTypeFromName(getFullName(), heliumSection.getString(ParamLiving.RABBITTYPE)));
+		setSheepColor (ConfigUtils.getDyeColorFromName(getFullName(), heliumSection.getString(ParamLiving.SHEEPCOLOR)));
+		setTropicalFishBodyColor (ConfigUtils.getDyeColorFromName(getFullName(), heliumSection.getString(ParamLiving.TROPICALFISHBODYCOLOR)));
+		setTropicalFishPatternColor (ConfigUtils.getDyeColorFromName(getFullName(), heliumSection.getString(ParamLiving.TROPICALFISHPATTERNCOLOR)));
+		setTropicalFishPattern (ConfigUtils.getTropicalFishPatternFromName(getFullName(), heliumSection.getString(ParamLiving.TROPICALFISHPATTERN)));
+		setVillagerType (ConfigUtils.getVillagerTypeFromName(getFullName(), heliumSection.getString(ParamLiving.VILLAGER_TYPE)));
+		setVillagerProfession (ConfigUtils.getVillagerProfessionFromName(getFullName(), heliumSection.getString(ParamLiving.VILLAGER_PROFESSION)));
+		setVillagerLevel (heliumSection.getInt(ParamLiving.VILLAGER_LEVEL, getVillagerLevel()));
 
-		Double x = heliumSection.getDouble(ParamAnimal.X, getOffset().getX());
-		Double y = heliumSection.getDouble(ParamAnimal.Y, getOffset().getY());
-		Double z = heliumSection.getDouble(ParamAnimal.Z, getOffset().getZ());
+
+		Double x = heliumSection.getDouble(ParamLiving.X, getOffset().getX());
+		Double y = heliumSection.getDouble(ParamLiving.Y, getOffset().getY());
+		Double z = heliumSection.getDouble(ParamLiving.Z, getOffset().getZ());
 		setOffset(new Vector(x, y, z));
 		
-		setCustom(heliumSection.getString(ParamAnimal.CUSTOM));
+		setCustom(heliumSection.getString(ParamLiving.CUSTOM));
+	}
+	
+	
+	protected void validateConfig() throws BalloonException {
+		if ((getVillagerLevel() < 1) || (getVillagerLevel() > 5)) {
+			throw new BalloonException(getFullName(), "Villager level must be between 1 and 5", Integer.toString(getVillagerLevel()));
+		}
+		if (getEntityType().equals(EntityType.VILLAGER) && hasLeash()) {
+			throw new BalloonException(getFullName(), "You can't leash a Villager", null);			
+		}
 	}
 
 
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
-		}
-
+		validateConfig();
+	}
+	
 }

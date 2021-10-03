@@ -88,7 +88,7 @@ public class BalloonManager extends BukkitRunnable {
 	}
 	
 	
-	public void wakeupBalloonByPlayer(Player player) {
+	public void wakeupBalloonsByPlayer(Player player) {
 		for (Balloon myBalloon : balloons) {
 			Player balloonPlayer = myBalloon.getPlayer();
 			if ((balloonPlayer != null) && (balloonPlayer.equals(player))) {

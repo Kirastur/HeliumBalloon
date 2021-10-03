@@ -2,21 +2,20 @@ package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 
-public enum ParamTemplate implements HeliumParam {
+public enum ParamMinecart implements HeliumParam {
 
-	RULE (false, "rule"),
-	OSCILLATING (false, "oscillating"),
-	LIVING (true, "living"),
-	ELEMENTS (true, "elements"),
-	MINECART (true, "minecart"),
+	X (false, "x"),
+	Y (false, "y"),
+	Z (false, "z"),
+	LOAD(true, "load"),
+	LOAD_OFFSET(false, "loadOffset"),
 	CUSTOM (false, "custom");
-		
 	
 	private final String attributeName;
 	private final boolean section;
 	
 
-	private ParamTemplate(boolean section, String attributeName) {
+	private ParamMinecart(boolean section, String attributeName) {
 		this.attributeName = attributeName;
 		this.section = section;
 	}
@@ -32,5 +31,4 @@ public enum ParamTemplate implements HeliumParam {
 	public String getAttributeName() {
 		return attributeName;
 	}
-	
 }

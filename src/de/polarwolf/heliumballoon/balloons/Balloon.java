@@ -1,28 +1,22 @@
 package de.polarwolf.heliumballoon.balloons;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
-public interface Balloon {
+public interface Balloon extends HeliumName {
 	
 	// Prepare the Balloon by creating the underlying element.
 	// This does only create the element, not the entity.
-	// The spawn of the entity is done later by move().  
+	// The spawn of the entity is done later by move().
+	// Please do not call this directly,
+	// this is done by the BalloonManager.
 	public void prepare(SpawnModifier spawnModifier);
-	
-	// Get the name of the Balloon.
-	// Mostly used for printing error messages.
-	public String getName();
-	
-	// Get the target location the Balloon should move to.
-	// The targetLocation is evaluated by move() to calculate speed and direction.
-	public Location getTargetLocation();
 	
 	// Get the associated player. Can be null.
 	public Player getPlayer();

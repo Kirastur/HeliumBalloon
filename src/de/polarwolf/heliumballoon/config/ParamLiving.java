@@ -2,7 +2,7 @@ package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 
-public enum ParamAnimal implements HeliumParam {
+public enum ParamLiving implements HeliumParam {
 
 	TYPE ("type"),
 	X ("x"),
@@ -26,13 +26,16 @@ public enum ParamAnimal implements HeliumParam {
 	TROPICALFISHBODYCOLOR ("tropicalFishBodyColor"),
 	TROPICALFISHPATTERNCOLOR ("tropicalFishPatternColor"),
 	TROPICALFISHPATTERN ("tropicalFishPattern"),
+	VILLAGER_TYPE("villagerType"),
+	VILLAGER_PROFESSION("villagerProfession"),
+	VILLAGER_LEVEL("villagerLevel"),
 	CUSTOM ("custom");
 	
 		
 	private final String attributeName;
 	
 
-	private ParamAnimal(String attributeName) {
+	private ParamLiving(String attributeName) {
 		this.attributeName = attributeName;
 	}
 	

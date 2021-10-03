@@ -23,8 +23,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigElement;
+import de.polarwolf.heliumballoon.config.ConfigRule;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.rules.Rule;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class FallingBlockElement extends SimpleElement {
@@ -33,7 +33,7 @@ public class FallingBlockElement extends SimpleElement {
 	protected FallingBlock fallingBlock = null;
 	
 
-	public FallingBlockElement(Player player, Rule rule, ConfigElement config, SpawnModifier spawnModifier) {
+	public FallingBlockElement(Player player, ConfigRule rule, ConfigElement config, SpawnModifier spawnModifier) {
 		super(player, rule, spawnModifier);
 		this.config = config;
 	}
@@ -187,7 +187,8 @@ public class FallingBlockElement extends SimpleElement {
 		modifyBlockDataEndPortalFrame(blockData);
 	}
 	
-	protected BlockData createBlockData() {
+
+	public BlockData createBlockData() {
 		BlockData blockData = createBaseBlockData();
 		modifyBlockData(blockData);
 		spawnModifier.modifyBlockData(this, blockData);
@@ -211,6 +212,12 @@ public class FallingBlockElement extends SimpleElement {
 		return fallingBlock;
 	}
 	
+	
+	@Override
+	public boolean needDelay() {
+		return true;
+	}
+
 
 	protected void spawnBaseFallingBlock(Location targetLocation) {
 		fallingBlock = targetLocation.getWorld().spawnFallingBlock(targetLocation, createBlockData());
@@ -233,7 +240,7 @@ public class FallingBlockElement extends SimpleElement {
 		spawnBaseFallingBlock(targetLocation);
 		modifySpawn();		
 		spawnModifier.modifyEntity(this);
-}
+	}
 	
 	
 	@Override

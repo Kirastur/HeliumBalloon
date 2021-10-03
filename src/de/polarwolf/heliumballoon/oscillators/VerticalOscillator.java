@@ -2,16 +2,16 @@ package de.polarwolf.heliumballoon.oscillators;
 
 import org.bukkit.util.Vector;
 
-import de.polarwolf.heliumballoon.rules.Rule;
+import de.polarwolf.heliumballoon.config.ConfigRule;
 
 public class VerticalOscillator implements Oscillator {
 	
-	protected final Rule rule;
+	protected final ConfigRule rule;
 	protected int count = 0;
 	protected Vector deflection = new Vector();
 
 	
-	public VerticalOscillator(Rule rule) {
+	public VerticalOscillator(ConfigRule rule) {
 		this.rule = rule;
 	}
 	
