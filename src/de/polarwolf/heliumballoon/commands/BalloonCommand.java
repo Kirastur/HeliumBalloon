@@ -21,10 +21,20 @@ import de.polarwolf.heliumballoon.messages.Message;
 public class BalloonCommand implements CommandExecutor {
 	
 	protected final Main main;
+	protected final String commandName;
+	protected BalloonTabCompleter balloonTabCompleter;
 	
 	
-	public BalloonCommand(Main main) {
+	public BalloonCommand(Main main, String commandName) {
 		this.main = main;
+		this.commandName = commandName;
+		main.getCommand(commandName).setExecutor(this);
+		balloonTabCompleter = new BalloonTabCompleter(main, this);
+	}
+	
+	
+	public String getCommandName() {
+		return commandName;
 	}
 	
 	

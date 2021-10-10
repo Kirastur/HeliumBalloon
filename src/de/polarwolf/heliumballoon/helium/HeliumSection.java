@@ -15,6 +15,7 @@ public class HeliumSection {
 	private final String name;
 	protected Map<HeliumParam,HeliumText> attributes = new HashMap<>();
 	protected List<HeliumParam> sections = new ArrayList<>();
+	protected List<HeliumParam> lists = new ArrayList<>();
 	
 	
 	public HeliumSection(String name) {
@@ -24,7 +25,13 @@ public class HeliumSection {
 	
 	public HeliumSection(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
 		this.name = fileSection.getName();
-		loadFromConfig(fileSection, validParams);
+		loadFromConfig(fileSection, validParams, false);
+	}
+	
+	
+	public HeliumSection(ConfigurationSection fileSection, List<HeliumParam> validParams, boolean ignoreUnknownAttributes) throws BalloonException {
+		this.name = fileSection.getName();
+		loadFromConfig(fileSection, validParams, ignoreUnknownAttributes);
 	}
 	
 	
@@ -33,12 +40,12 @@ public class HeliumSection {
 	}
 
 
-	public static HeliumParam findParam(String attributeName, List<HeliumParam> validParams) {
+	protected HeliumParam findParam(String attributeName, List<HeliumParam> validParams) {
 		for (HeliumParam myParam: validParams) {
-			if ((!myParam.isSection()) && attributeName.equalsIgnoreCase(myParam.getAttributeName())) {
+			if (myParam.isType(HeliumParamType.STRING) && attributeName.equalsIgnoreCase(myParam.getAttributeName())) {
 				return myParam;
 			}
-			if (myParam.isSection() && attributeName.equals(myParam.getAttributeName())) {
+			if (!myParam.isType(HeliumParamType.STRING) && attributeName.equals(myParam.getAttributeName())) {
 				return myParam;
 			}
 		}
@@ -46,7 +53,7 @@ public class HeliumSection {
 	}
 	
 	
-	public static boolean isValidLocalizedAttribute(String attributeName, List<HeliumParam> validParams) {
+	protected boolean isValidLocalizedAttribute(String attributeName, List<HeliumParam> validParams) {
 		int separatorPosition = attributeName.indexOf("_");
 		if (separatorPosition <= 0) {
 			return false;
@@ -55,26 +62,55 @@ public class HeliumSection {
 	}
 	
 	
-	protected void loadFromConfig(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
+	protected void loadStringFromConfig (String attributeName, HeliumParam param, ConfigurationSection fileSection) {
+		HeliumText myHeliumText = new HeliumText(attributeName, fileSection); 
+		attributes.put(param, myHeliumText);						
+	}
+	
+	
+	protected void loadSectionFromConfig (String attributeName, HeliumParam param, ConfigurationSection fileSection) throws BalloonException {
+		if (!fileSection.isConfigurationSection(attributeName)) {
+			throw new BalloonException(getName(), "Attribute is not a section", attributeName);
+		}
+		sections.add(param);
+	}
+
+
+	protected void loadListFromConfig (String attributeName, HeliumParam param, ConfigurationSection fileSection) throws BalloonException {
+		if (!fileSection.isList(attributeName)) {
+			throw new BalloonException(getName(), "Attribute is not a list", attributeName);
+		}
+		lists.add(param);
+	}
+	
+	
+	protected void dispatchParam(String attributeName, HeliumParam param, ConfigurationSection fileSection) throws BalloonException {
+		if (param.isType(HeliumParamType.STRING)) {
+			loadStringFromConfig(attributeName, param, fileSection);
+		}
+		if (param.isType(HeliumParamType.SECTION)) {
+			loadSectionFromConfig(attributeName, param, fileSection);
+		}
+		if (param.isType(HeliumParamType.LIST)) {
+			loadListFromConfig(attributeName, param, fileSection);
+		}	
+	}
+
+	
+	protected void loadFromConfig(ConfigurationSection fileSection, List<HeliumParam> validParams, boolean ignoreUnknownAttributes) throws BalloonException {
 		Set<String> attributeNames = fileSection.getKeys(false);
 		for (String myAttributeName : attributeNames) {
 			if (!fileSection.contains(myAttributeName, true) || isValidLocalizedAttribute(myAttributeName, validParams)) { // ignore default from jar
 				continue;
 			}
 			HeliumParam myParam = findParam(myAttributeName, validParams);
-			if (myParam == null) {
-				throw new BalloonException(getName(), "Unknown attribute", myAttributeName);
-			}
-			
-			if (myParam.isSection()) {
-				if (!fileSection.isConfigurationSection(myAttributeName)) {
-					throw new BalloonException(getName(), "Attribute is not a section", myAttributeName);
-				}
-				sections.add(myParam);
+			if (myParam != null) {
+				dispatchParam(myAttributeName, myParam, fileSection);
 			} else {
-				HeliumText myHeliumText = new HeliumText(myAttributeName, fileSection); 
-				attributes.put(myParam, myHeliumText);
-			}
+				if (!ignoreUnknownAttributes) {
+					throw new BalloonException(getName(), "Unknown attribute", myAttributeName);
+				}
+			}			
 		}
 	}
 	
@@ -83,6 +119,11 @@ public class HeliumSection {
 		return sections.contains(param);
 	}
 	
+	
+	public boolean isList(HeliumParam param) {
+		return lists.contains(param);
+	}
+
 	
 	public String getString(HeliumParam param) {
 		HeliumText heliumText =  attributes.get(param);

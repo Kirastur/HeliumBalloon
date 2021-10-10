@@ -47,7 +47,7 @@ public class ConfigManager {
 	public ConfigManager(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
-		section = new ConfigSection();
+		section = new ConfigSection("");
 		configPlayer = buildConfigPlayer();
 		configMessage = buildConfigMessage();		
 		keepPlayerDays = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS, DEFAULT_KEEP_PLAYER_DAYS);
@@ -120,8 +120,8 @@ public class ConfigManager {
 	}
 	
 	
-	public List<ConfigGuiItem> enumGuiItems() {
-		return section.enumGuiItems();
+	public List<ConfigGuiItem> getGuiItems() {
+		return section.getGuiItems();
 	}
 	
 
@@ -132,13 +132,13 @@ public class ConfigManager {
 	
 	public void reload() throws BalloonException {
 		ConfigurationSection fileSection = plugin.getConfig().getRoot();
-		ConfigSection newSection = new ConfigSection(fileSection);
+		ConfigSection newSection = new ConfigSection("", fileSection);
 		section = newSection;
 		
 		int ruleCount = getRuleNames().size();
 		int templateCount = getTemplateNames().size();
 		int wallCount = getWallNames().size();
-		int guiItemCount = enumGuiItems().size();
+		int guiItemCount = getGuiItems().size();
 		logger.printInfo(String.format("%d rules, %d templates, %d walls and %d GUI items loaded", ruleCount, templateCount, wallCount, guiItemCount));
 	}
 

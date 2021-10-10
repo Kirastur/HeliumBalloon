@@ -4,19 +4,17 @@ import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumParamType;
 import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
-public enum ParamSection implements HeliumParam {
+public enum ParamWorld implements HeliumParam {
 
-	WORLDS (SECTION, "worlds"),
-	RULES (SECTION, "rules"),
-	TEMPLATES (SECTION, "templates"),
-	WALLS (SECTION, "walls"),
-	GUI (SECTION, "gui");
-
+	INCLUDE_ALL (STRING, "includeAllWorlds"),
+	INCLUDE_LIST (LIST, "include"),
+	EXCLUDE_LIST(LIST, "exclude");
+		
 	private final HeliumParamType paramType;
 	private final String attributeName;
 	
 
-	private ParamSection(HeliumParamType paramType, String attributeName) {
+	private ParamWorld(HeliumParamType paramType, String attributeName) {
 		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
@@ -27,10 +25,9 @@ public enum ParamSection implements HeliumParam {
 		return testParamType==paramType;
 	}
 
-
+	
 	@Override
 	public String getAttributeName() {
 		return attributeName;
 	}
-
 }

@@ -2,7 +2,7 @@ package de.polarwolf.heliumballoon.helium;
 
 public interface HeliumParam {
 	
-	public boolean isSection();
+	public boolean isType(HeliumParamType paramType);
 	
 	public String getAttributeName();
 

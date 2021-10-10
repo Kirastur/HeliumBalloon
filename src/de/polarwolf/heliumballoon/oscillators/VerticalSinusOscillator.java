@@ -4,14 +4,14 @@ import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigRule;
 
-public class VerticalOscillator implements Oscillator {
+public class VerticalSinusOscillator implements Oscillator {
 	
 	protected final ConfigRule rule;
 	protected int count = 0;
 	protected Vector deflection = new Vector();
 
 	
-	public VerticalOscillator(ConfigRule rule) {
+	public VerticalSinusOscillator(ConfigRule rule) {
 		this.rule = rule;
 	}
 	

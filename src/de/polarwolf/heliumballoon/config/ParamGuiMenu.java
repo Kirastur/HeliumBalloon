@@ -1,27 +1,28 @@
 package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
 public enum ParamGuiMenu implements HeliumParam {
 
-	TITLE (false, "title"),
-	ITEMS (true, "items"),
-	DEASSIGN (true, "deassign");
-	
+	TITLE (STRING, "title"),
+	ITEMS (SECTION, "items"),
+	DEASSIGN (SECTION, "deassign");
 		
+	private final HeliumParamType paramType;
 	private final String attributeName;
-	private final boolean section;
 	
 
-	private ParamGuiMenu(boolean section, String attributeName) {
-		this.section = section;
+	private ParamGuiMenu(HeliumParamType paramType, String attributeName) {
+		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
 
 
 	@Override
-	public boolean isSection() {
-		return section;
+	public boolean isType(HeliumParamType testParamType) {
+		return testParamType==paramType;
 	}
 
 	

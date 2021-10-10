@@ -1,48 +1,51 @@
 package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
 public enum ParamLiving implements HeliumParam {
 
-	TYPE ("type"),
-	X ("x"),
-	Y ("y"),
-	Z ("z"),
-	LEASH ("leash"),
-	HIDDEN ("hidden"),
-	TAMED ("tamed"),
-	CATTYPE ("catType"),
-	COLLARCOLOR ("collarColor"),
-	FOXTYPE ("foxType"),
-	HORSECOLOR ("horseColor"),
-	HORSESTYLE ("horseStyle"),
-	LLAMACOLOR ("llamaColor"),
-	MUSHROOMCOWVARIANT ("mushroomCowVariant"),
-	PANDAMAINGENE ("pandaMainGene"),
-	PANDAHIDDENGENE ("pandaHiddenGene"),
-	PARROTVARIANT ("parrotVariant"),
-	RABBITTYPE ("rabbitType"),
-	SHEEPCOLOR ("sheepColor"),
-	TROPICALFISHBODYCOLOR ("tropicalFishBodyColor"),
-	TROPICALFISHPATTERNCOLOR ("tropicalFishPatternColor"),
-	TROPICALFISHPATTERN ("tropicalFishPattern"),
-	VILLAGER_TYPE("villagerType"),
-	VILLAGER_PROFESSION("villagerProfession"),
-	VILLAGER_LEVEL("villagerLevel"),
-	CUSTOM ("custom");
+	TYPE (STRING, "type"),
+	X (STRING, "x"),
+	Y (STRING, "y"),
+	Z (STRING, "z"),
+	LEASH (STRING, "leash"),
+	HIDDEN (STRING, "hidden"),
+	TAMED (STRING, "tamed"),
+	CATTYPE (STRING, "catType"),
+	COLLARCOLOR (STRING, "collarColor"),
+	FOXTYPE (STRING, "foxType"),
+	HORSECOLOR (STRING, "horseColor"),
+	HORSESTYLE (STRING, "horseStyle"),
+	LLAMACOLOR (STRING, "llamaColor"),
+	MUSHROOMCOWVARIANT (STRING, "mushroomCowVariant"),
+	PANDAMAINGENE (STRING, "pandaMainGene"),
+	PANDAHIDDENGENE (STRING, "pandaHiddenGene"),
+	PARROTVARIANT (STRING, "parrotVariant"),
+	RABBITTYPE (STRING, "rabbitType"),
+	SHEEPCOLOR (STRING, "sheepColor"),
+	TROPICALFISHBODYCOLOR (STRING, "tropicalFishBodyColor"),
+	TROPICALFISHPATTERNCOLOR (STRING, "tropicalFishPatternColor"),
+	TROPICALFISHPATTERN (STRING, "tropicalFishPattern"),
+	VILLAGER_TYPE(STRING, "villagerType"),
+	VILLAGER_PROFESSION(STRING, "villagerProfession"),
+	VILLAGER_LEVEL(STRING, "villagerLevel"),
+	CUSTOM (STRING, "custom");
 	
-		
+	private final HeliumParamType paramType;
 	private final String attributeName;
 	
 
-	private ParamLiving(String attributeName) {
+	private ParamLiving(HeliumParamType paramType, String attributeName) {
+		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
 	
 	
 	@Override
-	public boolean isSection() {
-		return false;
+	public boolean isType(HeliumParamType testParamType) {
+		return testParamType==paramType;
 	}
 
 

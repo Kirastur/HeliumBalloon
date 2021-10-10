@@ -83,7 +83,7 @@ public class BalloonManager extends BukkitRunnable {
 	}
 	
 	
-	public List<Balloon> enumAllBalloons() {
+	public List<Balloon> getAllBalloons() {
 		return new ArrayList<>(balloons);
 	}
 	
@@ -120,7 +120,7 @@ public class BalloonManager extends BukkitRunnable {
 
 	
 	public void cancelAllBalloons(boolean forceRemove) {
-		for (Balloon myBalloon : enumAllBalloons()) {
+		for (Balloon myBalloon : getAllBalloons()) {
 			myBalloon.cancel();
 			if (forceRemove) {
 				removeBalloon(myBalloon);							
@@ -144,9 +144,8 @@ public class BalloonManager extends BukkitRunnable {
 	}
 	
 	
-	protected void handleTick() throws BalloonException {
-		incrementOscillators();		
-		for (Balloon myBalloon : enumAllBalloons()) {
+	protected void moveBalloons() throws Exception  {
+		for (Balloon myBalloon : getAllBalloons()) {
 			try {
 				String resultMessage = myBalloon.move();
 				if (resultMessage == null) {
@@ -168,6 +167,12 @@ public class BalloonManager extends BukkitRunnable {
 				throw e;				
 			}
 		}
+	}
+	
+	
+	protected void handleTick() throws Exception {
+		incrementOscillators();
+		moveBalloons();
 	}
 	
 

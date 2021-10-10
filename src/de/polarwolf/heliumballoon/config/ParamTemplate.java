@@ -1,30 +1,31 @@
 package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
 public enum ParamTemplate implements HeliumParam {
 
-	RULE (false, "rule"),
-	OSCILLATING (false, "oscillating"),
-	LIVING (true, "living"),
-	ELEMENTS (true, "elements"),
-	MINECART (true, "minecart"),
-	CUSTOM (false, "custom");
+	RULE (STRING, "rule"),
+	OSCILLATING (STRING, "oscillating"),
+	LIVING (SECTION, "living"),
+	ELEMENTS (SECTION, "elements"),
+	MINECART (SECTION, "minecart"),
+	CUSTOM (STRING, "custom");
 		
-	
+	private final HeliumParamType paramType;
 	private final String attributeName;
-	private final boolean section;
 	
 
-	private ParamTemplate(boolean section, String attributeName) {
+	private ParamTemplate(HeliumParamType paramType, String attributeName) {
+		this.paramType = paramType;
 		this.attributeName = attributeName;
-		this.section = section;
 	}
 
 
 	@Override
-	public boolean isSection() {
-		return section;
+	public boolean isType(HeliumParamType testParamType) {
+		return testParamType==paramType;
 	}
 
 

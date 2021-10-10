@@ -17,6 +17,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.elements.FallingBlockElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
@@ -70,11 +71,35 @@ public class ConfigElement implements ConfigPart {
 	public String getFullName() {
 		return fullName;
 	}
+	
+	
+	@Override
+	public boolean isSuitableFor(BalloonPurpose purpose) {
+		switch(purpose) {
+			case PET: return true;
+			case WALL: return true;
+			case ROTATION: return false;
+			default: return false;
+		
+		}
+	}
 
 	
 	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new FallingBlockElement(player, rule, this, spawnModifier);
+	}
+	
+	
+	@Override
+	public double getMinYOffset() {
+		return offset.getY();		
+	}
+
+	
+	@Override
+	public double getMaxYOffset() {
+		return offset.getY();		
 	}
 
 	

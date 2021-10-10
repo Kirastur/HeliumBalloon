@@ -2,10 +2,13 @@ package de.polarwolf.heliumballoon.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.CompoundElement;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
@@ -15,7 +18,7 @@ public class ConfigCompound implements ConfigPart {
 
 	private final String name;
 	private final String fullName;
-	private List<ConfigElement> elements = new ArrayList<>();
+	private Map<String,ConfigElement> elements = new TreeMap<>();
 	
 	
 	public ConfigCompound(String name, String fullName) {
@@ -44,23 +47,59 @@ public class ConfigCompound implements ConfigPart {
 
 
 	@Override
+	public boolean isSuitableFor(BalloonPurpose purpose) {
+		switch(purpose) {
+			case PET: return true;
+			case WALL: return true;
+			case ROTATION: return false;
+			default: return false;
+		
+		}
+	}
+
+	
+	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new CompoundElement(player, rule, this, spawnModifier);
 	}
 
 	
+	@Override
+	public double getMinYOffset() {
+		double minYOffset = 0;
+		for (ConfigElement myElement : elements.values()) {
+			if (myElement.getMinYOffset() < minYOffset) {
+				minYOffset = myElement.getMinYOffset();
+			}
+		}
+		return minYOffset;		
+	}
+
+	
+	@Override
+	public double getMaxYOffset() {
+		double maxYOffset = 0;
+		for (ConfigElement myElement : elements.values()) {
+			if (myElement.getMaxYOffset() > maxYOffset) {
+				maxYOffset = myElement.getMinYOffset();
+			}
+		}
+		return maxYOffset;		
+	}
+	
+
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}
 	
 
-	public List<ConfigElement> enumElements() {
-		return new ArrayList<>(elements);
+	public List<ConfigElement> getElements() {
+		return new ArrayList<>(elements.values());
 	}
 	
 	
 	protected void addElement(ConfigElement newElement) {
-		elements.add(newElement);
+		elements.put(newElement.getName(), newElement);
 	}
 	
 	

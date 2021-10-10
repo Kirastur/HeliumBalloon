@@ -6,15 +6,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.bstats.Metrics;
 import de.polarwolf.heliumballoon.commands.BalloonCommand;
-import de.polarwolf.heliumballoon.commands.BalloonTabCompleter;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 
-public final class Main extends JavaPlugin { 
+public final class Main extends JavaPlugin {
+	
+	public static final String BALLOON_COMMAND = "balloon";
 	
 	protected HeliumBalloonOrchestrator orchestrator = null;
 	protected BalloonCommand balloonCommand = null;
-	protected BalloonTabCompleter balloonTabCompleter = null;
 
 	@Override
 	public void onEnable() {
@@ -23,10 +23,7 @@ public final class Main extends JavaPlugin {
 		saveDefaultConfig();
 		
 		// Register commands		
-		balloonCommand = new BalloonCommand(this);
-		getCommand("balloon").setExecutor(balloonCommand);
-		balloonTabCompleter = new BalloonTabCompleter(balloonCommand);
-		getCommand("balloon").setTabCompleter(balloonTabCompleter);
+		balloonCommand = new BalloonCommand(this, BALLOON_COMMAND);
 		
 		// Enable bStats Metrics
 		// Please download the bstats-code direct form their homepage

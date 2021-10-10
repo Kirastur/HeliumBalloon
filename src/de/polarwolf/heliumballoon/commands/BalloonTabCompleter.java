@@ -9,14 +9,16 @@ import org.bukkit.command.TabCompleter;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonAPI;
 import de.polarwolf.heliumballoon.api.HeliumBalloonProvider;
+import de.polarwolf.heliumballoon.main.Main;
 
 
 public class BalloonTabCompleter implements TabCompleter {
 	
 	protected final BalloonCommand balloonCommand;
 	
-	public BalloonTabCompleter(BalloonCommand balloonCommand) {
+	public BalloonTabCompleter(Main main, BalloonCommand balloonCommand) {
 		this.balloonCommand = balloonCommand;
+		main.getCommand(balloonCommand.getCommandName()).setTabCompleter(this);
 	}
 		
 

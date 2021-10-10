@@ -214,8 +214,8 @@ public class FallingBlockElement extends SimpleElement {
 	
 	
 	@Override
-	public boolean needDelay() {
-		return true;
+	public int getDelay() {
+		return getRule().getBlockDelay();
 	}
 
 

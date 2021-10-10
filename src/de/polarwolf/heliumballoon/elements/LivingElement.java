@@ -62,8 +62,8 @@ public class LivingElement extends SimpleElement {
 
 	
 	@Override
-	public boolean needDelay() {
-		return false;
+	public int getDelay() {
+		return getRule().getLivingDelay();
 	}
 
 

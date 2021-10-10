@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
+import de.polarwolf.heliumballoon.chunktickets.ChunkTicketManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.config.ConfigWall;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
@@ -16,6 +17,7 @@ public class WallManager {
 	
 	protected final Plugin plugin;
 	protected final HeliumLogger logger;
+	protected final ChunkTicketManager chunkTicketManager;
 	protected final ConfigManager configManager;
 	protected final BalloonManager balloonManager;
 	protected List<Wall> walls = new ArrayList<>();
@@ -24,6 +26,7 @@ public class WallManager {
 	public WallManager(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
+		this.chunkTicketManager = orchestrator.getChunkTicketManager();
 		this.configManager = orchestrator.getConfigManager();
 		this.balloonManager = orchestrator.getBalloonManager();
 		logger.printDebug("Wallmanager startet");
@@ -45,7 +48,6 @@ public class WallManager {
 				count = count +1;
 			}
 		}
-		world.removePluginChunkTickets(plugin);
 		return count;
 	}
 	
@@ -59,9 +61,9 @@ public class WallManager {
 				if (myConfigWall.isMatchingWorld(world)) {
 					String wallName = myConfigWall.getName()+"."+world.getName();
 					logger.printDebug(String.format("Crating WallBalloon: %s", wallName));
-					Wall newWall = new Wall(plugin, balloonManager, myConfigWall, world);
-					newWall.buildBalloon();
+					Wall newWall = new Wall(chunkTicketManager, balloonManager, myConfigWall, world);
 					walls.add(newWall);
+					newWall.buildBalloons();
 					count = count +1;
 				}
 			}

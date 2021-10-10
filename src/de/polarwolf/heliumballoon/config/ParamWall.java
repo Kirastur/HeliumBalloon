@@ -1,26 +1,30 @@
 package de.polarwolf.heliumballoon.config;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
 public enum ParamWall implements HeliumParam {
 
-	TEMPLATE ("template"),
-	WORLDS ("worlds"),
-	X ("x"),
-	Y ("y"),
-	Z ("z");
+	TEMPLATE (STRING, "template"),
+	WORLDS (STRING, "worlds"),
+	X (STRING, "x"),
+	Y (STRING, "y"),
+	Z (STRING, "z");
 		
+	private final HeliumParamType paramType;
 	private final String attributeName;
 	
 
-	private ParamWall(String attributeName) {
+	private ParamWall(HeliumParamType paramType, String attributeName) {
+		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
 
 
 	@Override
-	public boolean isSection() {
-		return false;
+	public boolean isType(HeliumParamType testParamType) {
+		return testParamType==paramType;
 	}
 
 

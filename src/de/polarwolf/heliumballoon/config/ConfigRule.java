@@ -26,6 +26,8 @@ public class ConfigRule implements HeliumName {
 	private int oscillatorPeriod = 100;
 	private double oscillatorAmplitude = 0.1;
 	private int blockDelay = 4;
+	private int livingDelay = 1;
+	private int minecartDelay = 0;
 	
 	private double adjustIllagerY = 0.0;
 	private boolean enableRisingYWorkaround = true;
@@ -149,6 +151,26 @@ public class ConfigRule implements HeliumName {
 	}
 
 
+	public int getLivingDelay() {
+		return livingDelay;
+	}
+
+
+	protected void setLivingDelay(int livingDelay) {
+		this.livingDelay = livingDelay;
+	}
+
+
+	public int getMinecartDelay() {
+		return minecartDelay;
+	}
+
+
+	protected void setMinecartDelay(int minecartDelay) {
+		this.minecartDelay = minecartDelay;
+	}
+
+
 	public double getAdjustIllagerY() {
 		return adjustIllagerY;
 	}
@@ -204,6 +226,8 @@ public class ConfigRule implements HeliumName {
 		setOscillatorPeriod(heliumSection.getInt(ParamRule.OSCILLATOR_PERIOD, getOscillatorPeriod()));
 		setOscillatorAmplitude(heliumSection.getDouble(ParamRule.OSCILLATOR_AMPLITUDE, getOscillatorAmplitude()));
 		setBlockDelay(heliumSection.getInt(ParamRule.BLOCK_DELAY, getBlockDelay()));
+		setLivingDelay(heliumSection.getInt(ParamRule.LIVING_DELAY, getLivingDelay()));
+		setMinecartDelay(heliumSection.getInt(ParamRule.MINECART_DELAY, getMinecartDelay()));
 		setAdjustIllagerY(heliumSection.getDouble(ParamRule.ADJUST_ILLAGER_Y, getAdjustIllagerY()));
 		setEnableRisingYWorkaround(heliumSection.getBoolean(ParamRule.ENABLE_RISING_Y_WORKAROUND, isEnableRisingYWorkaround()));
 		setEnableWarnY64Walls(heliumSection.getBoolean(ParamRule.ENABLE_WARN_Y64_WALLS, isEnableWarnY64Walls()));		

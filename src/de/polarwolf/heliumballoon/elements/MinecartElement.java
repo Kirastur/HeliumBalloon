@@ -46,8 +46,8 @@ public class MinecartElement extends SimpleElement {
 
 	
 	@Override
-	public boolean needDelay() {
-		return true;
+	public int getDelay() {
+		return getRule().getMinecartDelay();
 	}
 
 

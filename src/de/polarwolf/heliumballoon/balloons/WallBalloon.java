@@ -2,6 +2,7 @@ package de.polarwolf.heliumballoon.balloons;
 
 import org.bukkit.Location;
 
+import de.polarwolf.heliumballoon.config.ConfigPart;
 import de.polarwolf.heliumballoon.config.ConfigWall;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 
@@ -11,8 +12,8 @@ public class WallBalloon extends SimpleBalloon {
 	protected final Location fixedLocation;
 	
 	
-	public WallBalloon(ConfigWall configWall, Location fixedLocation, Oscillator oscillator) {
-		super(null, configWall.getTemplate().getRule(), configWall.getTemplate().getCompound(), oscillator);
+	public WallBalloon(Location fixedLocation, ConfigWall configWall, ConfigPart part, Oscillator oscillator) {
+		super(null, configWall.getTemplate().getRule(), part, oscillator);
 		this.configWall = configWall;
 		this.fixedLocation = fixedLocation;
 	}

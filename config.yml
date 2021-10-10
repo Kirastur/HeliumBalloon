@@ -87,6 +87,8 @@ rules:
 #        oscillatorPeriod: 100
 #        oscillatorAmplitude: 0.1
 #        blockDelay: 4
+#        livingDelay: 1
+#        minecartDelay: 0
 #        adjustIllagerY: 0.0
 #        enableRisingYWorkaround: true
 #        enableWarnY64Walls: true

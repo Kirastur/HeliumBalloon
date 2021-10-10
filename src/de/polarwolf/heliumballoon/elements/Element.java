@@ -35,6 +35,9 @@ public interface Element {
 	// Get the offset from the central location
 	public Vector getOffset();
 	
+	// Get the delay needed for synchronizing balloons with different inertia
+	public int getDelay();
+	
 	// Hide the Entity by removing it.
 	public void hide();
 	
@@ -45,10 +48,6 @@ public interface Element {
 	// Set the Velocity (direction to travel to)
 	// Should not be null. Use an empty Vector instead. 
 	public void setVelocity(Vector newVelocity);
-	
-	// Flag if the Element needs a delay to get synchronized
-	// with other Elements.
-	public boolean needDelay();
 	
 	// The supervising object should call this function on every Tick
 	// because the underlying Entity can have a limited lifetime.

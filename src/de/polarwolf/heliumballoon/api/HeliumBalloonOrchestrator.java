@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
+import de.polarwolf.heliumballoon.chunktickets.ChunkTicketManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.gui.GuiManager;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
@@ -21,6 +22,7 @@ public class HeliumBalloonOrchestrator {
 	private final Plugin plugin;
 	private final HeliumLogger heliumLogger;
 	private final SpawnModifierManager spawnModifierManager;
+	private final ChunkTicketManager chunkTicketManager;
 	private final ConfigManager configManager;
 	private final PlayerManager playerManager;
 	private final BalloonManager balloonManager;
@@ -40,6 +42,7 @@ public class HeliumBalloonOrchestrator {
 		}
 		heliumLogger = createHeliumLogger();
 		spawnModifierManager = createSpawnModifierManager();
+		chunkTicketManager = createChunkTicketManager();
 		configManager = createConfigManager();
 		messageManager = createMessageManager();
 		playerManager = createPlayerManager();
@@ -62,6 +65,11 @@ public class HeliumBalloonOrchestrator {
 	
 	public SpawnModifierManager getSpawnModifierManager() {
 		return spawnModifierManager;
+	}
+	
+	
+	public ChunkTicketManager getChunkTicketManager() {
+		return chunkTicketManager;
 	}
 
 	public ConfigManager getConfigManager() {
@@ -108,6 +116,10 @@ public class HeliumBalloonOrchestrator {
 	
 	protected SpawnModifierManager createSpawnModifierManager() {
 		return new SpawnModifierManager(this);
+	}
+	
+	protected ChunkTicketManager createChunkTicketManager() {
+		return new ChunkTicketManager(this);
 	}
 	
 	protected ConfigManager createConfigManager() {

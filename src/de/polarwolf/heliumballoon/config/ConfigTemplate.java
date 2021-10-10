@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,9 +16,7 @@ public class ConfigTemplate implements HeliumName {
 	private final String fullName;
 	private ConfigRule rule;
 	private boolean oscillating = false;
-	private ConfigLiving living = null;
-	private ConfigCompound compound = null;
-	private ConfigMinecart minecart = null;
+	private List<ConfigPart> parts = new ArrayList<>();
 	private String custom;
 	
 	
@@ -66,51 +65,6 @@ public class ConfigTemplate implements HeliumName {
 	}
 
 
-	public boolean hasLiving() {
-		return (living != null);
-	}
-	
-	
-	public ConfigLiving getLiving() {
-		return living;
-	}
-
-
-	protected void setLiving(ConfigLiving living) {
-		this.living = living;
-	}
-
-
-	public boolean hasCompound() {
-		return ((compound != null)  && (!compound.isEmpty()));
-	}
-	
-	
-	public ConfigCompound getCompound() {
-		return compound;
-	}
-
-
-	protected void setCompound(ConfigCompound compound) {
-		this.compound = compound;
-	}
-
-
-	public boolean hasMinecart() {
-		return (minecart != null);
-	}
-	
-	
-	public ConfigMinecart getMinecart() {
-		return minecart;
-	}
-
-
-	protected void setMinecart(ConfigMinecart minecart) {
-		this.minecart = minecart;
-	}
-
-
 	public String getCustom() {
 		return custom;
 	}
@@ -118,6 +72,16 @@ public class ConfigTemplate implements HeliumName {
 
 	protected void setCustom(String custom) {
 		this.custom = custom;
+	}
+	
+	
+	public List<ConfigPart> getParts() {
+		return new ArrayList<>(parts);
+	}
+	
+	
+	protected void addPart(ConfigPart newPart) {
+		parts.add(newPart);
 	}
 	
 	
@@ -141,19 +105,19 @@ public class ConfigTemplate implements HeliumName {
 	
 	protected void loadLivingConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		ConfigurationSection fileSectionLiving = fileSection.getConfigurationSection(ParamTemplate.LIVING.getAttributeName());
-		setLiving(new ConfigLiving (fileSectionLiving));
+		addPart(new ConfigLiving (fileSectionLiving));
 	}
 	
 	
 	protected void loadElementsConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		ConfigurationSection fileSectionCompound = fileSection.getConfigurationSection(ParamTemplate.ELEMENTS.getAttributeName());
-		setCompound(new ConfigCompound (fileSectionCompound));
+		addPart(new ConfigCompound (fileSectionCompound));
 	}
 	
 	
 	protected void loadMinecartConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		ConfigurationSection fileSectionMinecart = fileSection.getConfigurationSection(ParamTemplate.MINECART.getAttributeName());
-		setMinecart(new ConfigMinecart (fileSectionMinecart));
+		addPart(new ConfigMinecart (fileSectionMinecart));
 	}
 	
 	

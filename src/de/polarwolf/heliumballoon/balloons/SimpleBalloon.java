@@ -132,11 +132,7 @@ public abstract class SimpleBalloon implements Balloon {
 	
 	
 	protected int getDelay() {
-		if (element.needDelay()) {
-			return getRule().getBlockDelay();
-		} else {
-			return 0;
-		}
+		return element.getDelay();
 	}
 	
 	
@@ -147,12 +143,10 @@ public abstract class SimpleBalloon implements Balloon {
 			newPosition.add(getOscillator().getDeflection());
 		}
 		
-		if (getDelay() > 0) {		
-			positionQueue.add(newPosition);
-			if (positionQueue.size() > getDelay()) {
-				positionQueue.remove(0);
-			}
-			newPosition = positionQueue.get(0);
+		positionQueue.add(newPosition);
+		newPosition = positionQueue.get(0);
+		if (positionQueue.size() > getDelay()) {
+			positionQueue.remove(0);
 		}
 		
 		return newPosition;			

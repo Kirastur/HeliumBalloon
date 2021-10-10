@@ -1,24 +1,29 @@
 package de.polarwolf.heliumballoon.pets;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.bukkit.entity.Player;
 
 import de.polarwolf.heliumballoon.balloons.Balloon;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.balloons.PetBalloon;
+import de.polarwolf.heliumballoon.config.ConfigPart;
 import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
-import de.polarwolf.heliumballoon.oscillators.VerticalOscillator;
+import de.polarwolf.heliumballoon.oscillators.VerticalSinusOscillator;
 
-public class Pet {
+public class Pet implements HeliumName {
 	
 	protected final Player player;
 	protected final BalloonManager balloonManager;
 	protected final ConfigTemplate template;
 	protected final Oscillator oscillator;
-	protected Balloon balloonLiving = null;
-	protected Balloon balloonCompound = null;
-	protected Balloon balloonMinecart = null;
+	protected Map<ConfigPart,Balloon> balloons = new HashMap<>();
 	
 	
 	public Pet (Player player, BalloonManager balloonManager, ConfigTemplate template) {
@@ -26,10 +31,15 @@ public class Pet {
 		this.balloonManager = balloonManager;
 		this.template = template;
 		if (template.isOscillating()) {
-			oscillator = new VerticalOscillator(template.getRule());
+			oscillator = new VerticalSinusOscillator(template.getRule());
 		} else {
 			oscillator = null;
-		}		
+		}
+		for (ConfigPart part : template.getParts()) {
+			if (part.isSuitableFor(BalloonPurpose.PET)) {
+				balloons.put(part, null);
+			}
+		}
 	}
 	
 	
@@ -38,70 +48,50 @@ public class Pet {
 	}
 
 
+	@Override
 	public String getName() {
+		return template.getName();
+	}
+	
+	
+	@Override
+	public String getFullName() {
 		return player.getName()+"."+template.getName();
 	}
 	
 	
-	public boolean isCancelled() {
+	public boolean isCancelled() {		
 		boolean myCancel = false;
-		if (balloonLiving != null) {
-			myCancel = balloonLiving.isCancelled();
+		for (Balloon myBalloon: balloons.values()) {
+			if ((myBalloon != null) && myBalloon.isCancelled()) {
+				myCancel = true;
+			}
 		}
-		if (balloonCompound != null) {
-			myCancel = myCancel || balloonCompound.isCancelled();
-		}
-		if (balloonMinecart != null) {
-			myCancel = balloonMinecart.isCancelled();
-		}
-		return myCancel;
+		return myCancel; 
 	}
-	
-	
-	protected void hideLiving() {
-		if (balloonLiving != null) {
-			balloonLiving.cancel();
-			balloonLiving = null;
-		}
-	}
-
-
-	protected void hideCompound() {
-		if (balloonCompound != null) {
-			balloonCompound.cancel();
-			balloonCompound = null;
-		}
-	}
-
-	
-	protected void hideMinecart() {
-		if (balloonMinecart != null) {
-			balloonMinecart.cancel();
-			balloonMinecart = null;
-		}
-	}
-
+		
 
 	public void hide() {
-		hideLiving();
-		hideCompound(); 
-		hideMinecart();
+		for (Entry<ConfigPart,Balloon> myEntry: balloons.entrySet()) {
+			Balloon myBalloon = myEntry.getValue();
+			if (myBalloon != null) {
+				myBalloon.cancel();
+				myEntry.setValue(null);
+			}
+		}
 	}
 	
 	
 	public void show() throws BalloonException {
 		try {
-			if (template.hasLiving() && ((balloonLiving == null) || balloonLiving.isCancelled())) {
-				balloonLiving = new PetBalloon(player, template, template.getLiving(), oscillator); 
-				balloonManager.addBalloon(balloonLiving);
+			for (Entry<ConfigPart,Balloon> myEntry: balloons.entrySet()) {
+				ConfigPart myPart = myEntry.getKey();
+				Balloon myBalloon = myEntry.getValue();
+				if ((myBalloon==null) || (myBalloon.isCancelled())) {
+					Balloon newBalloon = new PetBalloon(player, template, myPart, oscillator);
+					myEntry.setValue(newBalloon);
+					balloonManager.addBalloon(newBalloon);
 				}
-			if (template.hasCompound() && ((balloonCompound == null) || balloonCompound.isCancelled())) {
-				balloonCompound = new PetBalloon(player, template, template.getCompound(), oscillator);
-				balloonManager.addBalloon(balloonCompound);
-			}
-			if (template.hasMinecart() && ((balloonMinecart == null) || balloonMinecart.isCancelled())) {
-				balloonMinecart = new PetBalloon(player, template, template.getMinecart(), oscillator);
-				balloonManager.addBalloon(balloonMinecart);
 			}
 		} catch (Exception e) {
 			hide();

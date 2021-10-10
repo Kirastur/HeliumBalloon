@@ -1,6 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -9,9 +10,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
+import de.polarwolf.heliumballoon.helium.HeliumParam;
+import de.polarwolf.heliumballoon.helium.HeliumSection;
 
-public class ConfigSection {
+public class ConfigSection implements HeliumName {
 	
+	private final String name;
 	private List<ConfigRule> rules = new ArrayList<>();
 	private ConfigWorld worlds = null;
 	private List<ConfigTemplate> templates = new ArrayList<>();
@@ -19,15 +24,28 @@ public class ConfigSection {
 	private ConfigGuiMenu guiMenu = null;
 	
 	
-	public ConfigSection() {
-		// Nothing to do
+	public ConfigSection(String name) {
+		this.name = name;
 	}
+
 	
-	
-	public ConfigSection(ConfigurationSection fileSection) throws BalloonException {
+	public ConfigSection(String name, ConfigurationSection fileSection) throws BalloonException {
+		this.name = name;
 		loadConfigFromFile(fileSection);
 	}
 	
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+
+	@Override
+	public String getFullName() {
+		return getName();
+	}
+
 
 	// Rules
 	public ConfigRule findRule(String ruleName) {
@@ -150,11 +168,11 @@ public class ConfigSection {
 	}
 	
 	
-	public List<ConfigGuiItem> enumGuiItems() {
+	public List<ConfigGuiItem> getGuiItems() {
 		if (guiMenu == null) {
 			return new ArrayList<>();
 		} else {
-			return guiMenu.enumGuiItems();
+			return guiMenu.getGuiItems();
 		}
 	}
 	
@@ -169,6 +187,11 @@ public class ConfigSection {
 	
 	
 	// LoadFromFile
+	protected List<HeliumParam> getValidParams() {
+		return  Arrays.asList(ParamSection.values());
+	}
+
+	
 	protected ConfigRule buildConfigRuleFromFile(ConfigurationSection fileSection) throws BalloonException {
 		return new ConfigRule(fileSection);
 	}
@@ -223,12 +246,12 @@ public class ConfigSection {
 	}
 
 
-	protected ConfigWorld buildConfigWorldFromFile(ConfigurationSection fileSection) {
+	protected ConfigWorld buildConfigWorldFromFile(ConfigurationSection fileSection) throws BalloonException {
 		return new ConfigWorld(fileSection);
 	}
 	
 	
-	protected void loadWorldsFromFile(ConfigurationSection fileSectionWorlds) {
+	protected void loadWorldsFromFile(ConfigurationSection fileSectionWorlds) throws BalloonException {
 		setWorlds(buildConfigWorldFromFile(fileSectionWorlds));
 	}
 	
@@ -244,28 +267,30 @@ public class ConfigSection {
 	
 
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams(), true);
 		
-		if (fileSection.contains(ParamSection.WORLDS.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.WORLDS.getAttributeName())) {
+
+		if (heliumSection.isSection(ParamSection.WORLDS))  {
 			loadWorldsFromFile(fileSection.getConfigurationSection(ParamSection.WORLDS.getAttributeName()));
 		}
 
-		if (fileSection.contains(ParamSection.RULES.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.RULES.getAttributeName())) {
+		if (heliumSection.isSection(ParamSection.RULES)) {
 			loadRulesFromFile(fileSection.getConfigurationSection(ParamSection.RULES.getAttributeName()));
 		} else {
 			throw new BalloonException(null, "Rules definition is missing", null);
 		}
 
-		if (fileSection.contains(ParamSection.TEMPLATES.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.TEMPLATES.getAttributeName())) {
+		if (heliumSection.isSection(ParamSection.TEMPLATES)) {
 			loadTemplatesFromFile(fileSection.getConfigurationSection(ParamSection.TEMPLATES.getAttributeName()));
 		} else {
 			throw new BalloonException(null, "Templates definition is missing", null);
 		}
 		
-		if (fileSection.contains(ParamSection.WALLS.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.WALLS.getAttributeName())) {
+		if (heliumSection.isSection(ParamSection.WALLS)) {
 			loadWallsFromFile(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
 		}
 		
-		if (fileSection.contains(ParamSection.GUI.getAttributeName(), true) && fileSection.isConfigurationSection(ParamSection.GUI.getAttributeName())) {
+		if (heliumSection.isSection(ParamSection.GUI)) {
 			loadGuiFromFile(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
 		}
 	}

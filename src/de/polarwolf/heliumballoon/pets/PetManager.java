@@ -237,11 +237,11 @@ public class PetManager extends BukkitRunnable {
 		pet.hide();
 		pets.remove(pet);
 		if (wasPetCancelled) {
-			logger.printDebug(String.format("Deleting cancelled pet: %s", pet.getName()));
+			logger.printDebug(String.format("Deleting cancelled pet: %s", pet.getFullName()));
 			setPlayerDelay(player);
 			increasePlayerCancelScore(player);
 		} else {
-			logger.printDebug(String.format("Removing pet: %s", pet.getName()));
+			logger.printDebug(String.format("Removing pet: %s", pet.getFullName()));
 		}
 	}
 	

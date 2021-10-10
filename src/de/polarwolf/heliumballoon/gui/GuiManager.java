@@ -91,9 +91,9 @@ public class GuiManager {
     }
 
 
-	public List<ConfigGuiItem> enumGuiItemConfigs(Player player) {
+	public List<ConfigGuiItem> getGuiItemConfigs(Player player) {
 		List<ConfigGuiItem> newGuiItems = new ArrayList<>();
-		for (ConfigGuiItem myGuiItem : configManager.enumGuiItems()) {
+		for (ConfigGuiItem myGuiItem : configManager.getGuiItems()) {
 			if ((player == null) || petManager.hasTemplatePermission(player, myGuiItem.getTemplate().getName())) {
 				newGuiItems.add(myGuiItem);
 			}
@@ -102,9 +102,9 @@ public class GuiManager {
 	}
 
 	
-	public List<ItemStack> enumGuiItemStacks(Player player) {
+	public List<ItemStack> getGuiItemStacks(Player player) {
 		List<ItemStack> newItemStacks = new ArrayList<>();
-		for (ConfigGuiItem myGuiItem : enumGuiItemConfigs(player)) {
+		for (ConfigGuiItem myGuiItem : getGuiItemConfigs(player)) {
 			ItemStack myItemStack = createTemplateItemStack(player, myGuiItem);
 			newItemStacks.add(myItemStack);
 		}
@@ -113,7 +113,7 @@ public class GuiManager {
 	
 	
 	public Inventory openGui(Player player) { 
-		List<ItemStack> itemStackList = enumGuiItemStacks(player);
+		List<ItemStack> itemStackList = getGuiItemStacks(player);
 		if (itemStackList.isEmpty()) {
 			return null;
 		}
@@ -127,7 +127,7 @@ public class GuiManager {
 		}
 		
 		Inventory newInventory = Bukkit.createInventory(null, size, configManager.getGuiTitle(player));
-		for (ItemStack myItemStack : enumGuiItemStacks(player)) {
+		for (ItemStack myItemStack : getGuiItemStacks(player)) {
 			newInventory.addItem(myItemStack);
 		}
 		if (configManager.getGuiDeassign() != null) {

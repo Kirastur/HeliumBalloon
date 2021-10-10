@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.elements.MinecartElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
@@ -55,8 +56,32 @@ public class ConfigMinecart implements ConfigPart {
 
 
 	@Override
+	public boolean isSuitableFor(BalloonPurpose purpose) {
+		switch(purpose) {
+			case PET: return true;
+			case WALL: return false;
+			case ROTATION: return true;
+			default: return false;
+		
+		}
+	}
+
+	
+	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new MinecartElement(player, rule, this, spawnModifier);
+	}
+
+	
+	@Override
+	public double getMinYOffset() {
+		return offset.getY();		
+	}
+
+	
+	@Override
+	public double getMaxYOffset() {
+		return offset.getY();		
 	}
 
 	

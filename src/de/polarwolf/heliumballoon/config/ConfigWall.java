@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
@@ -120,14 +121,18 @@ public class ConfigWall implements HeliumName {
 	
 	
 	protected void checkY64Bug() throws BalloonException {
-		if (!getTemplate().hasCompound() || !getTemplate().getRule().isEnableWarnY64Walls()) {
+		if (!getTemplate().getRule().isEnableWarnY64Walls()) {
 			return;
 		}
-		double y = getAbsolutePosition().getY();
-		for (ConfigElement myConfigElement : getTemplate().getCompound().enumElements()) {
-			double eY = y + myConfigElement.getOffset().getY();
-			if ((eY > 63.7) && (eY < 64.1)) {
-				throw new BalloonException(getFullName(), "Due to a bug a wall element cannot be positioned between y=63.7 and y=64.1", null);
+		for (ConfigPart myPart : template.getParts()) {
+			if (myPart.isSuitableFor(BalloonPurpose.WALL)) {
+				double y = getAbsolutePosition().getY();
+				double yMin = y + myPart.getMinYOffset();
+				double yMax = y + myPart.getMaxYOffset();						
+				if ((yMin < 64.1) && (yMax > 63.7)) {
+					String range = String.format("%f-%f", yMin, yMax);
+					throw new BalloonException(getFullName(), "A wall element cannot be positioned between y=63.7 and y=64.1", range);
+				}
 			}	
 		}	
 	}

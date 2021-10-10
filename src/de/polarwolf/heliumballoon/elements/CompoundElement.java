@@ -34,7 +34,7 @@ public class CompoundElement implements Element {
 	
 	protected void buildElements() {
 		elements.clear();
-		for(ConfigElement myConfigElement : getCompound().enumElements()) {
+		for(ConfigElement myConfigElement : getCompound().getElements()) {
 			elements.add(myConfigElement.createElement(player, getRule(), spawnModifier));
 		}
 	}
@@ -70,8 +70,8 @@ public class CompoundElement implements Element {
 
 
 	@Override
-	public boolean needDelay() {
-		return true;
+	public int getDelay() {
+		return getRule().getBlockDelay();
 	}
 
 

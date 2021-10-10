@@ -133,7 +133,7 @@ public class HeliumBalloonAPI {
 	}
 	
 	public List<Balloon> getAllBalloons() {
-		return balloonManager.enumAllBalloons();
+		return balloonManager.getAllBalloons();
 	}
 
 	
@@ -180,11 +180,11 @@ public class HeliumBalloonAPI {
 
     
 	public List<ConfigGuiItem> getGuiItemConfigs(Player player) {
-		return guiManager.enumGuiItemConfigs(player);
+		return guiManager.getGuiItemConfigs(player);
 	}
 
 	public List<ItemStack> getGuiItemStacks(Player player) {
-		return guiManager.enumGuiItemStacks(player);
+		return guiManager.getGuiItemStacks(player);
 	}
 	
 	public Inventory openGui(Player player) {

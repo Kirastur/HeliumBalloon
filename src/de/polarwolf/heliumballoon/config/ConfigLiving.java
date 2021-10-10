@@ -20,6 +20,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.elements.LivingElement;
+import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
@@ -84,8 +85,32 @@ public class ConfigLiving implements ConfigPart {
 
 	
 	@Override
+	public boolean isSuitableFor(BalloonPurpose purpose) {
+		switch(purpose) {
+			case PET: return true;
+			case WALL: return false;
+			case ROTATION: return false;
+			default: return false;
+		
+		}
+	}
+
+	
+	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new LivingElement(player, rule, this, spawnModifier);
+	}
+
+	
+	@Override
+	public double getMinYOffset() {
+		return offset.getY();		
+	}
+
+	
+	@Override
+	public double getMaxYOffset() {
+		return offset.getY();		
 	}
 
 	

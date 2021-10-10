@@ -59,7 +59,7 @@ public class ConfigGuiMenu implements HeliumName {
 	}
 
 
-	public List<ConfigGuiItem> enumGuiItems() {
+	public List<ConfigGuiItem> getGuiItems() {
 		return new ArrayList<>(guiItems.values());
 	}
 	
