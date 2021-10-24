@@ -6,11 +6,10 @@ import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
-public class ConfigTemplate implements HeliumName {
+public class ConfigTemplate implements ConfigBalloonSet {
 	
 	private final String name;
 	private final String fullName;
@@ -42,6 +41,12 @@ public class ConfigTemplate implements HeliumName {
 	@Override
 	public String getFullName() {
 		return fullName;
+	}
+	
+	
+	@Override
+	public ConfigTemplate getTemplate() {
+		return this;
 	}
 
 
@@ -121,6 +126,12 @@ public class ConfigTemplate implements HeliumName {
 	}
 	
 	
+	protected void loadArmorStandConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionArmorStand = fileSection.getConfigurationSection(ParamTemplate.ARMORSTAND.getAttributeName());
+		addPart(new ConfigArmorStand (fileSectionArmorStand));
+	}
+	
+	
 	protected void importHeliumSection(HeliumSection heliumSection, ConfigSection balloonSection) throws BalloonException { 
 		String ruleName = heliumSection.getString(ParamTemplate.RULE);
 		setRule(getRuleFromName(ruleName, balloonSection));
@@ -144,6 +155,9 @@ public class ConfigTemplate implements HeliumName {
 
 		if (heliumSection.isSection(ParamTemplate.MINECART)) {
 			loadMinecartConfigFromFile(fileSection);
+		}						
+		if (heliumSection.isSection(ParamTemplate.ARMORSTAND)) {
+			loadArmorStandConfigFromFile(fileSection);
 		}						
 	}
 

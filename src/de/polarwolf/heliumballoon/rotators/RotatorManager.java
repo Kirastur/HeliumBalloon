@@ -1,4 +1,4 @@
-package de.polarwolf.heliumballoon.walls;
+package de.polarwolf.heliumballoon.rotators;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,30 +10,30 @@ import de.polarwolf.heliumballoon.config.ConfigPlaceableBalloonSet;
 import de.polarwolf.heliumballoon.placings.Placing;
 import de.polarwolf.heliumballoon.placings.PlacingManager;
 
-public class WallManager extends PlacingManager {
+public class RotatorManager extends PlacingManager {
 	
 
-	public WallManager(HeliumBalloonOrchestrator orchestrator) {
+	public RotatorManager(HeliumBalloonOrchestrator orchestrator) {
 		super(orchestrator);
-		logger.printDebug("Wallmanager started");
+		logger.printDebug("Rotatormanager started");
 	}
 	
 	
 	@Override
 	protected Set<String> getBalloonSetNames() {
-		return configManager.getWallNames();
+		return configManager.getRotatorNames();
 	}
 	
 	
 	@Override
 	protected ConfigPlaceableBalloonSet findBalloonSet(String placingName) {
-		return configManager.findWall(placingName);
+		return configManager.findRotator(placingName);
 	}
 	
 	
 	@Override
 	protected Placing createPlacing(ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
-		return new Wall(chunkTicketManager, balloonManager, configPlaceableBalloonSet, world);
+		return new Rotator(chunkTicketManager, balloonManager, configPlaceableBalloonSet, world);
 	}
 
 	
@@ -41,21 +41,20 @@ public class WallManager extends PlacingManager {
 	public int reload() {
 		int count = super.reload();
 		if (count > 0) {
-			logger.printInfo(String.format("%d walls created in total.", count));
+			logger.printInfo(String.format("%d rotators created in total.", count));
 		}
 		return count;
 	}
-	
-	
-	public List<Wall> getWalls() {
-		List<Wall> wallList = new ArrayList<>();
+		
+
+	public List<Rotator> getRotators() {
+		List<Rotator> rotatorList = new ArrayList<>();
 		for (Placing myPlacing : getPlacings()) {
-			if (myPlacing instanceof Wall) {
-				Wall myWall = (Wall)myPlacing;
-				wallList.add(myWall);
+			if (myPlacing instanceof Rotator) {
+				Rotator myRotator = (Rotator)myPlacing;
+				rotatorList.add(myRotator);
 			}
 		}
-		return wallList;	
+		return rotatorList;	
 	}
-		
 }

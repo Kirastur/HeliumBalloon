@@ -49,6 +49,10 @@ public interface Element {
 	// Should not be null. Use an empty Vector instead. 
 	public void setVelocity(Vector newVelocity);
 	
+	
+	// Set the rotation angle (0 - 360 degree)
+	public void setSpin(double spin);
+	
 	// The supervising object should call this function on every Tick
 	// because the underlying Entity can have a limited lifetime.
 	public void keepAlive();

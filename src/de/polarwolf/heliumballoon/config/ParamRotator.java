@@ -4,20 +4,19 @@ import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumParamType;
 import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
-public enum ParamSection implements HeliumParam {
+public enum ParamRotator implements HeliumParam {
 
-	WORLDS (SECTION, "worlds"),
-	RULES (SECTION, "rules"),
-	TEMPLATES (SECTION, "templates"),
-	WALLS (SECTION, "walls"),
-	ROTATORS (SECTION, "rotators"),
-	GUI (SECTION, "gui");
-
+	TEMPLATE (STRING, "template"),
+	WORLDS (STRING, "worlds"),
+	X (STRING, "x"),
+	Y (STRING, "y"),
+	Z (STRING, "z");
+		
 	private final HeliumParamType paramType;
 	private final String attributeName;
 	
 
-	private ParamSection(HeliumParamType paramType, String attributeName) {
+	private ParamRotator(HeliumParamType paramType, String attributeName) {
 		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
@@ -33,5 +32,4 @@ public enum ParamSection implements HeliumParam {
 	public String getAttributeName() {
 		return attributeName;
 	}
-
 }

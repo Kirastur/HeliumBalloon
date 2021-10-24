@@ -110,6 +110,16 @@ public class ConfigManager {
 	}
 
 	
+	public ConfigRotator findRotator(String rotationName) {
+		return section.findRotator(rotationName);
+	}
+	
+	
+	public Set<String> getRotatorNames() {
+		return section.getRotatorNames();
+	}
+
+	
 	public boolean hasWorld(String worldName) {
 		return section.hasWorld(worldName);
 	}
@@ -138,8 +148,9 @@ public class ConfigManager {
 		int ruleCount = getRuleNames().size();
 		int templateCount = getTemplateNames().size();
 		int wallCount = getWallNames().size();
+		int rotatorCount = getRotatorNames().size();
 		int guiItemCount = getGuiItems().size();
-		logger.printInfo(String.format("%d rules, %d templates, %d walls and %d GUI items loaded", ruleCount, templateCount, wallCount, guiItemCount));
+		logger.printInfo(String.format("%d rules, %d templates, %d walls, %d rotators and %d GUI items loaded", ruleCount, templateCount, wallCount, rotatorCount, guiItemCount));
 	}
 
 

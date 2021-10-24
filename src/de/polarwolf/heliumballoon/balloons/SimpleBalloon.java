@@ -9,19 +9,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.config.ConfigBalloonSet;
 import de.polarwolf.heliumballoon.config.ConfigPart;
 import de.polarwolf.heliumballoon.config.ConfigRule;
+import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
-public abstract class SimpleBalloon implements Balloon {
+public abstract class SimpleBalloon implements Balloon, HeliumName {
 	
 	private boolean cancelled = false;
 	private final Player player;
-	private final ConfigRule rule;
-	private final ConfigPart part;
+	private final ConfigBalloonSet configBalloonSet;
+	private final ConfigPart configPart;
 	private final Oscillator oscillator;
 	private Element element = null;
 	protected boolean highSpeedMode = false;
@@ -31,10 +34,10 @@ public abstract class SimpleBalloon implements Balloon {
 	protected List<Vector> positionQueue = new ArrayList<>();
 	
 	
-	protected SimpleBalloon(Player player, ConfigRule rule, ConfigPart part, Oscillator oscillator) {
+	protected SimpleBalloon(Player player, ConfigBalloonSet configBalloonSet, ConfigPart configPart, Oscillator oscillator) {
 		this.player = player;
-		this.rule = rule;
-		this.part = part;
+		this.configBalloonSet = configBalloonSet;
+		this.configPart = configPart;
 		this.oscillator = oscillator;
 	}
 	
@@ -58,18 +61,35 @@ public abstract class SimpleBalloon implements Balloon {
 
 
 	@Override
+	public String getName() {
+		return configBalloonSet.getName();
+	}
+	
+	
+	@Override
+	public String getFullName() {
+		return configBalloonSet.getFullName();
+	}
+
+
+	@Override
 	public Player getPlayer() {
 		return player;
 	}
 	
+	
+	protected ConfigTemplate getTemplate() {
+		return configBalloonSet.getTemplate();
+	}
+	
 
 	protected ConfigRule getRule() {
-		return  rule;
+		return configBalloonSet.getTemplate().getRule();
 	}
 
 
 	protected ConfigPart getPart() {
-		return part;
+		return configPart;
 	}
 
 
@@ -140,7 +160,7 @@ public abstract class SimpleBalloon implements Balloon {
 		Vector newPosition = targetPosition.clone();
 
 		if (getOscillator() != null) {
-			newPosition.add(getOscillator().getDeflection());
+			newPosition.add(getOscillator().getCurrentDeflection(element));
 		}
 		
 		positionQueue.add(newPosition);
@@ -208,6 +228,13 @@ public abstract class SimpleBalloon implements Balloon {
 
 		return movingDirection;	
 	}
+	
+	
+	protected void setSpin() {
+		if ((getOscillator() != null) && getOscillator().hasSpin()) {
+			element.setSpin(getOscillator().getCurrentSpin(element));
+		}		
+	}
 
 
 	// Return:
@@ -270,6 +297,7 @@ public abstract class SimpleBalloon implements Balloon {
 			element.setVelocity(newVelocity);
 			refreshCounter = 0;
 		}
+		setSpin();
 		return resultText;
 	}
 

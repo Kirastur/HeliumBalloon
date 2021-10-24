@@ -89,7 +89,7 @@ public class ConfigLiving implements ConfigPart {
 		switch(purpose) {
 			case PET: return true;
 			case WALL: return false;
-			case ROTATION: return false;
+			case ROTATOR: return false;
 			default: return false;
 		
 		}

@@ -15,7 +15,7 @@ import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
-import de.polarwolf.heliumballoon.oscillators.VerticalSinusOscillator;
+import de.polarwolf.heliumballoon.oscillators.DefaultOscillator;
 
 public class Pet implements HeliumName {
 	
@@ -31,7 +31,8 @@ public class Pet implements HeliumName {
 		this.balloonManager = balloonManager;
 		this.template = template;
 		if (template.isOscillating()) {
-			oscillator = new VerticalSinusOscillator(template.getRule());
+			oscillator = new DefaultOscillator(template.getRule());
+			oscillator.setDeflectionState(true);
 		} else {
 			oscillator = null;
 		}

@@ -126,6 +126,12 @@ public class CompoundElement implements Element {
 		
 		
 	@Override
+	public void setSpin (double spin) {
+		// Nothing to do
+	}
+
+	
+	@Override
 	public void keepAlive() {
 		for (Element myElement : elements) {
 			myElement.keepAlive();

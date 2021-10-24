@@ -29,8 +29,8 @@ import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class LivingElement extends SimpleElement {
 
-	public static final double MIN_DISTANCE = 0.5;
-	public static final double MAX_PITCH_PER_STEP = 5;
+	protected static final double MIN_DISTANCE = 0.5;
+	protected static final double MAX_PITCH_PER_STEP = 5;
 	
 	private final ConfigLiving config;
 	protected boolean isAware = true;

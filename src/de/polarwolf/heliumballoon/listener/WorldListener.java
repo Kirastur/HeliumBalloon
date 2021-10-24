@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.rotators.RotatorManager;
 import de.polarwolf.heliumballoon.walls.WallManager;
 
 public class WorldListener implements Listener {
@@ -19,6 +20,7 @@ public class WorldListener implements Listener {
 	protected final HeliumLogger logger;
 	protected final BalloonManager balloonManager;
 	protected final WallManager wallManager;
+	protected final RotatorManager rotatorManager;
 	
 
 	public WorldListener(HeliumBalloonOrchestrator orchestrator) {
@@ -26,6 +28,7 @@ public class WorldListener implements Listener {
 		this.logger = orchestrator.getHeliumLogger();
 		this.balloonManager = orchestrator.getBalloonManager();
 		this.wallManager = orchestrator.getWallManager();
+		this.rotatorManager = orchestrator.getRotatorManager();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -43,7 +46,8 @@ public class WorldListener implements Listener {
 	public void handleWorldLoadEvent(WorldLoadEvent event) {
 		World world = event.getWorld();
 		logger.printDebug("Resync: WorldLoad " + world.getName());
-		wallManager.addWalls(world);
+		wallManager.addPlacings(world);
+		rotatorManager.addPlacings(world);
 	}
 	
 	
@@ -51,7 +55,8 @@ public class WorldListener implements Listener {
 		World world = event.getWorld();
 		logger.printDebug("Resync: WorldUnload " + world.getName());
 		resyncWorld(world);
-		wallManager.removeWalls(world);
+		wallManager.removePlacings(world);
+		rotatorManager.removePlacings(world);
 	}
 
 

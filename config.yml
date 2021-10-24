@@ -61,37 +61,38 @@ GDPR:
 # - Exclude takes precedence over include
 worlds:
     includeAllWorlds: true
-#    include:
-#        - demoincludeworld
-#    exclude:
-#        - demoexcludeworld        
+#   include:
+#       - demoincludeworld
+#   exclude:
+#       - demoexcludeworld        
 
 
 # Rule definition
 #
 # - Rules carry the mathematical informations
-# - how the pet should be handled.
-# - Only one rule can be markled as as default.
+# - how the balloon should be handled.
+# - Only one rule can be marked as as default.
 # - The default rule is used if in the template
-# - definition no rule is given.
+# - definition no other rule is given.
 
 rules:
     default:
         isDefault: true
-#        highAbovePlayer: 3.0
-#        distanceFromPlayer: 1.0
-#        angleFromPlayerDirection: 120
-#        normalSpeed: 0.1
-#        switchToFastSpeedAtDistance: 5.0
-#        maxAllowedDistance: 9.9
-#        oscillatorPeriod: 100
-#        oscillatorAmplitude: 0.1
-#        blockDelay: 4
-#        livingDelay: 1
-#        minecartDelay: 0
-#        adjustIllagerY: 0.0
-#        enableRisingYWorkaround: true
-#        enableWarnY64Walls: true
+#       highAbovePlayer: 3.0
+#       distanceFromPlayer: 1.0
+#       angleFromPlayerDirection: 120
+#       normalSpeed: 0.1
+#       switchToFastSpeedAtDistance: 5.0
+#       maxAllowedDistance: 9.9
+#       oscillatorPeriod: 100
+#       oscillatorAmplitude: 0.1
+#       rotatorPeriod: 100
+#       blockDelay: 4
+#       livingDelay: 1
+#       minecartDelay: 0
+#       adjustIllagerY: 0.0
+#       enableRisingYWorkaround: true
+#       enableWarnY64Walls: true
 
     demo1:
         highAbovePlayer: 0.2
@@ -99,8 +100,14 @@ rules:
         angleFromPlayerDirection: 180
         adjustIllagerY: -0.2
 
+    demo6:
+       oscillatorAmplitude: 0.2
 
-# Temnplates are the definitions for the pets.
+
+# Temnplates are the definitions for the balloons
+# You can summon a pet balloon by simply calling
+#     /balloon assign <TemplateName>
+#
 # Please see the Github wiki for a list of allowed parameters.
 # Here are only a few examples.
 #
@@ -167,6 +174,8 @@ templates:
                material: CARTOGRAPHY_TABLE
  
     demo6:
+        rule: demo6
+        oscillating: true
         elements:
             top:
                 material: BLACK_CONCRETE
@@ -178,11 +187,28 @@ templates:
                 material: YELLOW_CONCRETE
                 y: -1
 
+    demo7:
+        minecart:
+           loadOffset: 30
+           load:
+               material: EMERALD_BLOCK
+
+    demo8:
+        armorstand:
+           load:
+               material: EMERALD_BLOCK
+
 
 # Walls are blocks were you can walk through
 # e.g. for building a hidden passage.
 # The "worlds" is a Regex and must start with "^".
 # A wall element cannot be positioned between y=63.7 and y=64.1
+#
+# The coordinates here are only demo-locations,
+# please adjust them for your map.
+#
+# To disable the swinging of this wall,
+# set "oscillating" to false in the template "demo6"
 walls: 
     demowall1:
         template: demo6
@@ -190,9 +216,28 @@ walls:
         x: -171
         y: 89
         z: 339
+
+# Rotators are block which spin permanently.
+# There are different spinning algorithms for
+# minecarts and armorstands.
+rotators:
+    demorotator1:
+        template: demo7
+        worlds: ^world$
+        x: -171
+        y: 89
+        z: 330
         
+    demorotator2:
+        template: demo8
+        worlds: ^world$
+        x: -175
+        y: 89
+        z: 334
+
 
 # Using the API you can build you own GUI.
+# A GUI contains a list of pets the player can select from.
 # This GUI here is only an example.
 # Localized Strings can have two or five chars
 # (e.g. "de" and "de_de").        

@@ -12,6 +12,7 @@ import de.polarwolf.heliumballoon.listener.ListenManager;
 import de.polarwolf.heliumballoon.messages.MessageManager;
 import de.polarwolf.heliumballoon.pets.PetManager;
 import de.polarwolf.heliumballoon.players.PlayerManager;
+import de.polarwolf.heliumballoon.rotators.RotatorManager;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
 import de.polarwolf.heliumballoon.walls.WallManager;
 
@@ -29,6 +30,7 @@ public class HeliumBalloonOrchestrator {
 	private final MessageManager messageManager;
 	private final PetManager petManager;
 	private final WallManager wallManager;
+	private final RotatorManager rotatorManager;
 	private final GuiManager guiManager;
 	private final ListenManager listenManager;
 	private HeliumBalloonAPI api = null; 
@@ -49,6 +51,7 @@ public class HeliumBalloonOrchestrator {
 		balloonManager = createBalloonManager();
 		petManager = createPetManager();
 		wallManager = createWallManager();
+		rotatorManager = createRotatorManager();
 		guiManager = createGuiManager();
 		listenManager = createListenManager();
 	}
@@ -94,6 +97,10 @@ public class HeliumBalloonOrchestrator {
 
 	public WallManager getWallManager() {
 		return wallManager;
+	}
+	
+	public RotatorManager getRotatorManager() {
+		return rotatorManager;
 	}
 	
 	public GuiManager getGuiManager() {
@@ -144,6 +151,10 @@ public class HeliumBalloonOrchestrator {
 	
 	protected WallManager createWallManager() {
 		return new WallManager(this);
+	}
+	
+	protected RotatorManager createRotatorManager() {
+		return new RotatorManager(this);
 	}
 	
 	protected GuiManager createGuiManager() {

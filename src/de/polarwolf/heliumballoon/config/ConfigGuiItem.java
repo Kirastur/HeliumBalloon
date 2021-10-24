@@ -7,12 +7,11 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.helium.HeliumText;
 
-public class ConfigGuiItem implements HeliumName {
+public class ConfigGuiItem implements ConfigBalloonSet {
 	
 	private final String name;
 	private final String fullName;
@@ -47,6 +46,7 @@ public class ConfigGuiItem implements HeliumName {
 	}
 
 
+	@Override
 	public ConfigTemplate getTemplate() {
 		return template;
 	}

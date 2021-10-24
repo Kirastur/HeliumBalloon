@@ -43,7 +43,7 @@ public class BalloonTabCompleter implements TabCompleter {
 		}
 		
 		if (args.length == action.findPlayerPosition() +1) {
-			return null;
+			return null; //NOSONAR
 		}
 		
 		if (args.length == action.findTemplatePosition() +1) {

@@ -9,12 +9,11 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
-import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumSection;
 
-public class ConfigWall implements ConfigPlaceableBalloonSet {
+public class ConfigRotator implements ConfigPlaceableBalloonSet {
 	
 	public static final String DEFAULT_WORLDS = "^world$";
 
@@ -25,13 +24,13 @@ public class ConfigWall implements ConfigPlaceableBalloonSet {
 	private Pattern worlds;
 	
 	
-	public ConfigWall(String name, String fullName) {
+	public ConfigRotator(String name, String fullName) {
 		this.name = name;
 		this.fullName = fullName;
 	}
 
 
-	public ConfigWall(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+	public ConfigRotator(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		this.name = fileSection.getName();
 		this.fullName = fileSection.getCurrentPath();
 		loadConfigFromFile(fileSection, balloonSection);
@@ -122,24 +121,6 @@ public class ConfigWall implements ConfigPlaceableBalloonSet {
 	}
 	
 	
-	protected void checkY64Bug() throws BalloonException {
-		if (!getTemplate().getRule().isEnableWarnY64Walls()) {
-			return;
-		}
-		for (ConfigPart myPart : template.getParts()) {
-			if (myPart.isSuitableFor(BalloonPurpose.WALL)) {
-				double y = getAbsolutePosition().getY();
-				double yMin = y + myPart.getMinYOffset();
-				double yMax = y + myPart.getMaxYOffset();						
-				if ((yMin < 64.1) && (yMax > 63.7)) {
-					String range = String.format("%f-%f", yMin, yMax);
-					throw new BalloonException(getFullName(), "A wall element cannot be positioned between y=63.7 and y=64.1", range);
-				}
-			}	
-		}	
-	}
-
-		
 	protected List<HeliumParam> getValidParams() {
 		return  Arrays.asList(ParamWall.values());
 	}
@@ -158,15 +139,9 @@ public class ConfigWall implements ConfigPlaceableBalloonSet {
 	}
 	
 	
-	protected void validateConfig() throws BalloonException {
-		checkY64Bug();
-	}
-	
-	
 	protected void loadConfigFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection, balloonSection);
-		validateConfig();
 	}
 
 }

@@ -50,6 +50,7 @@ public final class Main extends JavaPlugin {
 		
 		// Initialize Walls
 		orchestrator.getWallManager().reload();
+		orchestrator.getRotatorManager().reload();
 	}
 
 	

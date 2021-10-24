@@ -25,6 +25,8 @@ import de.polarwolf.heliumballoon.messages.Message;
 import de.polarwolf.heliumballoon.messages.MessageManager;
 import de.polarwolf.heliumballoon.pets.PetManager;
 import de.polarwolf.heliumballoon.players.PlayerManager;
+import de.polarwolf.heliumballoon.rotators.Rotator;
+import de.polarwolf.heliumballoon.rotators.RotatorManager;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
 import de.polarwolf.heliumballoon.walls.Wall;
@@ -41,6 +43,7 @@ public class HeliumBalloonAPI {
 	protected final BalloonManager balloonManager;
 	protected final PetManager petManager;
 	protected final WallManager wallManager;
+	protected final RotatorManager rotatorManager;
 	protected final GuiManager guiManager;
 	
 	
@@ -54,6 +57,7 @@ public class HeliumBalloonAPI {
 		this.balloonManager = orchestrator.getBalloonManager();
 		this.petManager = orchestrator.getPetManager();
 		this.wallManager = orchestrator.getWallManager();
+		this.rotatorManager = orchestrator.getRotatorManager();
 		this.guiManager = orchestrator.getGuiManager();
 	}
 	
@@ -84,6 +88,7 @@ public class HeliumBalloonAPI {
 		configManager.reload();
 		petManager.reload();
 		wallManager.reload();
+		rotatorManager.reload();
 	}
 	
 	public ConfigRule findRule(String ruleName) {
@@ -161,7 +166,13 @@ public class HeliumBalloonAPI {
 	
 	// WallManager
 	public List<Wall> getAllWalls() {
-		return wallManager.enumWalls();
+		return wallManager.getWalls();
+	}
+	
+	
+	// RotationManager
+	public List<Rotator> getAllRotators() {
+		return rotatorManager.getRotators();
 	}
 	
 	

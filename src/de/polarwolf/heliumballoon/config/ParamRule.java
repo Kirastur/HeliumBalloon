@@ -15,6 +15,7 @@ public enum ParamRule implements HeliumParam {
 	MAX_ALLOWED_DISTANCE (STRING, "maxAllowedDistance"),
 	OSCILLATOR_PERIOD (STRING, "oscillatorPeriod"),
 	OSCILLATOR_AMPLITUDE (STRING, "oscillatorAmplitude"),
+	ROTATOR_PERIOD (STRING, "rotatorPeriod"),
 	BLOCK_DELAY (STRING, "blockDelay"),
 	LIVING_DELAY (STRING, "livingDelay"),
 	MINECART_DELAY (STRING, "minecartDelay"),

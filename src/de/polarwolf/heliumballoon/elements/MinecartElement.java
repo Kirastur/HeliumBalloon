@@ -16,7 +16,8 @@ import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class MinecartElement extends SimpleElement {
 
-	public static final double MIN_DISTANCE = 0.5;
+	protected static final double MIN_DISTANCE = 0.5;
+	protected static final double MAX_SPEED = 10.0;
 	
 	private final ConfigMinecart config;
 	protected Minecart minecart = null;
@@ -51,7 +52,6 @@ public class MinecartElement extends SimpleElement {
 	}
 
 
-
 	protected void spawnBaseEntity(Location targetLocation) {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, EntityType.MINECART);
 		
@@ -60,6 +60,10 @@ public class MinecartElement extends SimpleElement {
 		minecart.setInvulnerable(true);
 		minecart.setGravity(false);
 		minecart.setSilent(true);
+		minecart.setDerailedVelocityMod(new Vector());
+		minecart.setFlyingVelocityMod(new Vector());
+		minecart.setSlowWhenEmpty(false);
+		minecart.setMaxSpeed(MAX_SPEED);
 		minecart.setVelocity(new Vector());
 	}
 	
@@ -132,5 +136,11 @@ public class MinecartElement extends SimpleElement {
 		super.setVelocity(newVelocity);
 		adjustMinecartDirection();
 	}
-		
+
+
+	@Override
+	public void setSpin (double spin) {
+		minecart.setRotation((float)spin, 0);
+	}
+	
 }

@@ -4,32 +4,16 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import de.polarwolf.heliumballoon.config.ConfigBalloonSet;
 import de.polarwolf.heliumballoon.config.ConfigPart;
-import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 
 public class PetBalloon extends SimpleBalloon {
 	
-	private final ConfigTemplate template;
-	
-
-	public PetBalloon(Player player, ConfigTemplate template, ConfigPart part, Oscillator oscillator) {
-		super(player, template.getRule(), part, oscillator);
-		this.template = template;
+	public PetBalloon(Player player, ConfigBalloonSet configBalloonSet, ConfigPart part, Oscillator oscillator) {
+		super(player, configBalloonSet, part, oscillator);
 	}
 	
-	
-	@Override
-	public String getName() {
-		return template.getName();
-	}
-	
-	
-	@Override
-	public String getFullName() {
-		return template.getFullName();
-	}
-
 
 	protected Vector getPlayerXZDirection() {
 		Vector myDirection = getPlayer().getLocation().getDirection().clone();

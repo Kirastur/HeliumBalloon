@@ -11,6 +11,7 @@ public enum ParamTemplate implements HeliumParam {
 	LIVING (SECTION, "living"),
 	ELEMENTS (SECTION, "elements"),
 	MINECART (SECTION, "minecart"),
+	ARMORSTAND (SECTION, "armorstand"),
 	CUSTOM (STRING, "custom");
 		
 	private final HeliumParamType paramType;

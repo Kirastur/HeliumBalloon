@@ -139,12 +139,12 @@ public class BalloonManager extends BukkitRunnable {
 			}
 		}
 		for (Oscillator myOscillator : oscillatorSet) {
-			myOscillator.increment();
+			myOscillator.incrementCounters();
 		}		
 	}
 	
 	
-	protected void moveBalloons() throws Exception  {
+	protected void moveBalloons() throws BalloonException {
 		for (Balloon myBalloon : getAllBalloons()) {
 			try {
 				String resultMessage = myBalloon.move();
@@ -157,20 +157,21 @@ public class BalloonManager extends BukkitRunnable {
 					}
 				}
 			} catch (Exception e) {
-				logger.printDebug("Exception during spawn or move");
 				myBalloon.cancel();
 				removeBalloon(myBalloon);
 				Player myPlayer = myBalloon.getPlayer();
+				String playerName = null;
 				if (myPlayer != null) {
 					myPlayer.sendMessage(logger.getPetErrorMessage().findLocalizedforSender(myPlayer));
+					playerName = myPlayer.getName();
 				}
-				throw e;				
+				throw new BalloonException (myBalloon.getFullName(), "Exception during spawn or move", playerName, e);				
 			}
 		}
 	}
 	
 	
-	protected void handleTick() throws Exception {
+	protected void handleTick() throws BalloonException {
 		incrementOscillators();
 		moveBalloons();
 	}

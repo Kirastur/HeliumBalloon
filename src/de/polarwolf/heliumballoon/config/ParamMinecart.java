@@ -33,4 +33,5 @@ public enum ParamMinecart implements HeliumParam {
 	public String getAttributeName() {
 		return attributeName;
 	}
+
 }

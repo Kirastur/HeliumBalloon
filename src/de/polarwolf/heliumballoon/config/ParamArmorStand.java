@@ -1,23 +1,24 @@
 package de.polarwolf.heliumballoon.config;
 
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.SECTION;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.STRING;
+
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumParamType;
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
-public enum ParamSection implements HeliumParam {
+public enum ParamArmorStand implements HeliumParam {
 
-	WORLDS (SECTION, "worlds"),
-	RULES (SECTION, "rules"),
-	TEMPLATES (SECTION, "templates"),
-	WALLS (SECTION, "walls"),
-	ROTATORS (SECTION, "rotators"),
-	GUI (SECTION, "gui");
-
+	X (STRING, "x"),
+	Y (STRING, "y"),
+	Z (STRING, "z"),
+	LOAD(SECTION, "load"),
+	CUSTOM (STRING, "custom");
+	
 	private final HeliumParamType paramType;
 	private final String attributeName;
 	
 
-	private ParamSection(HeliumParamType paramType, String attributeName) {
+	private ParamArmorStand(HeliumParamType paramType, String attributeName) {
 		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}

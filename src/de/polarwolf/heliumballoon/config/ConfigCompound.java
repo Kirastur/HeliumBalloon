@@ -51,7 +51,7 @@ public class ConfigCompound implements ConfigPart {
 		switch(purpose) {
 			case PET: return true;
 			case WALL: return true;
-			case ROTATION: return false;
+			case ROTATOR: return false;
 			default: return false;
 		
 		}

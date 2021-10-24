@@ -105,12 +105,17 @@ public class PlayerListener implements Listener {
 	
 	public void handlePlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
 		Player player = event.getPlayer();
+		GameMode oldGameMode = event.getPlayer().getGameMode();
 		GameMode newGameMode = event.getNewGameMode();
-		if (!newGameMode.equals(GameMode.SPECTATOR) && player.getGameMode().equals(GameMode.SPECTATOR)) {
+		// On Paper the old game mode can be null, documentation is wrong here 
+		if (oldGameMode == null) { //NOSONAR
+			return;
+		}
+		if (!newGameMode.equals(GameMode.SPECTATOR) && oldGameMode.equals(GameMode.SPECTATOR)) {
 			logger.printDebug("Init: PlayerGameModeChange from Spectator " + player.getName());
 			resyncPlayer(player);
 		}
-		if (newGameMode.equals(GameMode.SPECTATOR) && !player.getGameMode().equals(GameMode.SPECTATOR)) {
+		if (newGameMode.equals(GameMode.SPECTATOR) && !oldGameMode.equals(GameMode.SPECTATOR)) {
 			logger.printDebug("Done: PlayerGameModeChange to Spectator " + player.getName());
 			resyncPlayer(player);
 		}		

@@ -21,6 +21,7 @@ public class ConfigSection implements HeliumName {
 	private ConfigWorld worlds = null;
 	private List<ConfigTemplate> templates = new ArrayList<>();
 	private List<ConfigWall> walls = new ArrayList<>();
+	private List<ConfigRotator> rotators = new ArrayList<>();
 	private ConfigGuiMenu guiMenu = null;
 	
 	
@@ -130,6 +131,31 @@ public class ConfigSection implements HeliumName {
 	
 	protected void addWall(ConfigWall newWall) {
 		walls.add(newWall);
+	}
+
+		
+	// Rotators
+	public ConfigRotator findRotator(String rotatorName) {
+		for (ConfigRotator myRotator : rotators) {
+			if (myRotator.getName().equalsIgnoreCase(rotatorName)) {
+				return myRotator;
+			}
+		}
+		return null;
+	}
+	
+	
+	public Set<String> getRotatorNames() {
+		Set<String> rotatorNamesSet = new TreeSet<>();
+		for (ConfigRotator myRotator : rotators) {
+			rotatorNamesSet.add(myRotator.getName());
+		}
+		return rotatorNamesSet;
+	}
+	
+	
+	protected void addRotator(ConfigRotator newRotator) {
+		rotators.add(newRotator);
 	}
 
 		
@@ -246,6 +272,24 @@ public class ConfigSection implements HeliumName {
 	}
 
 
+	protected ConfigRotator buildConfigRotatorFromFile(ConfigurationSection fileSection) throws BalloonException {
+		return new ConfigRotator(fileSection, this);
+	}
+
+
+	protected void loadRotatorsFromFile(ConfigurationSection fileSectionRotators) throws BalloonException {
+		for (String myRotatorName : fileSectionRotators.getKeys(false)) {
+			if (!fileSectionRotators.contains(myRotatorName, true)) { //ignore default from jar
+				continue;
+			}
+			if (!fileSectionRotators.isConfigurationSection(myRotatorName)) {
+				throw new BalloonException (null, "Illegal rotatator section", myRotatorName);
+			}
+			addRotator(buildConfigRotatorFromFile(fileSectionRotators.getConfigurationSection(myRotatorName)));
+		}
+	}
+
+
 	protected ConfigWorld buildConfigWorldFromFile(ConfigurationSection fileSection) throws BalloonException {
 		return new ConfigWorld(fileSection);
 	}
@@ -288,6 +332,10 @@ public class ConfigSection implements HeliumName {
 		
 		if (heliumSection.isSection(ParamSection.WALLS)) {
 			loadWallsFromFile(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
+		}
+		
+		if (heliumSection.isSection(ParamSection.ROTATORS)) {
+			loadRotatorsFromFile(fileSection.getConfigurationSection(ParamSection.ROTATORS.getAttributeName()));
 		}
 		
 		if (heliumSection.isSection(ParamSection.GUI)) {

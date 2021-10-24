@@ -66,6 +66,12 @@ public abstract class SimpleElement implements Element{
 	
 	
 	@Override
+	public void setSpin (double spin) {
+		// Nothing to do
+	}
+
+	
+	@Override
 	public void keepAlive() {
 		if (getEntity() != null) {
 			getEntity().setTicksLived(1);

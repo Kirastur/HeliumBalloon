@@ -4,6 +4,6 @@ public enum BalloonPurpose {
 	
 	PET,
 	WALL,
-	ROTATION;
+	ROTATOR;
 
 }

@@ -25,6 +25,7 @@ public class ConfigRule implements HeliumName {
 	
 	private int oscillatorPeriod = 100;
 	private double oscillatorAmplitude = 0.1;
+	private int rotatorPeriod = 100;
 	private int blockDelay = 4;
 	private int livingDelay = 1;
 	private int minecartDelay = 0;
@@ -141,6 +142,16 @@ public class ConfigRule implements HeliumName {
 	}
 
 
+	public int getRotatorPeriod() {
+		return rotatorPeriod;
+	}
+
+
+	protected void setRotatorPeriod(int rotatorPeriod) {
+		this.rotatorPeriod = rotatorPeriod;
+	}
+
+
 	public int getBlockDelay() {
 		return blockDelay;
 	}
@@ -225,6 +236,7 @@ public class ConfigRule implements HeliumName {
 		setMaxAllowedDistance(heliumSection.getDouble(ParamRule.MAX_ALLOWED_DISTANCE, getMaxAllowedDistance()));
 		setOscillatorPeriod(heliumSection.getInt(ParamRule.OSCILLATOR_PERIOD, getOscillatorPeriod()));
 		setOscillatorAmplitude(heliumSection.getDouble(ParamRule.OSCILLATOR_AMPLITUDE, getOscillatorAmplitude()));
+		setRotatorPeriod(heliumSection.getInt(ParamRule.ROTATOR_PERIOD, getRotatorPeriod()));
 		setBlockDelay(heliumSection.getInt(ParamRule.BLOCK_DELAY, getBlockDelay()));
 		setLivingDelay(heliumSection.getInt(ParamRule.LIVING_DELAY, getLivingDelay()));
 		setMinecartDelay(heliumSection.getInt(ParamRule.MINECART_DELAY, getMinecartDelay()));
