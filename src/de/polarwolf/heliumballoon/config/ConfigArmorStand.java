@@ -19,16 +19,14 @@ public class ConfigArmorStand implements ConfigPart {
 
 	private final String name;
 	private final String fullName;
-	private Vector offset = new Vector (0,0,0);
+	private Vector offset = new Vector(0, 0, 0);
 	private ConfigElement load = null;
 	private String custom = null;
-	
-	
+
 	public ConfigArmorStand(String name, String fullName) {
 		this.name = name;
 		this.fullName = fullName;
 	}
-
 
 	public ConfigArmorStand(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
@@ -36,107 +34,94 @@ public class ConfigArmorStand implements ConfigPart {
 		loadConfigFromFile(fileSection);
 	}
 
-	
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	
 	@Override
 	public String getFullName() {
 		return fullName;
 	}
 
-	
 	public ConfigElement getLoad() {
 		return load;
 	}
 
-
 	@Override
 	public boolean isSuitableFor(BalloonPurpose purpose) {
-		switch(purpose) {
-			case PET: return false;
-			case WALL: return false;
-			case ROTATOR: return true;
-			default: return false;
-		
+		switch (purpose) {
+		case PET:
+			return false;
+		case WALL:
+			return false;
+		case ROTATOR:
+			return true;
+		default:
+			return false;
 		}
 	}
 
-	
 	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new ArmorStandElement(rule, this, spawnModifier);
 	}
 
-	
 	@Override
 	public double getMinYOffset() {
-		return offset.getY();		
+		return offset.getY();
 	}
 
-	
 	@Override
 	public double getMaxYOffset() {
-		return offset.getY();		
+		return offset.getY();
 	}
 
-	
 	protected void setLoad(ConfigElement load) {
 		this.load = load;
 	}
-
 
 	public Vector getOffset() {
 		return offset;
 	}
 
-
 	protected void setOffset(Vector offset) {
 		this.offset = offset;
 	}
-	
-		
+
 	public String getCustom() {
 		return custom;
 	}
 
-
 	protected void setCustom(String custom) {
 		this.custom = custom;
 	}
-	
-	
+
 	protected List<HeliumParam> getValidParams() {
-		return  Arrays.asList(ParamArmorStand.values());
+		return Arrays.asList(ParamArmorStand.values());
 	}
-	
-	
+
 	protected void loadLoadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionLoad = fileSection.getConfigurationSection(ParamArmorStand.LOAD.getAttributeName());
-		setLoad(new ConfigElement (fileSectionLoad));
+		ConfigurationSection fileSectionLoad = fileSection
+				.getConfigurationSection(ParamArmorStand.LOAD.getAttributeName());
+		setLoad(new ConfigElement(fileSectionLoad));
 	}
-	
-	
-	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException { 
+
+	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException {
 		Double x = heliumSection.getDouble(ParamArmorStand.X, getOffset().getX());
 		Double y = heliumSection.getDouble(ParamArmorStand.Y, getOffset().getY());
 		Double z = heliumSection.getDouble(ParamArmorStand.Z, getOffset().getZ());
 		setOffset(new Vector(x, y, z));
-		
 		setCustom(heliumSection.getString(ParamArmorStand.CUSTOM));
 	}
-	
-	
+
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
 
 		if (heliumSection.isSection(ParamArmorStand.LOAD)) {
 			loadLoadConfigFromFile(fileSection);
-		}						
+		}
 	}
-	
+
 }

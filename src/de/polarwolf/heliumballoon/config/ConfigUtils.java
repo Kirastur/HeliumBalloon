@@ -4,13 +4,13 @@ import org.bukkit.Axis;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Door;
-import org.bukkit.block.data.type.Stairs;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
@@ -30,8 +30,7 @@ public class ConfigUtils {
 	private ConfigUtils() {
 		throw new IllegalStateException("Utility class");
 	}
-	
-	
+
 	public static Material getAnyMaterialFromName(String contextName, String materialName) throws BalloonException {
 		if ((materialName == null) || (materialName.isEmpty())) {
 			throw new BalloonException(contextName, "Material is missing", null);
@@ -47,7 +46,6 @@ public class ConfigUtils {
 		return myMaterial;
 	}
 
-		
 	public static Material getBlockMaterialFromName(String contextName, String materialName) throws BalloonException {
 		Material myMaterial = getAnyMaterialFromName(contextName, materialName);
 		if (!myMaterial.isBlock()) {
@@ -56,13 +54,12 @@ public class ConfigUtils {
 		return myMaterial;
 	}
 
-		
 	public static Axis getAxisFromName(String contextName, String axisName) throws BalloonException {
 		if ((axisName == null) || (axisName.isEmpty())) {
 			return null;
 		}
 
-		Axis  myAxis = null;
+		Axis myAxis = null;
 		try {
 			myAxis = Axis.valueOf(axisName);
 		} catch (Exception e) {
@@ -71,11 +68,10 @@ public class ConfigUtils {
 		if (myAxis == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown axis", axisName);
 		}
-				
+
 		return myAxis;
 	}
 
-	
 	public static Bisected.Half getHalfFromName(String contextName, String halfName) throws BalloonException {
 		if ((halfName == null) || (halfName.isEmpty())) {
 			return null;
@@ -90,12 +86,12 @@ public class ConfigUtils {
 		if (myHalf == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown half", halfName);
 		}
-				
+
 		return myHalf;
 	}
 
-	
-	public static Bell.Attachment getBellAttachmentFromName(String contextName, String bellAttachmentName) throws BalloonException {
+	public static Bell.Attachment getBellAttachmentFromName(String contextName, String bellAttachmentName)
+			throws BalloonException {
 		if ((bellAttachmentName == null) || (bellAttachmentName.isEmpty())) {
 			return null;
 		}
@@ -109,11 +105,10 @@ public class ConfigUtils {
 		if (myBellAttachment == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown bell attachment", bellAttachmentName);
 		}
-				
+
 		return myBellAttachment;
 	}
 
-	
 	public static BlockFace getBlockFaceFromName(String contextName, String blockFaceName) throws BalloonException {
 		if ((blockFaceName == null) || (blockFaceName.isEmpty())) {
 			return null;
@@ -128,10 +123,9 @@ public class ConfigUtils {
 		if (myBlockFace == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown block face", blockFaceName);
 		}
-				
+
 		return myBlockFace;
 	}
-	
 
 	public static Chest.Type getChestTypeFromName(String contextName, String chestTypeName) throws BalloonException {
 		if ((chestTypeName == null) || (chestTypeName.isEmpty())) {
@@ -147,11 +141,10 @@ public class ConfigUtils {
 		if (myChestType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown chest type", chestTypeName);
 		}
-				
+
 		return myChestType;
 	}
 
-	
 	public static Door.Hinge getDoorHingeFromName(String contextName, String doorHingeName) throws BalloonException {
 		if ((doorHingeName == null) || (doorHingeName.isEmpty())) {
 			return null;
@@ -166,12 +159,12 @@ public class ConfigUtils {
 		if (myDoorHinge == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown door hinge", doorHingeName);
 		}
-				
+
 		return myDoorHinge;
 	}
 
-	
-	public static FaceAttachable.AttachedFace getAttachedFaceFromName(String contextName, String attachedFaceName) throws BalloonException {
+	public static FaceAttachable.AttachedFace getAttachedFaceFromName(String contextName, String attachedFaceName)
+			throws BalloonException {
 		if ((attachedFaceName == null) || (attachedFaceName.isEmpty())) {
 			return null;
 		}
@@ -185,11 +178,10 @@ public class ConfigUtils {
 		if (myAttachedFace == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown attached face", attachedFaceName);
 		}
-				
+
 		return myAttachedFace;
 	}
 
-	
 	public static Slab.Type getSlabTypeFromName(String contextName, String slabName) throws BalloonException {
 		if ((slabName == null) || (slabName.isEmpty())) {
 			return null;
@@ -204,12 +196,12 @@ public class ConfigUtils {
 		if (mySlab == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown slab type", slabName);
 		}
-				
+
 		return mySlab;
 	}
 
-	
-	public static Stairs.Shape getStairsShapeFromName(String contextName, String stairsShapeName) throws BalloonException {
+	public static Stairs.Shape getStairsShapeFromName(String contextName, String stairsShapeName)
+			throws BalloonException {
 		if ((stairsShapeName == null) || (stairsShapeName.isEmpty())) {
 			return null;
 		}
@@ -223,12 +215,12 @@ public class ConfigUtils {
 		if (myShape == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown stairs shape", stairsShapeName);
 		}
-				
+
 		return myShape;
 	}
 
-	
-	public static EntityType getLivingEntityTypeFromName(String contextName, String livingEntityName) throws BalloonException {
+	public static EntityType getLivingEntityTypeFromName(String contextName, String livingEntityName)
+			throws BalloonException {
 		if ((livingEntityName == null) || (livingEntityName.isEmpty())) {
 			throw new BalloonException(contextName, "EntityType is missing", null);
 		}
@@ -242,15 +234,14 @@ public class ConfigUtils {
 		if (myEntityType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown entity", livingEntityName);
 		}
-		
+
 		if (!myEntityType.isSpawnable() || !myEntityType.isAlive()) {
-			throw new BalloonException(contextName, "Entity is not alive", livingEntityName);			
+			throw new BalloonException(contextName, "Entity is not alive", livingEntityName);
 		}
-		
+
 		return myEntityType;
 	}
-	
-	
+
 	public static DyeColor getDyeColorFromName(String contextName, String colorName) throws BalloonException {
 		if ((colorName == null) || (colorName.isEmpty())) {
 			return null;
@@ -265,11 +256,10 @@ public class ConfigUtils {
 		if (myColor == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown dye or collar color", colorName);
 		}
-				
+
 		return myColor;
 	}
 
-	
 	public static Horse.Color getHorseColorFromName(String contextName, String colorName) throws BalloonException {
 		if ((colorName == null) || (colorName.isEmpty())) {
 			return null;
@@ -284,11 +274,10 @@ public class ConfigUtils {
 		if (myColor == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown horse color", colorName);
 		}
-				
+
 		return myColor;
 	}
 
-	
 	public static Llama.Color getLlamaColorFromName(String contextName, String colorName) throws BalloonException {
 		if ((colorName == null) || (colorName.isEmpty())) {
 			return null;
@@ -303,11 +292,10 @@ public class ConfigUtils {
 		if (myColor == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown llama color", colorName);
 		}
-				
+
 		return myColor;
 	}
 
-	
 	public static Cat.Type getCatTypeFromName(String contextName, String catTypeName) throws BalloonException {
 		if ((catTypeName == null) || (catTypeName.isEmpty())) {
 			return null;
@@ -322,10 +310,9 @@ public class ConfigUtils {
 		if (myCatType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown cat type", catTypeName);
 		}
-				
+
 		return myCatType;
 	}
-
 
 	public static Fox.Type getFoxTypeFromName(String contextName, String foxTypeName) throws BalloonException {
 		if ((foxTypeName == null) || (foxTypeName.isEmpty())) {
@@ -341,11 +328,10 @@ public class ConfigUtils {
 		if (myFoxType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown fox type", foxTypeName);
 		}
-				
+
 		return myFoxType;
 	}
 
-	
 	public static Horse.Style getHorseStyleFromName(String contextName, String horseStyleName) throws BalloonException {
 		if ((horseStyleName == null) || (horseStyleName.isEmpty())) {
 			return null;
@@ -360,12 +346,12 @@ public class ConfigUtils {
 		if (myHorseStyle == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown horse style", horseStyleName);
 		}
-				
+
 		return myHorseStyle;
 	}
 
-	
-	public static MushroomCow.Variant getMushroomCowVariantFromName(String contextName, String mushroomCowVariantName) throws BalloonException {
+	public static MushroomCow.Variant getMushroomCowVariantFromName(String contextName, String mushroomCowVariantName)
+			throws BalloonException {
 		if ((mushroomCowVariantName == null) || (mushroomCowVariantName.isEmpty())) {
 			return null;
 		}
@@ -379,10 +365,9 @@ public class ConfigUtils {
 		if (myMushroomCowVariant == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown mushroom cow variant", mushroomCowVariantName);
 		}
-				
+
 		return myMushroomCowVariant;
 	}
-
 
 	public static Panda.Gene getPandaGeneFromName(String contextName, String pandaGeneName) throws BalloonException {
 		if ((pandaGeneName == null) || (pandaGeneName.isEmpty())) {
@@ -398,12 +383,12 @@ public class ConfigUtils {
 		if (myPandaGene == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown panda gene", pandaGeneName);
 		}
-				
+
 		return myPandaGene;
 	}
 
-	
-	public static Parrot.Variant getParrotVariantFromName(String contextName, String parrotVariantName) throws BalloonException {
+	public static Parrot.Variant getParrotVariantFromName(String contextName, String parrotVariantName)
+			throws BalloonException {
 		if ((parrotVariantName == null) || (parrotVariantName.isEmpty())) {
 			return null;
 		}
@@ -417,10 +402,9 @@ public class ConfigUtils {
 		if (myParrotVariant == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown parrot variant", parrotVariantName);
 		}
-				
+
 		return myParrotVariant;
 	}
-
 
 	public static Rabbit.Type getRabbitTypeFromName(String contextName, String rabbitTypeName) throws BalloonException {
 		if ((rabbitTypeName == null) || (rabbitTypeName.isEmpty())) {
@@ -436,12 +420,12 @@ public class ConfigUtils {
 		if (myRabbitType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown rabbit type", rabbitTypeName);
 		}
-				
+
 		return myRabbitType;
 	}
 
-	
-	public static TropicalFish.Pattern getTropicalFishPatternFromName(String contextName, String tropicalFishPatternName) throws BalloonException {
+	public static TropicalFish.Pattern getTropicalFishPatternFromName(String contextName,
+			String tropicalFishPatternName) throws BalloonException {
 		if ((tropicalFishPatternName == null) || (tropicalFishPatternName.isEmpty())) {
 			return null;
 		}
@@ -455,12 +439,12 @@ public class ConfigUtils {
 		if (myTropicalFishPattern == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown rabbit type", tropicalFishPatternName);
 		}
-				
+
 		return myTropicalFishPattern;
 	}
 
-
-	public static Villager.Type getVillagerTypeFromName(String contextName, String villagerTypeName) throws BalloonException {
+	public static Villager.Type getVillagerTypeFromName(String contextName, String villagerTypeName)
+			throws BalloonException {
 		if ((villagerTypeName == null) || (villagerTypeName.isEmpty())) {
 			return null;
 		}
@@ -474,12 +458,12 @@ public class ConfigUtils {
 		if (myVillagerType == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown villager type", villagerTypeName);
 		}
-				
+
 		return myVillagerType;
 	}
 
-	
-	public static Villager.Profession getVillagerProfessionFromName(String contextName, String villagerProfessionName) throws BalloonException {
+	public static Villager.Profession getVillagerProfessionFromName(String contextName, String villagerProfessionName)
+			throws BalloonException {
 		if ((villagerProfessionName == null) || (villagerProfessionName.isEmpty())) {
 			return null;
 		}
@@ -493,8 +477,7 @@ public class ConfigUtils {
 		if (myVillagerProfession == null) { // exception or null return
 			throw new BalloonException(contextName, "Unknown villager profession", villagerProfessionName);
 		}
-				
+
 		return myVillagerProfession;
 	}
 }
-

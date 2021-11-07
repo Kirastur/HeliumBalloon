@@ -21,48 +21,41 @@ public class ArmorStandElement extends SimpleElement {
 
 	private final ConfigArmorStand config;
 	protected ArmorStand armorStand = null;
-	
 
 	public ArmorStandElement(ConfigRule rule, ConfigArmorStand config, SpawnModifier spawnModifier) {
 		super(null, rule, spawnModifier);
 		this.config = config;
 	}
-	
-	
+
 	public ConfigArmorStand getConfig() {
 		return config;
 	}
-
 
 	@Override
 	public Vector getOffset() {
 		return config.getOffset();
 	}
 
-	
 	@Override
 	public Entity getEntity() {
 		return armorStand;
 	}
 
-	
 	@Override
 	public int getDelay() {
 		return 0;
 	}
 
-
-
 	protected void spawnBaseEntity(Location targetLocation) {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, EntityType.ARMOR_STAND);
-		
-		armorStand = (ArmorStand) entity;		
+
+		armorStand = (ArmorStand) entity;
 		armorStand.setPersistent(false);
 		armorStand.setInvulnerable(true);
 		armorStand.setGravity(false);
 		armorStand.setSilent(true);
 		armorStand.setVelocity(new Vector());
-		
+
 		armorStand.setCanPickupItems(false);
 		armorStand.setCollidable(false);
 
@@ -73,26 +66,23 @@ public class ArmorStandElement extends SimpleElement {
 		for (EquipmentSlot myEquipmentSlot : EquipmentSlot.values()) {
 			armorStand.addEquipmentLock(myEquipmentSlot, ArmorStand.LockType.REMOVING_OR_CHANGING);
 		}
-		
+
 	}
-	
-	
+
 	protected void modifySpawn() {
 		// Nothing
 	}
-
 
 	protected void modifyLoad() {
 		ConfigElement configLoadElement = config.getLoad();
 		if (configLoadElement != null) {
 			Material material = configLoadElement.getMaterial();
-			ItemStack itemStack = new ItemStack (material, 1);
+			ItemStack itemStack = new ItemStack(material, 1);
 			EntityEquipment entityEquipment = armorStand.getEquipment();
 			entityEquipment.setHelmet(itemStack, true);
 		}
 	}
-	
-	
+
 	@Override
 	protected void spawn(Location targetLocation) throws BalloonException {
 		spawnBaseEntity(targetLocation);
@@ -100,7 +90,6 @@ public class ArmorStandElement extends SimpleElement {
 		modifyLoad();
 		spawnModifier.modifyEntity(this);
 	}
-
 
 	@Override
 	public void hide() {
@@ -110,12 +99,11 @@ public class ArmorStandElement extends SimpleElement {
 		armorStand.remove();
 		armorStand = null;
 	}
-	
-	
+
 	@Override
-	public void setSpin (double spin) {
-		EulerAngle eulerAngle = new EulerAngle (0, Math.toRadians(spin), 0);
+	public void setSpin(double spin) {
+		EulerAngle eulerAngle = new EulerAngle(0, Math.toRadians(spin), 0);
 		armorStand.setHeadPose(eulerAngle);
 	}
-	
+
 }

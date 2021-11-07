@@ -1,5 +1,5 @@
 name: HeliumBalloon
-version: 1.7
+version: 1.8
 description: Build secret pathways, balloons and pets following you (using Falling Blocks, no NMS or ProtocolLib)
 author: Kirastur
 website: https://www.spigotmc.org/resources/heliumballoon.95902
@@ -40,7 +40,6 @@ permissions:
       balloon.command.list: true
       balloon.command.listall: true
       balloon.command.info: true
-      balloon.command.worlds: true
       balloon.command.reload: true
       balloon.command.purge: true
       balloon.command.gui: true
@@ -67,22 +66,19 @@ permissions:
     description: Can deassign a pet from others.
     default: op
   balloon.command.check:
-    description: Can get the templatename of your own pet.
+    description: Can get the name of your own pet.
     default: true
   balloon.command.checkother:
-    description: Can get the templatename of other player's pet.
+    description: Can get the name of other player's pet.
     default: op
   balloon.command.list:
-    description: Can list all available pet templates you have the permission for.
+    description: Can list all available pets you have the permission for.
     default: true
   balloon.command.listall:
-    description: Can list all pet templates.
+    description: Can list all pets.
     default: op
   balloon.command.info:
     description: Can display various system counters.
-    default: op
-  balloon.command.worlds:
-    description: Can display all worlds where pets are allowed..
     default: op
   balloon.command.reload:
     description: Can relod the configuration.
@@ -94,7 +90,11 @@ permissions:
     description: Can open the GUI to select a pet.
     default: true
     
-  balloon.template:
-    description: Have permissions for templates.
+  balloon.guinoparam:
+    description: Can open the GUI if no other parameter is given to this command call.
+    default: false
+    
+  balloon.pet:
+    description: Have permissions for pets.
     default: op
   

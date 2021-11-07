@@ -17,7 +17,6 @@ public class VehicleListener implements Listener {
 
 	protected final HeliumLogger logger;
 	protected final BalloonManager balloonManager;
-	
 
 	public VehicleListener(HeliumBalloonOrchestrator orchestrator) {
 		Plugin plugin = orchestrator.getPlugin();
@@ -25,12 +24,10 @@ public class VehicleListener implements Listener {
 		this.balloonManager = orchestrator.getBalloonManager();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	
-	
+
 	public void unregisterListener() {
 		HandlerList.unregisterAll(this);
 	}
-	
 
 	public void handleVehicleEnterEvent(VehicleEnterEvent event) {
 		Entity vehicleEntity = event.getVehicle();
@@ -41,7 +38,6 @@ public class VehicleListener implements Listener {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onVehicleEnterEvent(VehicleEnterEvent event) {
 		try {
@@ -51,5 +47,4 @@ public class VehicleListener implements Listener {
 		}
 	}
 
-		
 }

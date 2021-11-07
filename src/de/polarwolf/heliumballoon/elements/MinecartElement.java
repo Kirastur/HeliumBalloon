@@ -18,44 +18,38 @@ public class MinecartElement extends SimpleElement {
 
 	protected static final double MIN_DISTANCE = 0.5;
 	protected static final double MAX_SPEED = 10.0;
-	
+
 	private final ConfigMinecart config;
 	protected Minecart minecart = null;
-	
 
 	public MinecartElement(Player player, ConfigRule rule, ConfigMinecart config, SpawnModifier spawnModifier) {
 		super(player, rule, spawnModifier);
 		this.config = config;
 	}
-	
-	
+
 	public ConfigMinecart getConfig() {
 		return config;
 	}
-
 
 	@Override
 	public Vector getOffset() {
 		return config.getOffset();
 	}
 
-	
 	@Override
 	public Entity getEntity() {
 		return minecart;
 	}
 
-	
 	@Override
 	public int getDelay() {
 		return getRule().getMinecartDelay();
 	}
 
-
 	protected void spawnBaseEntity(Location targetLocation) {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, EntityType.MINECART);
-		
-		minecart = (Minecart) entity;		
+
+		minecart = (Minecart) entity;
 		minecart.setPersistent(false);
 		minecart.setInvulnerable(true);
 		minecart.setGravity(false);
@@ -66,24 +60,22 @@ public class MinecartElement extends SimpleElement {
 		minecart.setMaxSpeed(MAX_SPEED);
 		minecart.setVelocity(new Vector());
 	}
-	
-	
+
 	protected void modifySpawn() {
 		// Nothing
 	}
 
-
 	protected void modifyLoad() {
 		ConfigElement configLoadElement = config.getLoad();
 		if (configLoadElement != null) {
-			FallingBlockElement myElement = (FallingBlockElement)configLoadElement.createElement(null, getRule(), spawnModifier);
+			FallingBlockElement myElement = (FallingBlockElement) configLoadElement.createElement(null, getRule(),
+					spawnModifier);
 			BlockData myBlockData = myElement.createBlockData();
 			minecart.setDisplayBlockData(myBlockData);
 			minecart.setDisplayBlockOffset(config.getLoadOffset());
 		}
 	}
-	
-	
+
 	@Override
 	protected void spawn(Location targetLocation) throws BalloonException {
 		spawnBaseEntity(targetLocation);
@@ -91,7 +83,6 @@ public class MinecartElement extends SimpleElement {
 		modifyLoad();
 		spawnModifier.modifyEntity(this);
 	}
-
 
 	@Override
 	public void hide() {
@@ -101,15 +92,14 @@ public class MinecartElement extends SimpleElement {
 		minecart.remove();
 		minecart = null;
 	}
-	
-	
+
 	protected void adjustMinecartDirection() {
 		if (getPlayer() == null) {
 			return;
 		}
 		Vector entityVector = minecart.getLocation().toVector();
 		Vector playerVector = getPlayer().getLocation().toVector();
-		
+
 		entityVector.setY(0);
 		playerVector.setY(0);
 		Vector distanceVector = playerVector.subtract(entityVector);
@@ -129,18 +119,16 @@ public class MinecartElement extends SimpleElement {
 			minecart.setRotation((float) yaw, 0);
 		}
 	}
-	
-	
+
 	@Override
 	public void setVelocity(Vector newVelocity) {
 		super.setVelocity(newVelocity);
 		adjustMinecartDirection();
 	}
 
-
 	@Override
-	public void setSpin (double spin) {
-		minecart.setRotation((float)spin, 0);
+	public void setSpin(double spin) {
+		minecart.setRotation((float) spin, 0);
 	}
-	
+
 }

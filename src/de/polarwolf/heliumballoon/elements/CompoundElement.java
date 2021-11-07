@@ -21,8 +21,7 @@ public class CompoundElement implements Element {
 	private final Player player;
 	protected final SpawnModifier spawnModifier;
 	protected List<Element> elements = new ArrayList<>();
-	
-	
+
 	public CompoundElement(Player player, ConfigRule rule, ConfigCompound compound, SpawnModifier spawnModifier) {
 		this.player = player;
 		this.rule = rule;
@@ -30,34 +29,29 @@ public class CompoundElement implements Element {
 		this.spawnModifier = spawnModifier;
 		buildElements();
 	}
-	
-	
+
 	protected void buildElements() {
 		elements.clear();
-		for(ConfigElement myConfigElement : getCompound().getElements()) {
+		for (ConfigElement myConfigElement : getCompound().getElements()) {
 			elements.add(myConfigElement.createElement(player, getRule(), spawnModifier));
 		}
 	}
-	
-		
+
 	@Override
 	public Vector getOffset() {
 		return new Vector();
 	}
 
-	
 	@Override
 	public Entity getEntity() {
 		return null;
 	}
-	
 
 	@Override
 	public Player getPlayer() {
 		return player;
 	}
-	
-	
+
 	@Override
 	public boolean hasEntity(Entity entityToCheck) {
 		for (Element myElement : elements) {
@@ -68,12 +62,10 @@ public class CompoundElement implements Element {
 		return false;
 	}
 
-
 	@Override
 	public int getDelay() {
 		return getRule().getBlockDelay();
 	}
-
 
 	protected void spawn(Location targetLocation) throws BalloonException {
 		try {
@@ -85,17 +77,14 @@ public class CompoundElement implements Element {
 			throw e;
 		}
 	}
-	
 
 	public ConfigRule getRule() {
 		return rule;
 	}
 
-
 	public ConfigCompound getCompound() {
 		return compound;
 	}
-
 
 	@Override
 	public void hide() {
@@ -103,15 +92,13 @@ public class CompoundElement implements Element {
 			myElement.hide();
 		}
 	}
-	
-	
+
 	@Override
 	public void show(Location centralLocation) throws BalloonException {
 		hide();
 		spawn(centralLocation);
 	}
-	
-	
+
 	@Override
 	public void setVelocity(Vector newVelocity) {
 		Vector expectedLocation = elements.get(0).getCurrentCentralLocation().toVector();
@@ -123,14 +110,12 @@ public class CompoundElement implements Element {
 			myElement.setVelocity(myVelocity);
 		}
 	}
-		
-		
+
 	@Override
-	public void setSpin (double spin) {
+	public void setSpin(double spin) {
 		// Nothing to do
 	}
 
-	
 	@Override
 	public void keepAlive() {
 		for (Element myElement : elements) {
@@ -138,7 +123,6 @@ public class CompoundElement implements Element {
 		}
 	}
 
-	
 	@Override
 	public boolean isValid() {
 		boolean newValid = true;
@@ -147,8 +131,7 @@ public class CompoundElement implements Element {
 		}
 		return newValid;
 	}
-	
-	
+
 	@Override
 	public Location getCurrentCentralLocation() {
 		List<Location> centralLocations = new ArrayList<>();
@@ -159,17 +142,17 @@ public class CompoundElement implements Element {
 			}
 			centralLocations.add(elementLocation);
 		}
-		
+
 		if (centralLocations.isEmpty()) {
 			return null;
 		}
-		
+
 		Location currentLocation = centralLocations.get(0).clone();
 		for (Location myLocation : centralLocations) {
 			if (!currentLocation.getWorld().equals(myLocation.getWorld())) {
 				return null;
 			}
-			
+
 			// A correction of the element position is done in setVelocity
 			// so this is only a fail safe here.
 			Double distance = currentLocation.distance(myLocation);

@@ -19,23 +19,20 @@ import de.polarwolf.heliumballoon.balloons.BalloonManager;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
 
 public class EntityListener implements Listener {
-	
+
 	protected final HeliumLogger logger;
 	protected final BalloonManager balloonManager;
-	
-	
+
 	public EntityListener(HeliumBalloonOrchestrator orchestrator) {
 		Plugin plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.balloonManager = orchestrator.getBalloonManager();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	
-	
+
 	public void unregisterListener() {
 		HandlerList.unregisterAll(this);
 	}
-	
 
 	protected void handleEntityChangeBlockEvent(EntityChangeBlockEvent event) {
 		Entity whatEntity = event.getEntity();
@@ -45,43 +42,39 @@ public class EntityListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
-	
+
 	protected void handleEntityDropItemEvent(EntityDropItemEvent event) {
-		Entity entity=event.getEntity();
+		Entity entity = event.getEntity();
 		Balloon balloon = balloonManager.findBalloonByEntity(entity);
 		if (balloon != null) {
 			logger.printDebug("Cancelling EntityDrop for Balloon Element " + balloon.getName());
 			event.setCancelled(true);
-		}				
+		}
 	}
-	
-	
+
 	protected void handleEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		Entity takerEntity = event.getEntity();
 		Balloon balloonAsDamageTaker = balloonManager.findBalloonByEntity(takerEntity);
 		if (balloonAsDamageTaker != null) {
 			logger.printDebug("Cancelling EntityDamage for Balloon Element " + balloonAsDamageTaker.getName());
 			event.setCancelled(true);
-		}		
+		}
 		Entity damagerEntity = event.getDamager();
 		Balloon balloonAsDamager = balloonManager.findBalloonByEntity(damagerEntity);
 		if (balloonAsDamager != null) {
 			logger.printDebug("Cancelling EntityDamage for Balloon Element " + balloonAsDamager.getName());
 			event.setCancelled(true);
-		}		
+		}
 	}
-	
-		
+
 	protected void handleEntityEnterLoveModeEvent(EntityEnterLoveModeEvent event) {
 		Entity entity = event.getEntity();
 		Balloon balloon = balloonManager.findBalloonByEntity(entity);
 		if (balloon != null) {
 			logger.printDebug("Cancelling EntityEnterLoveMode for Balloon Element " + balloon.getName());
 			event.setCancelled(true);
-		}						
+		}
 	}
-	
 
 	protected void handleEntityBreedEvent(EntityBreedEvent event) {
 		Entity mother = event.getMother();
@@ -91,23 +84,21 @@ public class EntityListener implements Listener {
 		if (balloonMother != null) {
 			logger.printDebug("Cancelling EntityBreedEvent for Balloon Element " + balloonMother.getName());
 			event.setCancelled(true);
-		}						
+		}
 		if (balloonFather != null) {
 			logger.printDebug("Cancelling EntityBreedEvent for Balloon Element " + balloonFather.getName());
 			event.setCancelled(true);
-		}								
+		}
 	}
-	
-	
+
 	protected void handlePlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		Entity clickedEntity = event.getRightClicked();
 		Balloon balloon = balloonManager.findBalloonByEntity(clickedEntity);
 		if (balloon != null) {
 			logger.printDebug("Cancelling PlayerInteractEntity for Balloon Element " + balloon.getName());
 			event.setCancelled(true);
-		}						
+		}
 	}
-
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event) {
@@ -118,7 +109,6 @@ public class EntityListener implements Listener {
 		}
 	}
 
-	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDropItemEvent(EntityDropItemEvent event) {
 		try {
@@ -128,7 +118,6 @@ public class EntityListener implements Listener {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
 		try {
@@ -137,7 +126,6 @@ public class EntityListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-	
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityEnterLoveModeEvent(EntityEnterLoveModeEvent event) {
@@ -148,7 +136,6 @@ public class EntityListener implements Listener {
 		}
 	}
 
-	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityBreedEvent(EntityBreedEvent event) {
 		try {
@@ -158,7 +145,6 @@ public class EntityListener implements Listener {
 		}
 	}
 
-	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
 		try {

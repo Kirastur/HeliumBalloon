@@ -4,155 +4,179 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.events.EventManager;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.helium.HeliumText;
 import de.polarwolf.heliumballoon.messages.Message;
-import de.polarwolf.heliumballoon.players.PlayerPersistentPet;
+import de.polarwolf.heliumballoon.players.PlayerPersistentData;
 
 public class ConfigManager {
 
 	public static final String SECTION_STARTUP = "startup";
 	public static final String SECTION_GDPR = "GDPR";
 	public static final String PARAM_STARTUP_PASSIVEMODE = "passiveMode";
+	public static final String PARAM_LOAD_LOCAL_CONFIG = "loadLocalConfig";
+	public static final String PARAM_STARTUP_WARN_ON_WRONG_PURPOSE = "warnOnWrongPurpose";
 	public static final String PARAM_STARTUP_DEBUG = "debug";
 	public static final String PARAM_STARTUP_EXCEPTION_QUOTA = "exceptionQuota";
 	public static final String PARAM_GDPR_KEEP_PLAYER_DAYS = "keepPlayerDays";
 	public static final String PARAM_GDPR_RUN_PURGE_HOUR = "runPurgeHour";
-	
+
 	public static final boolean DEFAULT_PASSIVEMODE = false;
+	public static final boolean DEFAULT_LOAD_LOCAL_CONFIG = true;
 	public static final boolean DEFAULT_DEBUG = false;
 	public static final int DEFAULT_EXCEPTION_QUOTA = 10;
+	public static final boolean DEFAULT_WARN_ON_WRONG_PURPOSE = true;
 	public static final int DEFAULT_KEEP_PLAYER_DAYS = 30;
 	public static final int DEFAULT_RUN_PURGE_HOUR = 5;
-	
+
 	private final int keepPlayerDays;
 	private final int runPurgeHour;
 
-
 	protected final Plugin plugin;
 	protected final HeliumLogger logger;
+	protected final EventManager eventManager;
 	protected final ConfigPlayer configPlayer;
 	protected final ConfigMessage configMessage;
-	protected ConfigSection section;
-	
+	protected List<ConfigSection> sections = new ArrayList<>();
 
 	public ConfigManager(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
-		section = new ConfigSection("");
+		this.eventManager = orchestrator.getEventManager();
 		configPlayer = buildConfigPlayer();
-		configMessage = buildConfigMessage();		
-		keepPlayerDays = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS, DEFAULT_KEEP_PLAYER_DAYS);
-		runPurgeHour = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_RUN_PURGE_HOUR, DEFAULT_RUN_PURGE_HOUR);
+		configMessage = buildConfigMessage();
+		keepPlayerDays = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS,
+				DEFAULT_KEEP_PLAYER_DAYS);
+		runPurgeHour = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_RUN_PURGE_HOUR,
+				DEFAULT_RUN_PURGE_HOUR);
 	}
-	
-	
+
 	public static boolean isPassiveMode(Plugin startupPlugin) {
-		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_STARTUP_PASSIVEMODE, DEFAULT_PASSIVEMODE);
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_STARTUP_PASSIVEMODE,
+				DEFAULT_PASSIVEMODE);
 	}
-		
+
+	public static boolean isLoadLocalConfig(Plugin startupPlugin) {
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_LOAD_LOCAL_CONFIG,
+				DEFAULT_LOAD_LOCAL_CONFIG);
+	}
 
 	public static boolean isInitialDebug(Plugin startupPlugin) {
-		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_STARTUP_DEBUG, DEFAULT_DEBUG);
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_STARTUP_DEBUG,
+				DEFAULT_DEBUG);
 	}
 
-	
 	public static int getExceptionQuota(Plugin startupPlugin) {
-		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_EXCEPTION_QUOTA, DEFAULT_EXCEPTION_QUOTA);
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_EXCEPTION_QUOTA,
+				DEFAULT_EXCEPTION_QUOTA);
 	}
 
-	
+	public static boolean getWarnOnWrongPurpose(Plugin startupPlugin) {
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP)
+				.getBoolean(PARAM_STARTUP_WARN_ON_WRONG_PURPOSE, DEFAULT_WARN_ON_WRONG_PURPOSE);
+	}
+
 	public int getKeepPlayerDays() {
 		return keepPlayerDays;
 	}
 
-	
 	public int getRunPurgeHour() {
 		return runPurgeHour;
 	}
 
-	
-	public ConfigRule findRule(String ruleName) {
-		return section.findRule(ruleName);
-	}
-	
-	
-	public Set<String> getRuleNames() {
-		return section.getRuleNames();
+	public int getSectionCount() {
+		return sections.size();
 	}
 
+	public ConfigPet findPet(String petName) {
+		for (ConfigSection mySection : sections) {
+			ConfigPet myPet = mySection.findPet(petName);
+			if (myPet != null) {
+				return myPet;
+			}
+		}
+		return null;
+	}
 
-	public ConfigTemplate findTemplate(String templateName) {
-		return section.findTemplate(templateName);
+	public Set<String> getPetNames() {
+		Set<String> allPetNames = new TreeSet<>();
+		for (ConfigSection mySection : sections) {
+			allPetNames.addAll(mySection.getPetNames());
+		}
+		return allPetNames;
 	}
-	
-	
-	public Set<String> getTemplateNames() {
-		return section.getTemplateNames();
-	}
-	
-	
+
 	public ConfigWall findWall(String wallName) {
-		return section.findWall(wallName);
+		for (ConfigSection mySection : sections) {
+			ConfigWall myWall = mySection.findWall(wallName);
+			if (myWall != null) {
+				return myWall;
+			}
+		}
+		return null;
 	}
-	
-	
+
 	public Set<String> getWallNames() {
-		return section.getWallNames();
+		Set<String> allWallNames = new TreeSet<>();
+		for (ConfigSection mySection : sections) {
+			allWallNames.addAll(mySection.getWallNames());
+		}
+		return allWallNames;
 	}
 
-	
-	public ConfigRotator findRotator(String rotationName) {
-		return section.findRotator(rotationName);
+	public ConfigRotator findRotator(String rotatorName) {
+		for (ConfigSection mySection : sections) {
+			ConfigRotator myRotator = mySection.findRotator(rotatorName);
+			if (myRotator != null) {
+				return myRotator;
+			}
+		}
+		return null;
 	}
-	
-	
+
 	public Set<String> getRotatorNames() {
-		return section.getRotatorNames();
+		Set<String> allRotatorNames = new TreeSet<>();
+		for (ConfigSection mySection : sections) {
+			allRotatorNames.addAll(mySection.getRotatorNames());
+		}
+		return allRotatorNames;
 	}
 
-	
-	public boolean hasWorld(String worldName) {
-		return section.hasWorld(worldName);
+	public ConfigGuiMenu getGuiMenu() {
+		ConfigGuiMenu lastGuiMenu = null;
+		for (ConfigSection mySection : sections) {
+			ConfigGuiMenu myGuiMenu = mySection.getGuiMenu();
+			if (myGuiMenu != null) {
+				lastGuiMenu = myGuiMenu;
+			}
+		}
+		return lastGuiMenu;
 	}
-	
-	
-	public String getGuiTitle(CommandSender sender) {
-		return section.getGuiTitle(sender);
-	}
-	
-	
-	public List<ConfigGuiItem> getGuiItems() {
-		return section.getGuiItems();
-	}
-	
 
-	public ConfigGuiDeassign getGuiDeassign() {
-		return section.getGuiDeassign();
+	public ConfigSection buildConfigSectionFromConfigFile(Plugin fileOwnerPlugin) throws BalloonException {
+		ConfigurationSection fileSection = fileOwnerPlugin.getConfig().getRoot();
+		return new ConfigSection(fileOwnerPlugin.getName(), fileSection);
 	}
-	
-	
+
 	public void reload() throws BalloonException {
-		ConfigurationSection fileSection = plugin.getConfig().getRoot();
-		ConfigSection newSection = new ConfigSection("", fileSection);
-		section = newSection;
-		
-		int ruleCount = getRuleNames().size();
-		int templateCount = getTemplateNames().size();
+		List<ConfigSection> newSections = eventManager.sendReloadEvent();
+		sections = newSections;
+		int sectionCount = getSectionCount();
+		int petCount = getPetNames().size();
 		int wallCount = getWallNames().size();
 		int rotatorCount = getRotatorNames().size();
-		int guiItemCount = getGuiItems().size();
-		logger.printInfo(String.format("%d rules, %d templates, %d walls, %d rotators and %d GUI items loaded", ruleCount, templateCount, wallCount, rotatorCount, guiItemCount));
+		logger.printInfo(String.format("%d sections, %d pets, %d walls, and %d rotators loaded", sectionCount, petCount,
+				wallCount, rotatorCount));
 	}
-
 
 	public ConfigPlayer buildConfigPlayer() {
 		try {
@@ -163,28 +187,25 @@ public class ConfigManager {
 		return null;
 	}
 
-
-	public PlayerPersistentPet findPlayerPersistentPet(UUID playerUUID) {
+	public PlayerPersistentData findPlayerPersistentData(UUID playerUUID) {
 		try {
 			if (configPlayer != null) {
-				return configPlayer.findPlayerPersistentPet(playerUUID);
+				return configPlayer.findPlayerPersistentData(playerUUID);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	public boolean hasPlayerPersistentPet(UUID playerUUID) {
-		return findPlayerPersistentPet(playerUUID) != null;
+
+	public boolean hasPlayerPersistentData(UUID playerUUID) {
+		return findPlayerPersistentData(playerUUID) != null;
 	}
 
-
-	public boolean writePlayerPersistentPet(PlayerPersistentPet playerPersistentPet) {
+	public boolean writePlayerPersistentData(PlayerPersistentData playerPersistentData) {
 		try {
 			if (configPlayer != null) {
-				configPlayer.writePlayerPersistentPet(playerPersistentPet);
+				configPlayer.writePlayerPersistentData(playerPersistentData);
 				return true;
 			}
 		} catch (IOException e) {
@@ -193,11 +214,10 @@ public class ConfigManager {
 		return false;
 	}
 
-
-	public boolean removePlayerPersistentPet(UUID playerUUID) {
+	public boolean removePlayerPersistentData(UUID playerUUID) {
 		try {
 			if (configPlayer != null) {
-				configPlayer.removePlayerPersistentPet(playerUUID);
+				configPlayer.removePlayerPersistentData(playerUUID);
 				return true;
 			}
 		} catch (Exception e) {
@@ -205,16 +225,14 @@ public class ConfigManager {
 		}
 		return false;
 	}
-	
-	
-	public List<UUID> getAllPlayerPersistentPetUUIDs() {
+
+	public List<UUID> getAllPlayerPersistentDataUUIDs() {
 		if (configPlayer != null) {
-			return configPlayer.getAllPlayerPersistentPetUUIDs();
+			return configPlayer.getAllPlayerPersistentDataUUIDs();
 		} else {
 			return new ArrayList<>();
 		}
 	}
-	
 
 	protected ConfigMessage buildConfigMessage() {
 		try {
@@ -224,7 +242,6 @@ public class ConfigManager {
 		}
 		return null;
 	}
-	
 
 	public HeliumText getMessage(Message messageId) {
 		if (configMessage != null) {

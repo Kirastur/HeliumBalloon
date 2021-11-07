@@ -25,12 +25,11 @@ import de.polarwolf.heliumballoon.pets.PetManager;
 import de.polarwolf.heliumballoon.players.PlayerManager;
 
 public class PlayerListener implements Listener {
-	
+
 	protected final HeliumLogger logger;
 	protected final PlayerManager playerManager;
 	protected final BalloonManager balloonManager;
 	protected final PetManager petManager;
-	
 
 	public PlayerListener(HeliumBalloonOrchestrator orchestrator) {
 		Plugin plugin = orchestrator.getPlugin();
@@ -40,38 +39,32 @@ public class PlayerListener implements Listener {
 		this.petManager = orchestrator.getPetManager();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	
-	
+
 	public void unregisterListener() {
 		HandlerList.unregisterAll(this);
 	}
-	
 
 	protected void resyncPlayer(Player player) {
 		balloonManager.cancelBalloonsByPlayer(player);
 	}
-	
-	
+
 	protected void wakeupBalloons(Player player) {
 		balloonManager.wakeupBalloonsByPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		logger.printDebug("Init: PlayerJoin " + player.getName());
 		resyncPlayer(player);
-		playerManager.touchPetForPlayer(player);
+		playerManager.touchPersistentPetForPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerSpawnLocationEvent(PlayerSpawnLocationEvent event) {
 		Player player = event.getPlayer();
-		logger.printDebug("Init: PlayerSpawnLocation " + player.getName());		
+		logger.printDebug("Init: PlayerSpawnLocation " + player.getName());
 		resyncPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerMoveEvent(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		Location toLocation = event.getFrom();
@@ -83,32 +76,29 @@ public class PlayerListener implements Listener {
 			resyncPlayer(player);
 		}
 	}
-	
-	
+
 	public void handlePlayerTeleportEvent(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		Location toLocation = event.getFrom();
 		Location fromLocation = event.getTo();
 		if (!toLocation.getWorld().equals(fromLocation.getWorld())) {
 			logger.printDebug("Resync: PlayerTeleport " + player.getName());
-			resyncPlayer(player);				
+			resyncPlayer(player);
 		}
 	}
 
-	
 	public void handlePlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		logger.printDebug("Resync: PlayerChangeWorld " + player.getName());
 		resyncPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
 		Player player = event.getPlayer();
 		GameMode oldGameMode = event.getPlayer().getGameMode();
 		GameMode newGameMode = event.getNewGameMode();
-		// On Paper the old game mode can be null, documentation is wrong here 
-		if (oldGameMode == null) { //NOSONAR
+		// On Paper the old game mode can be null, documentation is wrong here
+		if (oldGameMode == null) { // NOSONAR
 			return;
 		}
 		if (!newGameMode.equals(GameMode.SPECTATOR) && oldGameMode.equals(GameMode.SPECTATOR)) {
@@ -118,31 +108,27 @@ public class PlayerListener implements Listener {
 		if (newGameMode.equals(GameMode.SPECTATOR) && !oldGameMode.equals(GameMode.SPECTATOR)) {
 			logger.printDebug("Done: PlayerGameModeChange to Spectator " + player.getName());
 			resyncPlayer(player);
-		}		
+		}
 	}
-	
-	
+
 	public void handlePlayerDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		logger.printDebug("Done: PlayerRespawn " + player.getName());
-		resyncPlayer(player);		
+		resyncPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerRespawnEvent(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 		logger.printDebug("Done: PlayerRespawn " + player.getName());
 		resyncPlayer(player);
 	}
-	
-	
+
 	public void handlePlayerQuitEvent(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		logger.printDebug("Done: PlayerQuit " + player.getName());
 		petManager.removePlayerCancelScore(player);
 		resyncPlayer(player);
 	}
-
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoinEvent(PlayerJoinEvent event) {
@@ -152,7 +138,6 @@ public class PlayerListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-		
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerSpawnLocationEvent(PlayerSpawnLocationEvent event) {
@@ -163,7 +148,6 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-		
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMoveEvent(PlayerMoveEvent event) {
 		try {
@@ -172,8 +156,7 @@ public class PlayerListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-		
-		
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleportEvent(PlayerTeleportEvent event) {
 		try {
@@ -182,7 +165,6 @@ public class PlayerListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
@@ -193,7 +175,6 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
 		try {
@@ -202,7 +183,6 @@ public class PlayerListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDeathEvent(PlayerDeathEvent event) {
@@ -213,7 +193,6 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
 		try {
@@ -222,7 +201,6 @@ public class PlayerListener implements Listener {
 			e.printStackTrace();
 		}
 	}
-
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {

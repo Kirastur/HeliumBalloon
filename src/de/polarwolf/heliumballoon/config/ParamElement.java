@@ -1,14 +1,15 @@
 package de.polarwolf.heliumballoon.config;
 
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.STRING;
+
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumParamType;
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.*;
 
 public enum ParamElement implements HeliumParam {
 
-	MATERIAL (STRING, "material"),
-	AXIS (STRING, "axis"),
-	BISECTED_HALF (STRING, "bisectedHalf"),
+	MATERIAL(STRING, "material"),
+	AXIS(STRING, "axis"),
+	BISECTED_HALF(STRING, "bisectedHalf"),
 	BELL_ATTACHMENT(STRING, "bellAttachment"),
 	BLOCK_FACE(STRING, "blockFace"),
 	CHEST_TYPE(STRING, "chestType"),
@@ -21,27 +22,24 @@ public enum ParamElement implements HeliumParam {
 	IS_SIGNAL_FIRE(STRING, "isSignalFire"),
 	IS_HANGING(STRING, "isHanging"),
 	HAS_EYE(STRING, "hasEye"),
-	CUSTOM (STRING, "custom"),
-	X (STRING, "x"),
-	Y (STRING, "y"),
-	Z (STRING, "z");
-		
+	CUSTOM(STRING, "custom"),
+	X(STRING, "x"),
+	Y(STRING, "y"),
+	Z(STRING, "z");
+
 	private final HeliumParamType paramType;
 	private final String attributeName;
-	
 
 	private ParamElement(HeliumParamType paramType, String attributeName) {
 		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
 
-
 	@Override
 	public boolean isType(HeliumParamType testParamType) {
-		return testParamType==paramType;
+		return testParamType == paramType;
 	}
 
-	
 	@Override
 	public String getAttributeName() {
 		return attributeName;

@@ -22,7 +22,6 @@ public abstract class PlacingManager {
 	protected final ConfigManager configManager;
 	protected final BalloonManager balloonManager;
 	protected List<Placing> placings = new ArrayList<>();
-	
 
 	protected PlacingManager(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
@@ -31,47 +30,44 @@ public abstract class PlacingManager {
 		this.configManager = orchestrator.getConfigManager();
 		this.balloonManager = orchestrator.getBalloonManager();
 	}
-	
-	
+
 	protected abstract Set<String> getBalloonSetNames();
-	
+
 	protected abstract ConfigPlaceableBalloonSet findBalloonSet(String placingName);
-	
+
 	protected abstract Placing createPlacing(ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world);
-	
-	
+
 	public List<Placing> getPlacings() {
 		return new ArrayList<>(placings);
 	}
-	
-	
+
 	public int removePlacings(World world) {
 		int count = 0;
-		List<Placing> placingList = new ArrayList <>(placings);
+		List<Placing> placingList = new ArrayList<>(placings);
 		for (Placing myPlacing : placingList) {
 			if (myPlacing.getWorld().equals(world)) {
 				myPlacing.cancel();
 				placings.remove(myPlacing);
-				count = count +1;
+				count = count + 1;
 			}
 		}
 		return count;
 	}
-	
-	
+
 	public int addPlacings(World world) {
 		int count = 0;
 		removePlacings(world);
 		try {
 			for (String myPlacingName : getBalloonSetNames()) {
 				ConfigPlaceableBalloonSet configPlaceableBalloonSet = findBalloonSet(myPlacingName);
-				if (configPlaceableBalloonSet.isMatchingWorld(world)) {
-					String fullPlacingName = configPlaceableBalloonSet.getName()+"."+world.getName();
-					logger.printDebug(String.format("Crating PlacingBalloon: %s", fullPlacingName));
+				if (configPlaceableBalloonSet.isMatchingWorld(world)
+						&& (configPlaceableBalloonSet.findTemplate(world) != null)) {
+					String fullPlacingName = configPlaceableBalloonSet.getName() + "." + world.getName();
+					logger.printDebug(String.format("Creating PlacingBalloon: %s", fullPlacingName));
 					Placing newPlacing = createPlacing(configPlaceableBalloonSet, world);
 					placings.add(newPlacing);
 					newPlacing.buildBalloons();
-					count = count +1;
+					count = count + 1;
 				}
 			}
 		} catch (Exception e) {
@@ -80,8 +76,7 @@ public abstract class PlacingManager {
 		}
 		return count;
 	}
-	
-	
+
 	public int reload() {
 		int count = 0;
 		for (World myWorld : plugin.getServer().getWorlds()) {
@@ -93,5 +88,5 @@ public abstract class PlacingManager {
 		}
 		return count;
 	}
-		
+
 }

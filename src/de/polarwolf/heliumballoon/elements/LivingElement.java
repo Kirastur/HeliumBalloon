@@ -31,56 +31,49 @@ public class LivingElement extends SimpleElement {
 
 	protected static final double MIN_DISTANCE = 0.5;
 	protected static final double MAX_PITCH_PER_STEP = 5;
-	
+
 	private final ConfigLiving config;
 	protected boolean isAware = true;
 	protected LivingEntity livingEntity = null;
 	protected double lastPitch = 0;
-	
 
 	public LivingElement(Player player, ConfigRule rule, ConfigLiving config, SpawnModifier spawnModifier) {
 		super(player, rule, spawnModifier);
 		this.config = config;
 	}
-	
-	
+
 	public ConfigLiving getConfig() {
 		return config;
 	}
-
 
 	@Override
 	public Vector getOffset() {
 		return config.getOffset();
 	}
 
-	
 	@Override
 	public Entity getEntity() {
 		return livingEntity;
 	}
 
-	
 	@Override
 	public int getDelay() {
 		return getRule().getLivingDelay();
 	}
-
 
 	@Override
 	public boolean isValid() {
 		if (!super.isValid()) {
 			return false;
 		}
-		
+
 		if (config.hasLeash()) {
 			return (livingEntity.isLeashed() && livingEntity.getLeashHolder().equals(getPlayer()));
 		} else {
 			return true;
 		}
 	}
-	
-	
+
 	public void disableAware() {
 		isAware = false;
 		if (livingEntity instanceof Mob) {
@@ -88,16 +81,14 @@ public class LivingElement extends SimpleElement {
 			mob.setAware(false);
 		}
 	}
-	
-	
+
 	protected void modifySpawnMonster() {
 		if (!(livingEntity instanceof Monster)) {
 			return;
 		}
 		disableAware();
 	}
-	
-	
+
 	protected void modifySpawnTamed() {
 		if (!(livingEntity instanceof Tameable) || !getConfig().isTamed()) {
 			return;
@@ -108,7 +99,6 @@ public class LivingElement extends SimpleElement {
 			tameable.setOwner(getPlayer());
 		}
 	}
-
 
 	protected void modifySpawnCat() {
 		if (!(livingEntity instanceof Cat)) {
@@ -123,7 +113,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-
 	protected void modifySpawnFox() {
 		if (!(livingEntity instanceof Fox)) {
 			return;
@@ -133,8 +122,7 @@ public class LivingElement extends SimpleElement {
 			fox.setFoxType(config.getFoxType());
 		}
 	}
-	
-	
+
 	protected void modifySpawnHorse() {
 		if (!(livingEntity instanceof Horse)) {
 			return;
@@ -148,7 +136,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnLlama() {
 		if (!(livingEntity instanceof Llama)) {
 			return;
@@ -159,7 +146,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnMushroomCow() {
 		if (!(livingEntity instanceof MushroomCow)) {
 			return;
@@ -170,7 +156,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnPanda() {
 		if (!(livingEntity instanceof Panda)) {
 			return;
@@ -184,7 +169,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnParrot() {
 		if (!(livingEntity instanceof Parrot)) {
 			return;
@@ -194,8 +178,7 @@ public class LivingElement extends SimpleElement {
 			parrot.setVariant(config.getParrotVariant());
 		}
 	}
-	
-	
+
 	protected void modifySpawnRabbit() {
 		if (!(livingEntity instanceof Rabbit)) {
 			return;
@@ -206,7 +189,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnSheep() {
 		if (!(livingEntity instanceof Sheep)) {
 			return;
@@ -217,7 +199,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnTropicalFish() {
 		if (!(livingEntity instanceof TropicalFish)) {
 			return;
@@ -234,7 +215,6 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-	
 	protected void modifySpawnWolf() {
 		if (!(livingEntity instanceof Wolf)) {
 			return;
@@ -244,8 +224,7 @@ public class LivingElement extends SimpleElement {
 			wolf.setCollarColor(config.getCollarColor());
 		}
 	}
-	
-	
+
 	protected void modifySpawnVillager() {
 		if (!(livingEntity instanceof Villager)) {
 			return;
@@ -262,15 +241,14 @@ public class LivingElement extends SimpleElement {
 		}
 	}
 
-
 	protected void spawnBaseEntity(Location targetLocation) throws BalloonException {
 		Entity entity = targetLocation.getWorld().spawnEntity(targetLocation, config.getEntityType());
 		if (!(entity instanceof LivingEntity)) {
 			entity.remove();
-			throw new BalloonException (config.getName(), "Wrong entity type", config.getEntityType().toString());
+			throw new BalloonException(config.getName(), "Wrong entity type", config.getEntityType().toString());
 		}
 		livingEntity = (LivingEntity) entity;
-		
+
 		livingEntity.setPersistent(false);
 		livingEntity.setCanPickupItems(false);
 		livingEntity.setCollidable(false);
@@ -284,8 +262,7 @@ public class LivingElement extends SimpleElement {
 		}
 		livingEntity.setVelocity(new Vector());
 	}
-	
-	
+
 	protected void modifySpawn() {
 		modifySpawnMonster();
 		modifySpawnTamed();
@@ -303,14 +280,12 @@ public class LivingElement extends SimpleElement {
 		modifySpawnVillager();
 	}
 
-
 	@Override
 	protected void spawn(Location targetLocation) throws BalloonException {
 		spawnBaseEntity(targetLocation);
-		modifySpawn();		
+		modifySpawn();
 		spawnModifier.modifyEntity(this);
 	}
-
 
 	@Override
 	public void hide() {
@@ -320,20 +295,18 @@ public class LivingElement extends SimpleElement {
 		livingEntity.remove();
 		livingEntity = null;
 	}
-	
-	
+
 	protected boolean isPitchableEntity() {
 		return (livingEntity instanceof Illager);
 	}
-	
-	
+
 	protected void adjustMonsterDirection() {
 		if ((getPlayer() == null) || isAware) {
 			return;
 		}
 		Vector entityVector = livingEntity.getEyeLocation().toVector();
 		Vector playerVector = getPlayer().getEyeLocation().toVector();
-		
+
 		double high = entityVector.getY() - playerVector.getY();
 		entityVector.setY(0);
 		playerVector.setY(0);
@@ -350,11 +323,11 @@ public class LivingElement extends SimpleElement {
 			double pitch = 0.0;
 			if (isPitchableEntity()) {
 				high = high + getRule().getAdjustIllagerY();
-				pitch = Math.atan(Math.abs(high)/distance);
+				pitch = Math.atan(Math.abs(high) / distance);
 				pitch = Math.toDegrees(pitch);
 				pitch = pitch * Math.signum(high);
 			}
-			
+
 			if ((pitch - lastPitch) > MAX_PITCH_PER_STEP) {
 				pitch = lastPitch + MAX_PITCH_PER_STEP;
 			}
@@ -362,16 +335,15 @@ public class LivingElement extends SimpleElement {
 				pitch = lastPitch - MAX_PITCH_PER_STEP;
 			}
 			lastPitch = pitch;
-			
+
 			livingEntity.setRotation((float) yaw, (float) pitch);
 		}
 	}
-	
-	
+
 	@Override
 	public void setVelocity(Vector newVelocity) {
 		super.setVelocity(newVelocity);
 		adjustMonsterDirection();
 	}
-		
+
 }

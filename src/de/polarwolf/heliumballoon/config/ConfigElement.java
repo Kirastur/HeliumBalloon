@@ -26,11 +26,11 @@ import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public class ConfigElement implements ConfigPart {
-	
+
 	private final String name;
 	private final String fullName;
 	private Material material = Material.STONE;
-	private Vector offset = new Vector (0,0,0);	
+	private Vector offset = new Vector(0, 0, 0);
 	private Axis axis = null;
 	private Bisected.Half bisectedHalf = null;
 	private Bell.Attachment bellAttachment = null;
@@ -46,13 +46,11 @@ public class ConfigElement implements ConfigPart {
 	private boolean hanging = false;
 	private boolean eye = false;
 	private String custom = null;
-	
-	
+
 	public ConfigElement(String name, String fullName) {
 		this.name = name;
 		this.fullName = fullName;
 	}
-
 
 	public ConfigElement(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
@@ -60,235 +58,201 @@ public class ConfigElement implements ConfigPart {
 		loadConfigFromFile(fileSection);
 	}
 
-	
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	
 	@Override
 	public String getFullName() {
 		return fullName;
 	}
-	
-	
+
 	@Override
 	public boolean isSuitableFor(BalloonPurpose purpose) {
-		switch(purpose) {
-			case PET: return true;
-			case WALL: return true;
-			case ROTATOR: return false;
-			default: return false;
-		
+		switch (purpose) {
+		case PET:
+			return true;
+		case WALL:
+			return true;
+		case ROTATOR:
+			return false;
+		default:
+			return false;
 		}
 	}
 
-	
 	@Override
 	public Element createElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
 		return new FallingBlockElement(player, rule, this, spawnModifier);
 	}
-	
-	
+
 	@Override
 	public double getMinYOffset() {
-		return offset.getY();		
+		return offset.getY();
 	}
 
-	
 	@Override
 	public double getMaxYOffset() {
-		return offset.getY();		
+		return offset.getY();
 	}
 
-	
 	public Material getMaterial() {
 		return material;
 	}
-
 
 	protected void setMaterial(Material material) {
 		this.material = material;
 	}
 
-
 	public Vector getOffset() {
 		return offset;
 	}
 
-
 	protected void setOffset(Vector offset) {
 		this.offset = offset;
 	}
-	
-	
+
 	public Axis getAxis() {
 		return axis;
 	}
-
 
 	protected void setAxis(Axis axis) {
 		this.axis = axis;
 	}
 
-
 	public Bisected.Half getBisectedHalf() {
 		return bisectedHalf;
 	}
-
 
 	protected void setBisectedHalf(Bisected.Half bisectedHalf) {
 		this.bisectedHalf = bisectedHalf;
 	}
 
-
 	public Bell.Attachment getBellAttachment() {
 		return bellAttachment;
 	}
-
 
 	protected void setBellAttachment(Bell.Attachment bellAttachment) {
 		this.bellAttachment = bellAttachment;
 	}
 
-
 	public BlockFace getBlockFace() {
 		return blockFace;
 	}
-
 
 	protected void setBlockFace(BlockFace blockFace) {
 		this.blockFace = blockFace;
 	}
 
-
 	public Chest.Type getChestType() {
 		return chestType;
 	}
-
 
 	protected void setChestType(Chest.Type chestType) {
 		this.chestType = chestType;
 	}
 
-
 	public Door.Hinge getDoorHinge() {
 		return doorHinge;
 	}
-
 
 	protected void setDoorHinge(Door.Hinge doorHinge) {
 		this.doorHinge = doorHinge;
 	}
 
-
 	public FaceAttachable.AttachedFace getAttachedFace() {
 		return attachedFace;
 	}
-
 
 	protected void setAttachedFace(FaceAttachable.AttachedFace attachedFace) {
 		this.attachedFace = attachedFace;
 	}
 
-
 	public Slab.Type getSlabType() {
 		return slabType;
 	}
-
 
 	protected void setSlabType(Slab.Type slabType) {
 		this.slabType = slabType;
 	}
 
-
 	public Stairs.Shape getStairsShape() {
 		return stairsShape;
 	}
-
 
 	protected void setStairsShape(Stairs.Shape stairsShape) {
 		this.stairsShape = stairsShape;
 	}
 
-
 	public boolean isOpen() {
 		return open;
 	}
-
 
 	protected void setOpen(boolean open) {
 		this.open = open;
 	}
 
-
 	public boolean isLit() {
 		return lit;
 	}
-
 
 	protected void setLit(boolean lit) {
 		this.lit = lit;
 	}
 
-
 	public boolean isSignalFire() {
 		return signalFire;
 	}
-
 
 	protected void setSignalFire(boolean signalFire) {
 		this.signalFire = signalFire;
 	}
 
-
 	public boolean isHanging() {
 		return hanging;
 	}
-
 
 	protected void setHanging(boolean hanging) {
 		this.hanging = hanging;
 	}
 
-
 	public boolean hasEye() {
 		return eye;
 	}
-
 
 	public void setEye(boolean eye) {
 		this.eye = eye;
 	}
 
-
 	public String getCustom() {
 		return custom;
 	}
-
 
 	protected void setCustom(String custom) {
 		this.custom = custom;
 	}
 
-
 	protected List<HeliumParam> getValidParams() {
-		return  Arrays.asList(ParamElement.values());
+		return Arrays.asList(ParamElement.values());
 	}
-	
-	
+
 	protected void importHeliumSection(HeliumSection heliumSection) throws BalloonException {
-		setMaterial(ConfigUtils.getBlockMaterialFromName(getFullName(), heliumSection.getString(ParamElement.MATERIAL)));
+		setMaterial(
+				ConfigUtils.getBlockMaterialFromName(getFullName(), heliumSection.getString(ParamElement.MATERIAL)));
 		setAxis(ConfigUtils.getAxisFromName(getFullName(), heliumSection.getString(ParamElement.AXIS)));
-		setBisectedHalf(ConfigUtils.getHalfFromName(getFullName(), heliumSection.getString(ParamElement.BISECTED_HALF)));
-		setBellAttachment(ConfigUtils.getBellAttachmentFromName(getFullName(), heliumSection.getString(ParamElement.BELL_ATTACHMENT)));
+		setBisectedHalf(
+				ConfigUtils.getHalfFromName(getFullName(), heliumSection.getString(ParamElement.BISECTED_HALF)));
+		setBellAttachment(ConfigUtils.getBellAttachmentFromName(getFullName(),
+				heliumSection.getString(ParamElement.BELL_ATTACHMENT)));
 		setBlockFace(ConfigUtils.getBlockFaceFromName(getFullName(), heliumSection.getString(ParamElement.BLOCK_FACE)));
 		setChestType(ConfigUtils.getChestTypeFromName(getFullName(), heliumSection.getString(ParamElement.CHEST_TYPE)));
 		setDoorHinge(ConfigUtils.getDoorHingeFromName(getFullName(), heliumSection.getString(ParamElement.DOOR_HINGE)));
-		setAttachedFace(ConfigUtils.getAttachedFaceFromName(getFullName(), heliumSection.getString(ParamElement.ATTACHED_FACE)));
+		setAttachedFace(ConfigUtils.getAttachedFaceFromName(getFullName(),
+				heliumSection.getString(ParamElement.ATTACHED_FACE)));
 		setSlabType(ConfigUtils.getSlabTypeFromName(getFullName(), heliumSection.getString(ParamElement.SLAB_TYPE)));
-		setStairsShape(ConfigUtils.getStairsShapeFromName(getFullName(), heliumSection.getString(ParamElement.STAIRS_SHAPE)));
+		setStairsShape(
+				ConfigUtils.getStairsShapeFromName(getFullName(), heliumSection.getString(ParamElement.STAIRS_SHAPE)));
 
 		setOpen(heliumSection.getBoolean(ParamElement.IS_OPEN, isOpen()));
 		setLit(heliumSection.getBoolean(ParamElement.IS_LIT, isLit()));
@@ -301,10 +265,9 @@ public class ConfigElement implements ConfigPart {
 		Double z = heliumSection.getDouble(ParamElement.Z, getOffset().getZ());
 		setOffset(new Vector(x, y, z));
 
-		setCustom(heliumSection.getString(ParamElement.CUSTOM));		
+		setCustom(heliumSection.getString(ParamElement.CUSTOM));
 	}
-	
-	
+
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);

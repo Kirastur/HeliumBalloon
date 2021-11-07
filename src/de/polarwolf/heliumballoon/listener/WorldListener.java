@@ -21,7 +21,6 @@ public class WorldListener implements Listener {
 	protected final BalloonManager balloonManager;
 	protected final WallManager wallManager;
 	protected final RotatorManager rotatorManager;
-	
 
 	public WorldListener(HeliumBalloonOrchestrator orchestrator) {
 		Plugin plugin = orchestrator.getPlugin();
@@ -31,26 +30,22 @@ public class WorldListener implements Listener {
 		this.rotatorManager = orchestrator.getRotatorManager();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	
-	
+
 	public void unregisterListener() {
 		HandlerList.unregisterAll(this);
 	}
-	
 
 	protected void resyncWorld(World world) {
 		balloonManager.cancelBalloonsByWorld(world);
 	}
-	
-	
+
 	public void handleWorldLoadEvent(WorldLoadEvent event) {
 		World world = event.getWorld();
 		logger.printDebug("Resync: WorldLoad " + world.getName());
 		wallManager.addPlacings(world);
 		rotatorManager.addPlacings(world);
 	}
-	
-	
+
 	public void handleWorldUnloadEvent(WorldUnloadEvent event) {
 		World world = event.getWorld();
 		logger.printDebug("Resync: WorldUnload " + world.getName());
@@ -58,7 +53,6 @@ public class WorldListener implements Listener {
 		wallManager.removePlacings(world);
 		rotatorManager.removePlacings(world);
 	}
-
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldLoadEvent(WorldLoadEvent event) {
@@ -69,7 +63,6 @@ public class WorldListener implements Listener {
 		}
 	}
 
-		
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldUnloadEvent(WorldUnloadEvent event) {
 		try {

@@ -1,24 +1,23 @@
 package de.polarwolf.heliumballoon.config;
 
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.SECTION;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.LIST;
+import static de.polarwolf.heliumballoon.helium.HeliumParamType.STRING;
 
 import de.polarwolf.heliumballoon.helium.HeliumParam;
 import de.polarwolf.heliumballoon.helium.HeliumParamType;
 
-public enum ParamSection implements HeliumParam {
+public enum ParamWorldset implements HeliumParam {
 
-	WORLDSETS(SECTION, "worldsets"),
-	RULES(SECTION, "rules"),
-	TEMPLATES(SECTION, "templates"),
-	PETS(SECTION, "pets"),
-	WALLS(SECTION, "walls"),
-	ROTATORS(SECTION, "rotators"),
-	GUI(SECTION, "gui");
+	IS_DEFAULT(STRING, "isDefault"),
+	INCLUDE_ALL(STRING, "includeAllWorlds"),
+	INCLUDE_REGEX(STRING, "includeRegex"),
+	INCLUDE_WORLDS(LIST, "includeWorlds"),
+	EXCLUDE_WORLDS(LIST, "excludeWorlds");
 
 	private final HeliumParamType paramType;
 	private final String attributeName;
 
-	private ParamSection(HeliumParamType paramType, String attributeName) {
+	private ParamWorldset(HeliumParamType paramType, String attributeName) {
 		this.paramType = paramType;
 		this.attributeName = attributeName;
 	}
@@ -32,5 +31,4 @@ public enum ParamSection implements HeliumParam {
 	public String getAttributeName() {
 		return attributeName;
 	}
-
 }

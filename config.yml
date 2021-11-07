@@ -17,6 +17,11 @@
 # - There is another file "messages.yml" where you can
 # - configure the enduser's output for different languages
 
+
+# Global Parameters read on startup
+#
+# - The parameters here affects HeliumBalloon in global.
+# - Most of then are only read once at startup. 
 startup:
 
    # Use Passive mode
@@ -28,11 +33,26 @@ startup:
    # - Us this option only if you customize the Java objects itself 
    passiveMode: false
    
+   # LoadLocalConfig
+   #
+   # - Load the configuration given in THIS file.
+   # - Set this only to false if you have implemented
+   # - you own ConfigLoader using the BalloonReloadEvent.
+   loadLocalConfig: true
+   
+   # Warn on unuseable entries in template
+   #
+   # - Not all parts of a template are usable for all purposes.
+   # - So you can confure to get a warning if you try to use
+   # - a template which includes a part that is not suitable
+   # - for the desired purpose (pet, wall or rotator).
+   warnOnWrongPurpose: true
+
    # Initial debug
    #
    # - You can set the debug during runtime using
    # - "/balloon debugenable" and "/balloon debugdisable"
-   # - Hiere you definie only the initial value.
+   # - Here you define only the initial value.
    debug: false
    
    # Exception Quota
@@ -41,7 +61,7 @@ startup:
    # - If the number of exceptions during a timeframe reaches this value
    # - the plugin disables itself for security.
    exceptionQuota: 10
-
+   
 
 # This plugin supports you to be GDPR/DSGVO compliant
 #
@@ -52,19 +72,34 @@ startup:
 # - So this plugin deletes all information from players
 # - who has not logged in for a while.
 GDPR:
+
    keepPlayerDays: 30
    runPurgeHour: 5
    
 
-# Worlds where the player can summon pets
-#
-# - Exclude takes precedence over include
-worlds:
-    includeAllWorlds: true
-#   include:
-#       - demoincludeworld
-#   exclude:
-#       - demoexcludeworld        
+# Worldsets defines where a template can be used
+# 
+# - A worldset is a list of worlds given by Name-List or Regex.
+# - They are referenced in the template definitions (see below). 
+# - Exclude takes precedence over include.
+worldsets:
+
+    default:
+        isDefault: true
+        includeAllWorlds: true
+#       includeRegex: ^world$
+#       includeWorlds:
+#           - demoincludeworld
+#       excludeWorlds:
+#           - demoexcludeworld        
+
+    overworld:
+        includeRegex: ^world$
+
+    netherend:
+        includeWorlds:
+            - world_nether
+            - world_the_end
 
 
 # Rule definition
@@ -74,8 +109,8 @@ worlds:
 # - Only one rule can be marked as as default.
 # - The default rule is used if in the template
 # - definition no other rule is given.
-
 rules:
+
     default:
         isDefault: true
 #       highAbovePlayer: 3.0
@@ -104,14 +139,14 @@ rules:
        oscillatorAmplitude: 0.2
 
 
-# Temnplates are the definitions for the balloons
-# You can summon a pet balloon by simply calling
-#     /balloon assign <TemplateName>
+# Templates define a set of balloons suitable for various purpose
 #
-# Please see the Github wiki for a list of allowed parameters.
-# Here are only a few examples.
-#
+# - Here you design the outfit of your balloon. 
+# - You must define a template if you want to summon a pet, place a wall etc. 
+# - Please see the Github wiki for a list of allowed parameters.
+# - Here are only a few examples.
 templates:
+
     demo1:
         rule: demo1
         living:
@@ -152,12 +187,22 @@ templates:
                 slabType: TOP
                 y: -1.0
 
-    demo4:
+    demo4a:
+        worldset: overworld
         living:
             type: CAT
             cattype: CALICO
             collarColor: BLUE
             tamed: true
+        elements:
+            floor:
+                material: RED_CARPET
+                y: -0.06
+
+    demo4b:
+        worldset: netherend
+        living:
+            type: MAGMA_CUBE
         elements:
             floor:
                 material: RED_CARPET
@@ -174,6 +219,7 @@ templates:
                material: CARTOGRAPHY_TABLE
  
     demo6:
+        worldset: overworld
         rule: demo6
         oscillating: true
         elements:
@@ -188,6 +234,7 @@ templates:
                 y: -1
 
     demo7:
+        worldset: overworld
         minecart:
            loadOffset: 30
            load:
@@ -199,89 +246,127 @@ templates:
                material: EMERALD_BLOCK
 
 
-# Walls are blocks were you can walk through
-# e.g. for building a hidden passage.
-# The "worlds" is a Regex and must start with "^".
-# A wall element cannot be positioned between y=63.7 and y=64.1
-#
-# The coordinates here are only demo-locations,
-# please adjust them for your map.
-#
-# To disable the swinging of this wall,
-# set "oscillating" to false in the template "demo6"
+# Pets are Balloons following a player
+#  
+# - You can summon a pet balloon by simply calling
+# -    /balloon assign <PetName>
+# -
+# - Or you can use the GUI to select one
+# -    /balloon gui
+# -
+# - Yon can set the display text in different langages,
+# - simplay use a 2-digit or 5-digit language suffix here.
+# - The language finally used is determined by the minecraft client. 
+pets:
+
+    demo1:
+        templates: demo1
+        title: "Caged Evoker"
+        title_de: "Gefangener Magier"
+        description: "Look what I have captured"
+        description_de: "Seht her was ich gefangen habe"
+        icon: GLASS
+
+    demo2:
+        templates: demo2
+        title: "Lantern"
+        title_de: "Laterne"
+        description: "Flying lantern"
+        description_de: "Fliegende Laterne"
+        icon: LANTERN
+
+    demo3:
+        templates: demo3
+        title: "Stone Balloon"
+        title_de: "Steinballon"
+        description: "A hovering stoneblock with a leash"
+        description_de: "Ein schwebender Steinblock mit Leine"
+        icon: STONE
+
+    demo4:
+        templates: demo4a demo4b
+        title: "Cat"
+        title_de: "Katze"
+        description: "A sweet kitten"
+        description_de: "Ein süßes Kätzchen"
+        icon: RED_CARPET
+
+    demo5:
+        templates: demo5
+        title: "Minecart"
+        description: "A minecart with a cartography table"
+        description_de: "Ein Minecart mit einem Kartentisch"
+        icon: MINECART
+ 
+
+# Walls are blocks at a fixed position were you can walk through
+# 
+# - You can use them e.g. for building a hidden passage.
+# - 
+# - A wall element cannot be positioned between y=63.7 and y=64.1
+# -
+# - The coordinates here are only demo-locations,
+# - please adjust them for your map.
+# -
+# - To disable the swinging of this demo-wall,
+# - set "oscillating" to false in the template "demo6"
 walls: 
+
     demowall1:
         template: demo6
-        worlds: ^world$
         x: -171
         y: 89
         z: 339
 
-# Rotators are block which spin permanently.
-# There are different spinning algorithms for
-# minecarts and armorstands.
+
+# Rotators are block which spin permanently
+# 
+# - There are different spinning algorithms for
+# - minecarts and armorstands.
+#
+# - Armorstands are automatically invisible.
 rotators:
+
     demorotator1:
         template: demo7
-        worlds: ^world$
         x: -171
         y: 89
         z: 330
         
     demorotator2:
         template: demo8
-        worlds: ^world$
+        world: world
         x: -175
         y: 89
         z: 334
 
 
-# Using the API you can build you own GUI.
-# A GUI contains a list of pets the player can select from.
-# This GUI here is only an example.
-# Localized Strings can have two or five chars
-# (e.g. "de" and "de_de").        
+# A GUI contains a list of pets the player can select from
+#
+# - The player opens the GUI with the command
+# -    /balloon gui
+# - 
+# - Using the API you can build you own GUIs.
+# - The Standard-GUI shows all pets the player has permisison for,
+# - and (if configured) a deassign button to remove the current pet.
+# - 
+# - You can define multiple Standard-GUIs in different ConfigSections,
+# - but only the last one defined is used.
+# - 
+# - This GUI here is only an example.
+# - Localized Strings can have two or five chars
+# -   (e.g. "de" and "de_de").        
 gui:
+
     title: "Pets"
     title_de: "Haustiere"
+
     deassign:
         title: "No pet"
         title_de: "Kein Haustier"
         description: "deassign the actual pet"
-        description_de: "Schickt das aktuelle Haustier zurück in den Stall"       
-    items:
-        demo1:
-            template: demo1
-            title: "Caged Evoker"
-            title_de: "Gefangener Magier"
-            description: "Look what I have captured"
-            description_de: "Seht her was ich gefangen habe"
-            icon: GLASS
-        demo2:
-            template: demo2
-            title: "Lantern"
-            title_de: "Laterne"
-            description: "Flying lantern"
-            description_de: "Fliegende Laterne"
-            icon: LANTERN
-        demo3:
-            template: demo3
-            title: "Stone Balloon"
-            title_de: "Steinballon"
-            description: "A hovering stoneblock with a leash"
-            description_de: "Ein schwebender Steinblock mit Leine"
-            icon: STONE
-        demo4:
-            template: demo4
-            title: "Cat"
-            title_de: "Katze"
-            description: "A sweet kitten"
-            description_de: "Ein süßes Kätzchen"
-            icon: RED_CARPET
-        demo5:
-            template: demo5
-            title: "Minecart"
-            description: "A minecart with a cartography table"
-            description_de: "Ein Minecart mit einem Kartentisch"
-            icon: MINECART
- 
+        description_de: "Schickt das aktuelle Haustier zurück in den Stall"
+        icon: BARRIER
+
+ #  filler:
+ #      icon: LIGHT_GRAY_STAINED_GLASS_PANE

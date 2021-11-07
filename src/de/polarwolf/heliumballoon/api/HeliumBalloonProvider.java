@@ -3,24 +3,20 @@ package de.polarwolf.heliumballoon.api;
 public final class HeliumBalloonProvider {
 
 	private static HeliumBalloonOrchestrator heliumBalloonOrchestrator = null;
-	
 
 	private HeliumBalloonProvider() {
 	}
 
-
-	protected static boolean setOrchestrator (HeliumBalloonOrchestrator newOrchestrator) {
+	protected static boolean setOrchestrator(HeliumBalloonOrchestrator newOrchestrator) {
 		if (heliumBalloonOrchestrator == null) {
 			heliumBalloonOrchestrator = newOrchestrator;
 			return true;
 		} else {
 			return false;
 		}
-		
 	}
-	
-	
-	protected static boolean clearOrchestrator (HeliumBalloonOrchestrator oldOrchestrator) {
+
+	protected static boolean clearOrchestrator(HeliumBalloonOrchestrator oldOrchestrator) {
 		if (heliumBalloonOrchestrator == null) {
 			return true;
 		}
@@ -31,7 +27,6 @@ public final class HeliumBalloonProvider {
 			return false;
 		}
 	}
-	
 
 	public static HeliumBalloonAPI getAPI() {
 		if (heliumBalloonOrchestrator != null) {

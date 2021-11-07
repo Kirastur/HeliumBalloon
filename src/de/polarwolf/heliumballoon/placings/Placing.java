@@ -15,62 +15,59 @@ import de.polarwolf.heliumballoon.chunktickets.ChunkTicketManager;
 import de.polarwolf.heliumballoon.chunktickets.ChunkTicketOwner;
 import de.polarwolf.heliumballoon.config.ConfigPart;
 import de.polarwolf.heliumballoon.config.ConfigPlaceableBalloonSet;
+import de.polarwolf.heliumballoon.config.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.oscillators.DefaultOscillator;
 import de.polarwolf.heliumballoon.oscillators.Oscillator;
 
 public abstract class Placing implements ChunkTicketOwner {
-	
+
 	protected final ChunkTicketManager chunkTicketManager;
 	protected final BalloonManager balloonManager;
 	protected final ConfigPlaceableBalloonSet configPlaceableBalloonSet;
+	protected final ConfigTemplate template;
 	private Oscillator oscillator = null;
 	private final World world;
-	protected Map<ConfigPart,Balloon> balloons = new HashMap<>();
+	protected Map<ConfigPart, Balloon> balloons = new HashMap<>();
 
-
-	protected Placing(ChunkTicketManager chunkTicketManager, BalloonManager balloonManager, ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
+	protected Placing(ChunkTicketManager chunkTicketManager, BalloonManager balloonManager,
+			ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
 		this.chunkTicketManager = chunkTicketManager;
 		this.balloonManager = balloonManager;
 		this.configPlaceableBalloonSet = configPlaceableBalloonSet;
+		this.template = configPlaceableBalloonSet.findTemplate(world);
 		this.world = world;
 	}
-
 
 	protected Oscillator getOscillator() {
 		return oscillator;
 	}
-	
-	
+
 	protected void generateOscillator() {
 		if (oscillator == null) {
-			oscillator = new DefaultOscillator(configPlaceableBalloonSet.getTemplate().getRule());
+			oscillator = new DefaultOscillator(template.getRule());
 		}
 	}
-
 
 	public World getWorld() {
 		return world;
 	}
 
-
 	protected Location getLocation() {
-		return configPlaceableBalloonSet.getAbsolutePosition().toLocation(world); 
+		return configPlaceableBalloonSet.getAbsolutePosition().toLocation(world);
 	}
-	
-	
+
 	protected void prepareBalloons(BalloonPurpose balloonPurpose) {
-		for (ConfigPart myPart : configPlaceableBalloonSet.getTemplate().getParts()) {
+		for (ConfigPart myPart : template.getParts()) {
 			if (myPart.isSuitableFor(balloonPurpose)) {
 				balloons.put(myPart, null);
 			}
 		}
 	}
 
-	
 	public void buildBalloons() throws BalloonException {
 		chunkTicketManager.addChunkTicket(this, getLocation());
-		for (Entry<ConfigPart,Balloon> myEntry : balloons.entrySet()) {
+		for (Entry<ConfigPart, Balloon> myEntry : balloons.entrySet()) {
 			ConfigPart myPart = myEntry.getKey();
 			Balloon myBalloon = myEntry.getValue();
 			if (myBalloon != null) {
@@ -88,9 +85,8 @@ public abstract class Placing implements ChunkTicketOwner {
 		}
 	}
 
-
 	public void cancel() {
-		for (Entry<ConfigPart,Balloon> myEntry : balloons.entrySet()) {
+		for (Entry<ConfigPart, Balloon> myEntry : balloons.entrySet()) {
 			Balloon myBalloon = myEntry.getValue();
 			if (myBalloon != null) {
 				myBalloon.cancel();

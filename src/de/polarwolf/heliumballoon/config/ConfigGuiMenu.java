@@ -1,10 +1,7 @@
 package de.polarwolf.heliumballoon.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,109 +17,84 @@ public class ConfigGuiMenu implements HeliumName {
 	private final String name;
 	private final String fullName;
 	private HeliumText guiTitle = new HeliumText("title");
-	private Map<String,ConfigGuiItem> guiItems = new TreeMap<>();
-	private ConfigGuiDeassign guiDeassign = null;
-	
+	private ConfigGuiHelperItem guiDeassign = null;
+	private ConfigGuiHelperItem guiFiller = null;
 
 	public ConfigGuiMenu(String name, String fullName) {
 		this.name = name;
 		this.fullName = fullName;
 	}
-	
-	
-	public ConfigGuiMenu(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+
+	public ConfigGuiMenu(ConfigurationSection fileSection) throws BalloonException {
 		this.name = fileSection.getName();
 		this.fullName = fileSection.getCurrentPath();
-		loadConfigFromFile(fileSection, balloonSection);
+		loadConfigFromFile(fileSection);
 	}
-	
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
-
 
 	@Override
 	public String getFullName() {
 		return fullName;
 	}
 
-
 	public String getGuiTitle(CommandSender sender) {
 		return guiTitle.findLocalizedforSender(sender);
 	}
 
-	
 	protected void setGuiTitle(HeliumText guiTitle) {
 		this.guiTitle = guiTitle;
 	}
 
-
-	public List<ConfigGuiItem> getGuiItems() {
-		return new ArrayList<>(guiItems.values());
-	}
-	
-	
-	protected void addGuiItem(ConfigGuiItem newItem) {
-		guiItems.put(newItem.getName(), newItem);
-	}
-	
-	
-	public ConfigGuiDeassign getGuiDeassign() {
+	public ConfigGuiHelperItem getGuiDeassign() {
 		return guiDeassign;
 	}
 
-
-	protected void setGuiDeassign(ConfigGuiDeassign guiDeassign) {
+	protected void setGuiDeassign(ConfigGuiHelperItem guiDeassign) {
 		this.guiDeassign = guiDeassign;
 	}
 
+	public ConfigGuiHelperItem getGuiFiller() {
+		return guiFiller;
+	}
+
+	protected void setGuiFiller(ConfigGuiHelperItem guiFiller) {
+		this.guiFiller = guiFiller;
+	}
 
 	protected List<HeliumParam> getValidParams() {
-		return  Arrays.asList(ParamGuiMenu.values());
+		return Arrays.asList(ParamGuiMenu.values());
 	}
 
-	
-	protected void importHeliumSection(HeliumSection heliumSection) { 
+	protected void importHeliumSection(HeliumSection heliumSection) {
 		setGuiTitle(heliumSection.getHeliumText(ParamGuiMenu.TITLE));
 	}
-	
-	
-	protected void loadItemsFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
-		ConfigurationSection fileSectionGuiItems = fileSection.getConfigurationSection(ParamGuiMenu.ITEMS.getAttributeName());
-		
-		for (String myItemName : fileSectionGuiItems.getKeys(false)) {
-			if (!fileSectionGuiItems.contains(myItemName, true)) { //ignore default from jar
-				continue;
-			}
-			if (!fileSectionGuiItems.isConfigurationSection(myItemName)) {
-				throw new BalloonException (getFullName(), "Illegal GUI items secton", myItemName);
-			}
-			addGuiItem(new ConfigGuiItem(fileSectionGuiItems.getConfigurationSection(myItemName), balloonSection));
-		}
-	}
-	
-	
-	protected void loadDeassignFromFile(ConfigurationSection fileSection) throws BalloonException {
-		ConfigurationSection fileSectionDeassign = fileSection.getConfigurationSection(ParamGuiMenu.DEASSIGN.getAttributeName());
-		setGuiDeassign(new ConfigGuiDeassign(fileSectionDeassign));
-	}
-		
 
-	protected void loadConfigFromFile(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
+	protected void loadDeassignFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionDeassign = fileSection
+				.getConfigurationSection(ParamGuiMenu.DEASSIGN.getAttributeName());
+		setGuiDeassign(new ConfigGuiHelperItem(fileSectionDeassign));
+	}
+
+	protected void loadFillerFromFile(ConfigurationSection fileSection) throws BalloonException {
+		ConfigurationSection fileSectionFiller = fileSection
+				.getConfigurationSection(ParamGuiMenu.FILLER.getAttributeName());
+		setGuiFiller(new ConfigGuiHelperItem(fileSectionFiller));
+	}
+
+	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
-		
-		if (heliumSection.isSection(ParamGuiMenu.ITEMS)) {
-			loadItemsFromFile(fileSection, balloonSection);
-		} else {
-			throw new BalloonException (getFullName(), "No GUI Item section found", null);			
-		}
-		
+
 		if (heliumSection.isSection(ParamGuiMenu.DEASSIGN)) {
 			loadDeassignFromFile(fileSection);
 		}
+		if (heliumSection.isSection(ParamGuiMenu.FILLER)) {
+			loadFillerFromFile(fileSection);
+		}
 	}
-	
+
 }
