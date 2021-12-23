@@ -101,9 +101,8 @@ public class ArmorStandElement extends SimpleElement {
 	}
 
 	@Override
-	public void setSpin(double spin) {
-		EulerAngle eulerAngle = new EulerAngle(0, Math.toRadians(spin), 0);
-		armorStand.setHeadPose(eulerAngle);
+	public void setSpin(EulerAngle spin) {
+		armorStand.setHeadPose(spin);
 	}
 
 }

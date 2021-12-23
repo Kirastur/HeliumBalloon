@@ -1,9 +1,9 @@
 package de.polarwolf.heliumballoon.config;
 
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.SECTION;
+import static de.polarwolf.heliumballoon.tools.helium.HeliumParamType.SECTION;
 
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParamType;
 
 public enum ParamSection implements HeliumParam {
 

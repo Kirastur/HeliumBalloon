@@ -3,8 +3,8 @@ package de.polarwolf.heliumballoon.config;
 import org.bukkit.entity.Player;
 
 import de.polarwolf.heliumballoon.elements.Element;
-import de.polarwolf.heliumballoon.helium.HeliumName;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
 
 public interface ConfigPart extends HeliumName, ConfigPurpose {
 

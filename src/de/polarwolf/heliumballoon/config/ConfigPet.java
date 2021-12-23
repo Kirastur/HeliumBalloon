@@ -3,6 +3,7 @@ package de.polarwolf.heliumballoon.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -11,9 +12,9 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
-import de.polarwolf.heliumballoon.helium.HeliumText;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumText;
 
 public class ConfigPet implements ConfigBalloonSet {
 
@@ -146,5 +147,33 @@ public class ConfigPet implements ConfigBalloonSet {
 			throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection, balloonSection);
+	}
+
+	protected List<String> templateListAsDump() {
+		List<String> newTemplateListDump = new ArrayList<>();
+		for (ConfigTemplate myTemplate : templates)
+			newTemplateListDump.add(myTemplate.getName());
+		return newTemplateListDump;
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		List<String> newParamListDump = new ArrayList<>();
+		newParamListDump
+				.add(String.format(fs, ParamPet.TEMPLATES.getAttributeName(), String.join(" ", templateListAsDump())));
+		if (icon != null)
+			newParamListDump.add(String.format(fs, ParamPet.ICON.getAttributeName(), icon.toString()));
+		if (title != null)
+			for (Entry<String, String> myEntry : title.dump().entrySet())
+				newParamListDump.add(String.format(fs, myEntry.getKey(), myEntry.getValue()));
+		if (description != null)
+			for (Entry<String, String> myEntry : description.dump().entrySet())
+				newParamListDump.add(String.format(fs, myEntry.getKey(), myEntry.getValue()));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 }

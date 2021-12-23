@@ -1,5 +1,5 @@
 name: HeliumBalloon
-version: 1.8
+version: 1.9
 description: Build secret pathways, balloons and pets following you (using Falling Blocks, no NMS or ProtocolLib)
 author: Kirastur
 website: https://www.spigotmc.org/resources/heliumballoon.95902
@@ -31,6 +31,7 @@ permissions:
       balloon.command.help: true
       balloon.command.debugenable: true
       balloon.command.debugdisable: true
+      balloon.command.dumpconfig: true
       balloon.command.assign: true
       balloon.command.assignother: true
       balloon.command.deassign: true
@@ -52,6 +53,9 @@ permissions:
     default: op
   balloon.command.debugdisable:
     description: Can disable the output of debug messages.
+    default: op
+  balloon.command.dumpconfig:
+    description: Can print the complete configuration to console.
     default: op
   balloon.command.assign:
     description: Can assign a pet to yourself.

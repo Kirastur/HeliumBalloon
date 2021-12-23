@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigElement;
@@ -127,8 +128,10 @@ public class MinecartElement extends SimpleElement {
 	}
 
 	@Override
-	public void setSpin(double spin) {
-		minecart.setRotation((float) spin, 0);
+	public void setSpin(EulerAngle spin) {
+		double yaw = Math.toDegrees(spin.getY());
+		double pitch = Math.toDegrees(spin.getZ());
+		minecart.setRotation((float) yaw, (float) pitch);
 	}
 
 }

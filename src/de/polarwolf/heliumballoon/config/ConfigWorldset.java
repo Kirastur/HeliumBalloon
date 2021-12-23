@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigWorldset implements HeliumName {
 
@@ -150,4 +150,49 @@ public class ConfigWorldset implements HeliumName {
 			addExcludeWorldNames(newExcludeWorldNames);
 		}
 	}
+
+	protected List<String> includeListAsDump() {
+		List<String> newIncludeListDump = new ArrayList<>();
+		for (String myWorldName : includeWorldNames)
+			newIncludeListDump.add(String.format("\"%s\"", myWorldName));
+		return newIncludeListDump;
+	}
+
+	protected List<String> excludeListAsDump() {
+		List<String> newExcludeListDump = new ArrayList<>();
+		for (String myWorldName : excludeWorldNames)
+			newExcludeListDump.add(String.format("\"%s\"", myWorldName));
+		return newExcludeListDump;
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		String fa = "%s: [ %s ]";
+		List<String> newParamListDump = new ArrayList<>();
+		if (defaultWorldset)
+			newParamListDump
+					.add(String.format(fb, ParamWorldset.IS_DEFAULT.getAttributeName(), Boolean.toString(true)));
+		if (includeAllWorlds)
+			newParamListDump
+					.add(String.format(fs, ParamWorldset.INCLUDE_ALL.getAttributeName(), Boolean.toString(true)));
+		if (includeRegex != null)
+			newParamListDump
+					.add(String.format(fs, ParamWorldset.INCLUDE_REGEX.getAttributeName(), includeRegex.pattern()));
+		List<String> includeListDump = includeListAsDump();
+		if (!includeListDump.isEmpty())
+			newParamListDump.add(String.format(fa, ParamWorldset.INCLUDE_WORLDS.getAttributeName(),
+					String.join(", ", includeListDump)));
+		List<String> excludeListDump = excludeListAsDump();
+		if (!excludeListDump.isEmpty())
+			newParamListDump.add(String.format(fa, ParamWorldset.EXCLUDE_WORLDS.getAttributeName(),
+					String.join(", ", excludeListDump)));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
+	}
+
 }

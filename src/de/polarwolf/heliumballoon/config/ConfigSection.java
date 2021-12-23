@@ -9,9 +9,9 @@ import java.util.TreeSet;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigSection implements HeliumName {
 
@@ -367,6 +367,77 @@ public class ConfigSection implements HeliumName {
 		if (heliumSection.isSection(ParamSection.GUI)) {
 			loadGuiFromFile(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
 		}
+	}
+
+	protected List<String> worldsetListAsDump() {
+		List<String> newWorldsetListDump = new ArrayList<>();
+		for (ConfigWorldset myWorldset : worldsets)
+			newWorldsetListDump.add(myWorldset.toString());
+		return newWorldsetListDump;
+	}
+
+	protected List<String> ruleListAsDump() {
+		List<String> newRuleListDump = new ArrayList<>();
+		for (ConfigRule myRule : rules)
+			newRuleListDump.add(myRule.toString());
+		return newRuleListDump;
+	}
+
+	protected List<String> templateListAsDump() {
+		List<String> newTemplateListDump = new ArrayList<>();
+		for (ConfigTemplate myTemplate : templates)
+			newTemplateListDump.add(myTemplate.toString());
+		return newTemplateListDump;
+	}
+
+	protected List<String> petListAsDump() {
+		List<String> newPetListDump = new ArrayList<>();
+		for (ConfigPet myPet : pets)
+			newPetListDump.add(myPet.toString());
+		return newPetListDump;
+	}
+
+	protected List<String> wallListAsDump() {
+		List<String> newWallListDump = new ArrayList<>();
+		for (ConfigWall myWall : walls)
+			newWallListDump.add(myWall.toString());
+		return newWallListDump;
+	}
+
+	protected List<String> rotatorListAsDump() {
+		List<String> newRotatorListDump = new ArrayList<>();
+		for (ConfigRotator myRotator : rotators)
+			newRotatorListDump.add(myRotator.toString());
+		return newRotatorListDump;
+	}
+
+	protected List<String> paramListAsDump() { // NOSONAR
+		String fl = "%s: { %s }";
+		List<String> newParamListDump = new ArrayList<>();
+		newParamListDump.add(
+				String.format(fl, ParamSection.WORLDSETS.getAttributeName(), String.join(", ", worldsetListAsDump())));
+		newParamListDump
+				.add(String.format(fl, ParamSection.RULES.getAttributeName(), String.join(", ", ruleListAsDump())));
+		newParamListDump.add(
+				String.format(fl, ParamSection.TEMPLATES.getAttributeName(), String.join(", ", templateListAsDump())));
+		List<String> petList = petListAsDump();
+		if (!petList.isEmpty())
+			newParamListDump.add(String.format(fl, ParamSection.PETS.getAttributeName(), String.join(", ", petList)));
+		List<String> wallList = wallListAsDump();
+		if (!wallList.isEmpty())
+			newParamListDump.add(String.format(fl, ParamSection.WALLS.getAttributeName(), String.join(", ", wallList)));
+		List<String> rotatorList = rotatorListAsDump();
+		if (!rotatorList.isEmpty())
+			newParamListDump
+					.add(String.format(fl, ParamSection.ROTATORS.getAttributeName(), String.join(", ", rotatorList)));
+		if (guiMenu != null)
+			newParamListDump.add(guiMenu.toString());
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

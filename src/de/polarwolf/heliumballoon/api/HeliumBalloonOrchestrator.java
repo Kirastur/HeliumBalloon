@@ -3,20 +3,20 @@ package de.polarwolf.heliumballoon.api;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.balloons.BalloonManager;
-import de.polarwolf.heliumballoon.chunktickets.ChunkTicketManager;
+import de.polarwolf.heliumballoon.balloons.pets.PetManager;
+import de.polarwolf.heliumballoon.balloons.rotators.RotatorManager;
+import de.polarwolf.heliumballoon.balloons.walls.WallManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.events.EventManager;
 import de.polarwolf.heliumballoon.gui.GuiManager;
-import de.polarwolf.heliumballoon.helium.HeliumLogger;
-import de.polarwolf.heliumballoon.listener.ListenManager;
-import de.polarwolf.heliumballoon.messages.MessageManager;
-import de.polarwolf.heliumballoon.pets.PetManager;
-import de.polarwolf.heliumballoon.players.PlayerManager;
-import de.polarwolf.heliumballoon.reload.ReloadManager;
-import de.polarwolf.heliumballoon.rotators.RotatorManager;
+import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.system.reload.ReloadManager;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
-import de.polarwolf.heliumballoon.walls.WallManager;
+import de.polarwolf.heliumballoon.system.listener.ListenManager;
+import de.polarwolf.heliumballoon.system.players.PlayerManager;
+import de.polarwolf.heliumballoon.tools.chunktickets.ChunkTicketManager;
+import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.tools.messages.MessageManager;
 
 public class HeliumBalloonOrchestrator {
 
@@ -24,19 +24,19 @@ public class HeliumBalloonOrchestrator {
 
 	private final Plugin plugin;
 	private final HeliumLogger heliumLogger;
-	private final SpawnModifierManager spawnModifierManager;
 	private final ChunkTicketManager chunkTicketManager;
 	private final EventManager eventManager;
 	private final ConfigManager configManager;
 	private final MessageManager messageManager;
 	private final PlayerManager playerManager;
-	private final BalloonManager balloonManager;
+	private final SpawnModifierManager spawnModifierManager;
+	private final ObserverManager observerManager;
 	private final PetManager petManager;
 	private final WallManager wallManager;
 	private final RotatorManager rotatorManager;
 	private final GuiManager guiManager;
-	private final ListenManager listenManager;
 	private final ReloadManager reloadManager;
+	private final ListenManager listenManager;
 	private HeliumBalloonAPI api = null;
 
 	public HeliumBalloonOrchestrator(Plugin plugin) {
@@ -46,19 +46,19 @@ public class HeliumBalloonOrchestrator {
 			this.plugin = Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
 		}
 		heliumLogger = createHeliumLogger();
-		spawnModifierManager = createSpawnModifierManager();
 		chunkTicketManager = createChunkTicketManager();
 		eventManager = createEventManager();
 		configManager = createConfigManager();
 		messageManager = createMessageManager();
 		playerManager = createPlayerManager();
-		balloonManager = createBalloonManager();
+		spawnModifierManager = createSpawnModifierManager();
+		observerManager = createObserverManager();
 		petManager = createPetManager();
 		wallManager = createWallManager();
 		rotatorManager = createRotatorManager();
 		guiManager = createGuiManager();
-		listenManager = createListenManager();
 		reloadManager = createReloadManager();
+		listenManager = createListenManager();
 	}
 
 	// Getter
@@ -94,8 +94,8 @@ public class HeliumBalloonOrchestrator {
 		return playerManager;
 	}
 
-	public BalloonManager getBalloonManager() {
-		return balloonManager;
+	public ObserverManager getObserverManager() {
+		return observerManager;
 	}
 
 	public PetManager getPetManager() {
@@ -114,12 +114,12 @@ public class HeliumBalloonOrchestrator {
 		return guiManager;
 	}
 
-	public ListenManager getListenManager() {
-		return listenManager;
-	}
-
 	public ReloadManager getReloadManager() {
 		return reloadManager;
+	}
+
+	public ListenManager getListenManager() {
+		return listenManager;
 	}
 
 	public HeliumBalloonAPI getApi() {
@@ -155,8 +155,8 @@ public class HeliumBalloonOrchestrator {
 		return new PlayerManager(this);
 	}
 
-	protected BalloonManager createBalloonManager() {
-		return new BalloonManager(this);
+	protected ObserverManager createObserverManager() {
+		return new ObserverManager(this);
 	}
 
 	protected PetManager createPetManager() {
@@ -175,12 +175,12 @@ public class HeliumBalloonOrchestrator {
 		return new GuiManager(this);
 	}
 
-	protected ListenManager createListenManager() {
-		return new ListenManager(this);
-	}
-
 	protected ReloadManager createReloadManager() {
 		return new ReloadManager(this);
+	}
+
+	protected ListenManager createListenManager() {
+		return new ListenManager(this);
 	}
 
 	protected HeliumBalloonAPI createAPI() {
@@ -200,9 +200,10 @@ public class HeliumBalloonOrchestrator {
 	}
 
 	protected void disableManagers() {
+		reloadManager.disable();
 		listenManager.disable();
 		petManager.disable();
-		balloonManager.disable();
+		observerManager.disable();
 		playerManager.disable();
 	}
 

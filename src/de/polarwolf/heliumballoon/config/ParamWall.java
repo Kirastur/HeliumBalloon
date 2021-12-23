@@ -1,9 +1,9 @@
 package de.polarwolf.heliumballoon.config;
 
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.STRING;
+import static de.polarwolf.heliumballoon.tools.helium.HeliumParamType.STRING;
 
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParamType;
 
 public enum ParamWall implements HeliumParam {
 

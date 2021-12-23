@@ -1,16 +1,18 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
-import de.polarwolf.heliumballoon.helium.HeliumText;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumText;
 
 public class ConfigGuiMenu implements HeliumName {
 
@@ -97,4 +99,21 @@ public class ConfigGuiMenu implements HeliumName {
 		}
 	}
 
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		List<String> newParamListDump = new ArrayList<>();
+		if (guiTitle != null)
+			for (Entry<String, String> myEntry : guiTitle.dump().entrySet())
+				newParamListDump.add(String.format(fs, myEntry.getKey(), myEntry.getValue()));
+		if (guiDeassign != null)
+			newParamListDump.add(guiDeassign.toString());
+		if (guiFiller != null)
+			newParamListDump.add(guiFiller.toString());
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", ParamSection.GUI.getAttributeName(), String.join(", ", paramListAsDump()));
+	}
 }

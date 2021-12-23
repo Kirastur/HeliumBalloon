@@ -1,14 +1,12 @@
 package de.polarwolf.heliumballoon.main;
 
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.api.HeliumBalloonProvider;
 import de.polarwolf.heliumballoon.bstats.Metrics;
-import de.polarwolf.heliumballoon.commands.BalloonCommand;
 import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.system.commands.BalloonCommand;
 
 public final class Main extends JavaPlugin {
 
@@ -46,14 +44,9 @@ public final class Main extends JavaPlugin {
 		}
 
 		// Load Configuration
-		try {
-			HeliumBalloonProvider.getAPI().reload();
-		} catch (BalloonException e) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "ERROR " + e.getMessage());
-			getLogger().warning("Error loading config");
-			return;
-		}
+		HeliumBalloonProvider.getAPI().scheduleRedloadFoNextTick();
 
+		// print final message
 		getLogger().info("HeliumBalloon is ready");
 	}
 

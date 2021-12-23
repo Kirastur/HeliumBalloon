@@ -1,97 +1,70 @@
 package de.polarwolf.heliumballoon.oscillators;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigRule;
-import de.polarwolf.heliumballoon.elements.ArmorStandElement;
-import de.polarwolf.heliumballoon.elements.Element;
-import de.polarwolf.heliumballoon.elements.MinecartElement;
 
-public class DefaultOscillator implements Oscillator {
+public class DefaultOscillator extends SimpleOscillator {
 
 	protected final ConfigRule rule;
-
-	protected boolean deflection = false;
-	protected boolean spin = false;
-
-	protected int countDeflection = 0;
-	protected int countSpin = 0;
-
-	protected Vector currentDeflection = new Vector();
-	protected double currentMinecartSpin = 0.0;
-	protected double currentArmorStandSpin = 0.0;
 
 	public DefaultOscillator(ConfigRule rule) {
 		this.rule = rule;
 	}
 
-	@Override
-	public boolean hasDeflection() {
-		return deflection;
-	}
-
-	@Override
-	public void setDeflectionState(boolean newDeflectionState) {
-		this.deflection = newDeflectionState;
-	}
-
-	@Override
-	public boolean hasSpin() {
-		return spin;
-	}
-
-	@Override
-	public void setSpinState(boolean newSpinState) {
-		this.spin = newSpinState;
-	}
-
-	protected void calculateEffects() {
-		if (hasDeflection() && (rule.getOscillatorPeriod() != 0)) {
-			int period = rule.getOscillatorPeriod();
-			double amplitude = rule.getOscillatorAmplitude();
-
-			double p = 2.0 * Math.PI / period;
-			double x = countDeflection * p;
-			double y = Math.sin(x) * amplitude;
-
-			currentDeflection = new Vector(0.0, y, 0.0);
+	protected List<Double> calculateDeflectionY() {
+		List<Double> deflections = new ArrayList<>();
+		double amplitude = rule.getOscillatorAmplitude();
+		int period = rule.getOscillatorPeriod();
+		double step = 2.0 * Math.PI / period;
+		for (int i = 0; i < period; i++) {
+			double y = Math.sin(i * step) * amplitude;
+			deflections.add(Double.valueOf(y));
 		}
+		return deflections;
+	}
 
-		if (hasSpin() && (rule.getRotatorPeriod() != 0)) {
-			double pa = 360.0 / Math.abs(rule.getRotatorPeriod());
-			currentArmorStandSpin = countSpin * pa;
-			if (rule.getRotatorPeriod() < 0) {
-				currentArmorStandSpin = 360.0 - currentArmorStandSpin;
+	protected List<Double> calculateMinecartSpin() {
+		List<Double> spins = new ArrayList<>();
+		int period = rule.getRotatorPeriod();
+		double step = 2.0 * Math.PI / period;
+		for (int i = 0; i < period; i++) {
+			double mySpin = Math.sin(i * step) * (2 * Math.PI - 0.17);
+			spins.add(Double.valueOf(mySpin));
+		}
+		return spins;
+	}
+
+	protected List<Double> calculateArmorStandSpin() {
+		List<Double> spins = new ArrayList<>();
+		int period = rule.getRotatorPeriod();
+		double step = 2.0 * Math.PI / period;
+		for (int i = 0; i < period; i++) {
+			double myAngle = i * step;
+			if (period < 0) {
+				myAngle = 2 * Math.PI - myAngle;
 			}
-
-			double pm = 2.0 * Math.PI / Math.abs(rule.getRotatorPeriod());
-			double x = countSpin * pm;
-			currentMinecartSpin = Math.sin(x) * 350.0;
+			spins.add(Double.valueOf(myAngle));
 		}
-
+		return spins;
 	}
 
 	@Override
-	public void incrementCounters() {
-		countDeflection = (countDeflection + 1) % rule.getOscillatorPeriod();
-		countSpin = (countSpin + 1) % Math.abs(rule.getRotatorPeriod());
-		calculateEffects();
-	}
-
-	@Override
-	public Vector getCurrentDeflection(Element element) {
-		return currentDeflection;
-	}
-
-	@Override
-	public double getCurrentSpin(Element element) {
-		if (element instanceof MinecartElement) {
-			return currentMinecartSpin;
+	protected void prepare() {
+		for (double y : calculateDeflectionY()) {
+			addDeflection(new Vector(0, y, 0));
 		}
-		if (element instanceof ArmorStandElement) {
-			return currentArmorStandSpin;
+		for (double d : calculateMinecartSpin()) {
+			addMinecartSpin(new EulerAngle(0, d, 0));
 		}
-		return 0.0;
+		for (double d : calculateArmorStandSpin()) {
+			addArmorStandSpin(new EulerAngle(0, d, 0));
+		}
+		setPrepared();
 	}
 
 }

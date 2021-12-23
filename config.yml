@@ -55,6 +55,14 @@ startup:
    # - Here you define only the initial value.
    debug: false
    
+   # PlacingDelay
+   #
+   # - We need a bit time after acquiring the ChunkTicket
+   # - before we can place our Walls and Rotators into this Chunk.
+   # - Here you define this delay in seconds.
+   # - The optimal settings depends on your server.
+   placingDelay: 3
+   
    # Exception Quota
    #
    # - This plugin has a scheduler to check all balloons periodically.
@@ -119,6 +127,8 @@ rules:
 #       normalSpeed: 0.1
 #       switchToFastSpeedAtDistance: 5.0
 #       maxAllowedDistance: 9.9
+#       startMoveAtDeviation: 0.5
+#       oscillatorHint: ""
 #       oscillatorPeriod: 100
 #       oscillatorAmplitude: 0.1
 #       rotatorPeriod: 100

@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,9 +24,9 @@ import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.elements.LivingElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigLiving implements ConfigPart {
 
@@ -366,6 +367,79 @@ public class ConfigLiving implements ConfigPart {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
 		validateConfig();
+	}
+
+	protected List<String> paramListAsDump() { // NOSONAR
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		newParamListDump.add(String.format(fs, ParamLiving.TYPE.getAttributeName(), entityType.toString()));
+		if (hidden)
+			newParamListDump.add(String.format(fb, ParamLiving.HIDDEN.getAttributeName(), Boolean.toString(true)));
+		if (leash)
+			newParamListDump.add(String.format(fb, ParamLiving.LEASH.getAttributeName(), Boolean.toString(true)));
+		if (tamed)
+			newParamListDump.add(String.format(fb, ParamLiving.TAMED.getAttributeName(), Boolean.toString(true)));
+		if (catType != null)
+			newParamListDump.add(String.format(fs, ParamLiving.CATTYPE.getAttributeName(), catType.toString()));
+		if (collarColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.COLLARCOLOR.getAttributeName(), collarColor.toString()));
+		if (foxType != null)
+			newParamListDump.add(String.format(fs, ParamLiving.FOXTYPE.getAttributeName(), foxType.toString()));
+		if (horseColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.HORSECOLOR.getAttributeName(), horseColor.toString()));
+		if (horseStyle != null)
+			newParamListDump.add(String.format(fs, ParamLiving.HORSESTYLE.getAttributeName(), horseStyle.toString()));
+		if (llamaColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.LLAMACOLOR.getAttributeName(), llamaColor.toString()));
+		if (mushroomCowVariant != null)
+			newParamListDump.add(String.format(fs, ParamLiving.MUSHROOMCOWVARIANT.getAttributeName(),
+					mushroomCowVariant.toString()));
+		if (pandaMainGene != null)
+			newParamListDump
+					.add(String.format(fs, ParamLiving.PANDAMAINGENE.getAttributeName(), pandaMainGene.toString()));
+		if (pandaHiddenGene != null)
+			newParamListDump
+					.add(String.format(fs, ParamLiving.PANDAHIDDENGENE.getAttributeName(), pandaHiddenGene.toString()));
+		if (parrotVariant != null)
+			newParamListDump
+					.add(String.format(fs, ParamLiving.PARROTVARIANT.getAttributeName(), parrotVariant.toString()));
+		if (rabbitType != null)
+			newParamListDump.add(String.format(fs, ParamLiving.RABBITTYPE.getAttributeName(), rabbitType.toString()));
+		if (sheepColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.SHEEPCOLOR.getAttributeName(), sheepColor.toString()));
+		if (tropicalFishBodyColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.TROPICALFISHBODYCOLOR.getAttributeName(),
+					tropicalFishBodyColor.toString()));
+		if (tropicalFishPatternColor != null)
+			newParamListDump.add(String.format(fs, ParamLiving.TROPICALFISHPATTERNCOLOR.getAttributeName(),
+					tropicalFishPatternColor.toString()));
+		if (tropicalFishPattern != null)
+			newParamListDump.add(String.format(fs, ParamLiving.TROPICALFISHPATTERN.getAttributeName(),
+					tropicalFishPattern.toString()));
+		if (villagerType != null)
+			newParamListDump
+					.add(String.format(fs, ParamLiving.VILLAGER_TYPE.getAttributeName(), villagerType.toString()));
+		if (villagerProfession != null)
+			newParamListDump.add(String.format(fs, ParamLiving.VILLAGER_PROFESSION.getAttributeName(),
+					villagerProfession.toString()));
+		if (villagerLevel != 1)
+			newParamListDump.add(
+					String.format(fb, ParamLiving.VILLAGER_LEVEL.getAttributeName(), Integer.toString(villagerLevel)));
+		if (offset.getX() != 0)
+			newParamListDump.add(String.format(fb, ParamLiving.X.getAttributeName(), Double.toString(offset.getX())));
+		if (offset.getY() != 0)
+			newParamListDump.add(String.format(fb, ParamLiving.Y.getAttributeName(), Double.toString(offset.getY())));
+		if (offset.getZ() != 0)
+			newParamListDump.add(String.format(fb, ParamLiving.Z.getAttributeName(), Double.toString(offset.getZ())));
+		if ((custom != null) && !custom.isEmpty())
+			newParamListDump.add(String.format(fs, ParamLiving.CUSTOM.getAttributeName(), custom));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

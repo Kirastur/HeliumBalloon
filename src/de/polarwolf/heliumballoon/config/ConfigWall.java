@@ -1,16 +1,18 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigWall implements ConfigPlaceableBalloonSet {
 
@@ -23,6 +25,14 @@ public class ConfigWall implements ConfigPlaceableBalloonSet {
 	public ConfigWall(String name, String fullName) {
 		this.name = name;
 		this.fullName = fullName;
+	}
+
+	public ConfigWall(String name, String fullName, ConfigTemplate template, Location location) {
+		this.name = name;
+		this.fullName = fullName;
+		setTemplate(template);
+		setAbsolutePosition(location.toVector());
+		setWorldName(location.getWorld().getName());
 	}
 
 	public ConfigWall(ConfigurationSection fileSection, ConfigSection balloonSection) throws BalloonException {
@@ -141,6 +151,31 @@ public class ConfigWall implements ConfigPlaceableBalloonSet {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection, balloonSection);
 		validateConfig();
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		if (template != null)
+			newParamListDump.add(String.format(fs, ParamWall.TEMPLATE.getAttributeName(), template.getName()));
+		if (worldName != null)
+			newParamListDump.add(String.format(fs, ParamWall.WORLD.getAttributeName(), worldName));
+		if (absolutePosition.getX() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamWall.X.getAttributeName(), Double.toString(absolutePosition.getX())));
+		if (absolutePosition.getY() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamWall.Y.getAttributeName(), Double.toString(absolutePosition.getY())));
+		if (absolutePosition.getZ() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamWall.Z.getAttributeName(), Double.toString(absolutePosition.getZ())));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

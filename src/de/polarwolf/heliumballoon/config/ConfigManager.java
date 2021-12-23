@@ -13,10 +13,10 @@ import org.bukkit.plugin.Plugin;
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.events.EventManager;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumLogger;
-import de.polarwolf.heliumballoon.helium.HeliumText;
-import de.polarwolf.heliumballoon.messages.Message;
-import de.polarwolf.heliumballoon.players.PlayerPersistentData;
+import de.polarwolf.heliumballoon.system.players.PlayerPersistentData;
+import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.tools.helium.HeliumText;
+import de.polarwolf.heliumballoon.tools.messages.Message;
 
 public class ConfigManager {
 
@@ -26,6 +26,7 @@ public class ConfigManager {
 	public static final String PARAM_LOAD_LOCAL_CONFIG = "loadLocalConfig";
 	public static final String PARAM_STARTUP_WARN_ON_WRONG_PURPOSE = "warnOnWrongPurpose";
 	public static final String PARAM_STARTUP_DEBUG = "debug";
+	public static final String PARAM_STARTUP_PLACING_DELAY = "placingDelay";
 	public static final String PARAM_STARTUP_EXCEPTION_QUOTA = "exceptionQuota";
 	public static final String PARAM_GDPR_KEEP_PLAYER_DAYS = "keepPlayerDays";
 	public static final String PARAM_GDPR_RUN_PURGE_HOUR = "runPurgeHour";
@@ -33,6 +34,7 @@ public class ConfigManager {
 	public static final boolean DEFAULT_PASSIVEMODE = false;
 	public static final boolean DEFAULT_LOAD_LOCAL_CONFIG = true;
 	public static final boolean DEFAULT_DEBUG = false;
+	public static final int DEFAULT_PLACING_DELAY = 3;
 	public static final int DEFAULT_EXCEPTION_QUOTA = 10;
 	public static final boolean DEFAULT_WARN_ON_WRONG_PURPOSE = true;
 	public static final int DEFAULT_KEEP_PLAYER_DAYS = 30;
@@ -75,6 +77,11 @@ public class ConfigManager {
 				DEFAULT_DEBUG);
 	}
 
+	public static int getPlacingDelay(Plugin startupPlugin) {
+		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_PLACING_DELAY,
+				DEFAULT_PLACING_DELAY);
+	}
+
 	public static int getExceptionQuota(Plugin startupPlugin) {
 		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_EXCEPTION_QUOTA,
 				DEFAULT_EXCEPTION_QUOTA);
@@ -93,8 +100,54 @@ public class ConfigManager {
 		return runPurgeHour;
 	}
 
-	public int getSectionCount() {
-		return sections.size();
+	protected ConfigSection findSection(String sectionName) {
+		for (ConfigSection mySection : sections) {
+			if (mySection.getName().equals(sectionName)) {
+				return mySection;
+			}
+		}
+		return null;
+	}
+
+	public Set<String> getSectionNames() {
+		Set<String> allSectionNames = new TreeSet<>();
+		for (ConfigSection mySection : sections) {
+			allSectionNames.add(mySection.getName());
+		}
+		return allSectionNames;
+	}
+
+	public String dumpSection(String sectionName) {
+		for (ConfigSection mySection : sections) {
+			if (mySection.getName().equals(sectionName)) {
+				return mySection.toString();
+			}
+		}
+		return null;
+	}
+
+	public ConfigWorldset findWorldsetInSection(String sectionName, String worldsetName) {
+		ConfigSection mySection = findSection(sectionName);
+		if (mySection == null) {
+			return null;
+		}
+		return mySection.findWorldset(worldsetName);
+	}
+
+	public ConfigRule findRuleInSection(String sectionName, String ruleName) {
+		ConfigSection mySection = findSection(sectionName);
+		if (mySection == null) {
+			return null;
+		}
+		return mySection.findRule(ruleName);
+	}
+
+	public ConfigTemplate findTemplateInSection(String sectionName, String templateName) {
+		ConfigSection mySection = findSection(sectionName);
+		if (mySection == null) {
+			return null;
+		}
+		return mySection.findTemplate(templateName);
 	}
 
 	public ConfigPet findPet(String petName) {
@@ -162,20 +215,26 @@ public class ConfigManager {
 		return lastGuiMenu;
 	}
 
-	public ConfigSection buildConfigSectionFromConfigFile(Plugin fileOwnerPlugin) throws BalloonException {
-		ConfigurationSection fileSection = fileOwnerPlugin.getConfig().getRoot();
-		return new ConfigSection(fileOwnerPlugin.getName(), fileSection);
+	public ConfigSection buildConfigSectionFromFileSection(String sectionName, ConfigurationSection fileSection)
+			throws BalloonException {
+		return new ConfigSection(sectionName, fileSection);
 	}
 
-	public void reload() throws BalloonException {
-		List<ConfigSection> newSections = eventManager.sendReloadEvent();
+	public ConfigSection buildConfigSectionFromConfigFile(Plugin fileOwnerPlugin) throws BalloonException {
+		ConfigurationSection fileSection = fileOwnerPlugin.getConfig().getRoot();
+		return buildConfigSectionFromFileSection(fileOwnerPlugin.getName(), fileSection);
+	}
+
+	public String reload(List<ConfigSection> newSections) {
 		sections = newSections;
-		int sectionCount = getSectionCount();
+		int sectionCount = getSectionNames().size();
 		int petCount = getPetNames().size();
 		int wallCount = getWallNames().size();
 		int rotatorCount = getRotatorNames().size();
-		logger.printInfo(String.format("%d sections, %d pets, %d walls, and %d rotators loaded", sectionCount, petCount,
-				wallCount, rotatorCount));
+		String s = String.format("%d sections, %d pets, %d walls, and %d rotators loaded", sectionCount, petCount,
+				wallCount, rotatorCount);
+		plugin.getLogger().info(s);
+		return s;
 	}
 
 	public ConfigPlayer buildConfigPlayer() {

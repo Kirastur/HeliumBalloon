@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,9 +22,9 @@ import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.elements.FallingBlockElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigElement implements ConfigPart {
 
@@ -271,6 +272,60 @@ public class ConfigElement implements ConfigPart {
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
+	}
+
+	protected List<String> paramListAsDump() { // NOSONAR
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		newParamListDump.add(String.format(fs, ParamElement.MATERIAL.getAttributeName(), material.toString()));
+		if (axis != null)
+			newParamListDump.add(String.format(fs, ParamElement.AXIS.getAttributeName(), axis.toString()));
+		if (bisectedHalf != null)
+			newParamListDump
+					.add(String.format(fs, ParamElement.BISECTED_HALF.getAttributeName(), bisectedHalf.toString()));
+		if (bellAttachment != null)
+			newParamListDump
+					.add(String.format(fs, ParamElement.BELL_ATTACHMENT.getAttributeName(), bellAttachment.toString()));
+		if (blockFace != null)
+			newParamListDump.add(String.format(fs, ParamElement.BLOCK_FACE.getAttributeName(), blockFace.toString()));
+		if (chestType != null)
+			newParamListDump.add(String.format(fs, ParamElement.CHEST_TYPE.getAttributeName(), chestType.toString()));
+		if (doorHinge != null)
+			newParamListDump.add(String.format(fs, ParamElement.DOOR_HINGE.getAttributeName(), doorHinge.toString()));
+		if (attachedFace != null)
+			newParamListDump
+					.add(String.format(fs, ParamElement.ATTACHED_FACE.getAttributeName(), attachedFace.toString()));
+		if (slabType != null)
+			newParamListDump.add(String.format(fs, ParamElement.SLAB_TYPE.getAttributeName(), slabType.toString()));
+		if (stairsShape != null)
+			newParamListDump
+					.add(String.format(fs, ParamElement.STAIRS_SHAPE.getAttributeName(), stairsShape.toString()));
+		if (open)
+			newParamListDump.add(String.format(fb, ParamElement.IS_OPEN.getAttributeName(), Boolean.toString(true)));
+		if (!lit)
+			newParamListDump.add(String.format(fb, ParamElement.IS_LIT.getAttributeName(), Boolean.toString(false)));
+		if (signalFire)
+			newParamListDump
+					.add(String.format(fb, ParamElement.IS_SIGNAL_FIRE.getAttributeName(), Boolean.toString(true)));
+		if (hanging)
+			newParamListDump.add(String.format(fb, ParamElement.IS_HANGING.getAttributeName(), Boolean.toString(true)));
+		if (eye)
+			newParamListDump.add(String.format(fb, ParamElement.HAS_EYE.getAttributeName(), Boolean.toString(true)));
+		if (offset.getX() != 0)
+			newParamListDump.add(String.format(fb, ParamElement.X.getAttributeName(), Double.toString(offset.getX())));
+		if (offset.getY() != 0)
+			newParamListDump.add(String.format(fb, ParamElement.Y.getAttributeName(), Double.toString(offset.getY())));
+		if (offset.getZ() != 0)
+			newParamListDump.add(String.format(fb, ParamElement.Z.getAttributeName(), Double.toString(offset.getZ())));
+		if ((custom != null) && !custom.isEmpty())
+			newParamListDump.add(String.format(fs, ParamElement.CUSTOM.getAttributeName(), custom));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

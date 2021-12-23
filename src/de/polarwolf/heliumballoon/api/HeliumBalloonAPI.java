@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,35 +12,37 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.balloons.Balloon;
-import de.polarwolf.heliumballoon.balloons.BalloonManager;
+import de.polarwolf.heliumballoon.balloons.pets.Pet;
+import de.polarwolf.heliumballoon.balloons.pets.PetManager;
+import de.polarwolf.heliumballoon.balloons.rotators.Rotator;
+import de.polarwolf.heliumballoon.balloons.rotators.RotatorManager;
+import de.polarwolf.heliumballoon.balloons.walls.Wall;
+import de.polarwolf.heliumballoon.balloons.walls.WallManager;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.config.ConfigPet;
+import de.polarwolf.heliumballoon.config.ConfigRotator;
+import de.polarwolf.heliumballoon.config.ConfigRule;
+import de.polarwolf.heliumballoon.config.ConfigTemplate;
+import de.polarwolf.heliumballoon.config.ConfigWall;
+import de.polarwolf.heliumballoon.config.ConfigWorldset;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.gui.GuiManager;
-import de.polarwolf.heliumballoon.helium.HeliumLogger;
-import de.polarwolf.heliumballoon.messages.Message;
-import de.polarwolf.heliumballoon.messages.MessageManager;
-import de.polarwolf.heliumballoon.pets.Pet;
-import de.polarwolf.heliumballoon.pets.PetManager;
-import de.polarwolf.heliumballoon.players.PlayerManager;
-import de.polarwolf.heliumballoon.reload.ReloadManager;
-import de.polarwolf.heliumballoon.rotators.Rotator;
-import de.polarwolf.heliumballoon.rotators.RotatorManager;
-import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
-import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifierManager;
-import de.polarwolf.heliumballoon.walls.Wall;
-import de.polarwolf.heliumballoon.walls.WallManager;
+import de.polarwolf.heliumballoon.observers.Observer;
+import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.system.reload.ReloadManager;
+import de.polarwolf.heliumballoon.system.players.PlayerManager;
+import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.tools.messages.Message;
+import de.polarwolf.heliumballoon.tools.messages.MessageManager;
 
 public class HeliumBalloonAPI {
 
 	protected final Plugin plugin;
 	protected final HeliumLogger logger;
-	protected final SpawnModifierManager spawnModifierManager;
 	protected final ConfigManager configManager;
 	protected final MessageManager messageManager;
 	protected final PlayerManager playerManager;
-	protected final BalloonManager balloonManager;
+	protected final ObserverManager observerManager;
 	protected final PetManager petManager;
 	protected final WallManager wallManager;
 	protected final RotatorManager rotatorManager;
@@ -49,11 +52,10 @@ public class HeliumBalloonAPI {
 	public HeliumBalloonAPI(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
-		this.spawnModifierManager = orchestrator.getSpawnModifierManager();
 		this.configManager = orchestrator.getConfigManager();
 		this.messageManager = orchestrator.getMessageManager();
 		this.playerManager = orchestrator.getPlayerManager();
-		this.balloonManager = orchestrator.getBalloonManager();
+		this.observerManager = orchestrator.getObserverManager();
 		this.petManager = orchestrator.getPetManager();
 		this.wallManager = orchestrator.getWallManager();
 		this.rotatorManager = orchestrator.getRotatorManager();
@@ -70,16 +72,27 @@ public class HeliumBalloonAPI {
 		logger.setDebug(debug);
 	}
 
-	// SpawnModifyManager
-	public void registerModifier(SpawnModifier newSpawnModifier) {
-		spawnModifierManager.registerModifier(newSpawnModifier);
-	}
-
-	public void unregisterModifier(SpawnModifier oldSpawnModifier) {
-		spawnModifierManager.unregisterModifier(oldSpawnModifier);
-	}
-
 	// ConfigManager
+	public Set<String> getConfigSectionNames() {
+		return configManager.getSectionNames();
+	}
+
+	public String dumpConfigSection(String sectionName) {
+		return configManager.dumpSection(sectionName);
+	}
+
+	public ConfigWorldset findConfigWorldsetInSection(String sectionName, String worldsetName) {
+		return configManager.findWorldsetInSection(sectionName, worldsetName);
+	}
+
+	public ConfigRule findConfigRuleInSection(String sectionName, String ruleName) {
+		return configManager.findRuleInSection(sectionName, ruleName);
+	}
+
+	public ConfigTemplate findConfigTemplateInSection(String sectionName, String templateName) {
+		return configManager.findTemplateInSection(sectionName, templateName);
+	}
+
 	public ConfigPet findConfigPet(String petName) {
 		return configManager.findPet(petName);
 	}
@@ -98,17 +111,17 @@ public class HeliumBalloonAPI {
 		return playerManager.purgeOldPlayers();
 	}
 
-	// BalloonManager
-	public Balloon findBalloonByEntity(Entity entity) {
-		return balloonManager.findBalloonByEntity(entity);
+	// ObserverManager
+	public Observer findObserverByEntity(Entity entity) {
+		return observerManager.findObserverByEntity(entity);
 	}
 
-	public void addBalloon(Balloon balloon) throws BalloonException {
-		balloonManager.addBalloon(balloon);
+	public void addObserver(Observer observer) throws BalloonException {
+		observerManager.addObserver(observer);
 	}
 
-	public List<Balloon> getAllBalloons() {
-		return balloonManager.getAllBalloons();
+	public List<Observer> getAllObservers() {
+		return observerManager.getAllObservers();
 	}
 
 	// PetManager
@@ -145,9 +158,25 @@ public class HeliumBalloonAPI {
 		return wallManager.getWalls();
 	}
 
+	public Wall createWall(ConfigWall configWall, World world) throws BalloonException {
+		return wallManager.createWall(configWall, world);
+	}
+
+	public void destroyWall(Wall wall) {
+		wallManager.destroyWall(wall);
+	}
+
 	// RotationManager
 	public List<Rotator> getAllRotators() {
 		return rotatorManager.getRotators();
+	}
+
+	public Rotator createRotator(ConfigRotator configRotator, World world) throws BalloonException {
+		return rotatorManager.createRotator(configRotator, world);
+	}
+
+	public void destroyRotator(Rotator rotator) {
+		rotatorManager.destroyRotator(rotator);
 	}
 
 	// GuiManager
@@ -180,13 +209,17 @@ public class HeliumBalloonAPI {
 	}
 
 	// ReloadManager
-	public void reload() throws BalloonException {
-		reloadManager.reload();
+	public String reload() throws BalloonException {
+		return reloadManager.reload();
+	}
+
+	public void scheduleRedloadFoNextTick() {
+		reloadManager.scheduleRedloadFoNextTick();
 	}
 
 	// Global
 	public boolean isDisabled() {
-		return (balloonManager.isCancelled() || petManager.isCancelled());
+		return (observerManager.isCancelled() || petManager.isCancelled());
 	}
 
 }

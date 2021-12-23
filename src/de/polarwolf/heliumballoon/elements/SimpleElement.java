@@ -3,6 +3,7 @@ package de.polarwolf.heliumballoon.elements;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigRule;
@@ -58,7 +59,7 @@ public abstract class SimpleElement implements Element {
 	}
 
 	@Override
-	public void setSpin(double spin) {
+	public void setSpin(EulerAngle spin) {
 		// Nothing to do
 	}
 

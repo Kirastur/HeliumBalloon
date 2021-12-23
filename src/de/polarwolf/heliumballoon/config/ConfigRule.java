@@ -1,38 +1,62 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigRule implements HeliumName {
+
+	public static final double DEFAULT_HIGH_ABOVE_PLAYER = 3.0;
+	public static final double DEFAULT_DISTANCE_FROM_PLAYER = 1.0;
+	public static final double DEFAULT_ANGLE_FROM_PLAYER_DIRECTION = 120;
+	public static final double DEFAULT_NORMAL_SPEED = 0.1;
+	public static final double DEFAULT_SWITCH_TO_FAST_SPEED_AT_DISTANCE = 5.0;
+	public static final double DEFAULT_START_MOVE_AT_DEVIATION = 0.5;
+	public static final double DEFAULT_MAX_ALLOWED_DISTANCE = 9.9;
+	public static final String DEFAULT_OSCILLATOR_HINT = "";
+	public static final int DEFAULT_OSCILLATOR_PERIOD = 100;
+	public static final double DEFAULT_OSCILLATOR_AMPLITUDE = 0.1;
+	public static final int DEFAULT_ROTATOR_PERIOD = 100;
+	public static final int DEFAULT_BLOCK_DELAY = 4;
+	public static final int DEFAULT_LIVING_DELAY = 1;
+	public static final int DEFAULT_MINECART_DELAY = 0;
+	public static final double DEFAULT_ADJUST_ILLAGER_Y = 0.0;
+	public static final boolean DEFAULT_ENABLE_RISING_Y_WORKAROUND = true;
+	public static final boolean DEFAULT_ENABLE_WARN_Y64_WALLS = true;
 
 	private final String name;
 	private final String fullName;
 
-	private double highAbovePlayer = 3.0;
-	private double distanceFromPlayer = 1.0;
-	private double angleFromPlayerDirection = 120;
+	private double highAbovePlayer = DEFAULT_HIGH_ABOVE_PLAYER;
+	private double distanceFromPlayer = DEFAULT_DISTANCE_FROM_PLAYER;
+	private double angleFromPlayerDirection = DEFAULT_ANGLE_FROM_PLAYER_DIRECTION;
 
-	private double normalSpeed = 0.1;
-	private double switchToFastSpeedAtDistance = 5.0;
-	private double maxAllowedDistance = 9.9;
+	private double normalSpeed = DEFAULT_NORMAL_SPEED;
+	private double switchToFastSpeedAtDistance = DEFAULT_SWITCH_TO_FAST_SPEED_AT_DISTANCE;
+	private double maxAllowedDistance = DEFAULT_MAX_ALLOWED_DISTANCE;
+	private double startMoveAtDeviation = DEFAULT_START_MOVE_AT_DEVIATION;
 
-	private int oscillatorPeriod = 100;
-	private double oscillatorAmplitude = 0.1;
-	private int rotatorPeriod = 100;
-	private int blockDelay = 4;
-	private int livingDelay = 1;
-	private int minecartDelay = 0;
+	private String oscillatorHint = DEFAULT_OSCILLATOR_HINT;
+	private int oscillatorPeriod = DEFAULT_OSCILLATOR_PERIOD;
+	private double oscillatorAmplitude = DEFAULT_OSCILLATOR_AMPLITUDE;
+	private int rotatorPeriod = DEFAULT_ROTATOR_PERIOD;
+	private int blockDelay = DEFAULT_BLOCK_DELAY;
+	private int livingDelay = DEFAULT_LIVING_DELAY;
+	private int minecartDelay = DEFAULT_MINECART_DELAY;
 
-	private double adjustIllagerY = 0.0;
-	private boolean enableRisingYWorkaround = true;
-	private boolean enableWarnY64Walls = true;
+	private double adjustIllagerY = DEFAULT_ADJUST_ILLAGER_Y;
+	private boolean enableRisingYWorkaround = DEFAULT_ENABLE_RISING_Y_WORKAROUND;
+	private boolean enableWarnY64Walls = DEFAULT_ENABLE_WARN_Y64_WALLS;
 
 	private boolean defaultRule = false;
 
@@ -109,6 +133,22 @@ public class ConfigRule implements HeliumName {
 
 	protected void setMaxAllowedDistance(double maxAllowedDistance) {
 		this.maxAllowedDistance = maxAllowedDistance;
+	}
+
+	public double getStartMoveAtDeviation() {
+		return startMoveAtDeviation;
+	}
+
+	protected void setStartMoveAtDeviation(double startMoveAtDeviation) {
+		this.startMoveAtDeviation = startMoveAtDeviation;
+	}
+
+	public String getOscillatorHint() {
+		return oscillatorHint;
+	}
+
+	protected void setOscillatorHint(String oscillatorHint) {
+		this.oscillatorHint = oscillatorHint;
 	}
 
 	public int getOscillatorPeriod() {
@@ -205,6 +245,8 @@ public class ConfigRule implements HeliumName {
 		setSwitchToFastSpeedAtDistance(
 				heliumSection.getDouble(ParamRule.SWITCH_TO_FAST_SPEED_AT_DISTANCE, getSwitchToFastSpeedAtDistance()));
 		setMaxAllowedDistance(heliumSection.getDouble(ParamRule.MAX_ALLOWED_DISTANCE, getMaxAllowedDistance()));
+		setStartMoveAtDeviation(heliumSection.getDouble(ParamRule.START_MOVE_AT_DEVIATION, getStartMoveAtDeviation()));
+		setOscillatorHint(heliumSection.getString(ParamRule.OSCILLATOR_HINT, getOscillatorHint()));
 		setOscillatorPeriod(heliumSection.getInt(ParamRule.OSCILLATOR_PERIOD, getOscillatorPeriod()));
 		setOscillatorAmplitude(heliumSection.getDouble(ParamRule.OSCILLATOR_AMPLITUDE, getOscillatorAmplitude()));
 		setRotatorPeriod(heliumSection.getInt(ParamRule.ROTATOR_PERIOD, getRotatorPeriod()));
@@ -228,6 +270,65 @@ public class ConfigRule implements HeliumName {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
 		validateConfig();
+	}
+
+	protected Map<String, String> buildMathParamMap() { // NOSONAR
+		Map<String, String> newParamMap = new HashMap<>();
+		if (defaultRule)
+			newParamMap.put(ParamRule.IS_DEFAULT.getAttributeName(), Boolean.toString(true));
+		if (highAbovePlayer != DEFAULT_HIGH_ABOVE_PLAYER)
+			newParamMap.put(ParamRule.HIGH_ABOVE_PLAYER.getAttributeName(), Double.toString(highAbovePlayer));
+		if (distanceFromPlayer != DEFAULT_DISTANCE_FROM_PLAYER)
+			newParamMap.put(ParamRule.DISTANCE_FROM_PLAYER.getAttributeName(), Double.toString(distanceFromPlayer));
+		if (angleFromPlayerDirection != DEFAULT_ANGLE_FROM_PLAYER_DIRECTION)
+			newParamMap.put(ParamRule.ANGLE_FROM_PLAYER_DIRECTION.getAttributeName(),
+					Double.toString(angleFromPlayerDirection));
+		if (normalSpeed != DEFAULT_NORMAL_SPEED)
+			newParamMap.put(ParamRule.NORMAL_SPEED.getAttributeName(), Double.toString(normalSpeed));
+		if (switchToFastSpeedAtDistance != DEFAULT_SWITCH_TO_FAST_SPEED_AT_DISTANCE)
+			newParamMap.put(ParamRule.SWITCH_TO_FAST_SPEED_AT_DISTANCE.getAttributeName(),
+					Double.toString(switchToFastSpeedAtDistance));
+		if (maxAllowedDistance != DEFAULT_MAX_ALLOWED_DISTANCE)
+			newParamMap.put(ParamRule.MAX_ALLOWED_DISTANCE.getAttributeName(), Double.toString(maxAllowedDistance));
+		if (startMoveAtDeviation != DEFAULT_START_MOVE_AT_DEVIATION)
+			newParamMap.put(ParamRule.START_MOVE_AT_DEVIATION.getAttributeName(),
+					Double.toString(startMoveAtDeviation));
+		if (oscillatorPeriod != DEFAULT_OSCILLATOR_PERIOD)
+			newParamMap.put(ParamRule.OSCILLATOR_PERIOD.getAttributeName(), Integer.toString(oscillatorPeriod));
+		if (oscillatorAmplitude != DEFAULT_OSCILLATOR_AMPLITUDE)
+			newParamMap.put(ParamRule.OSCILLATOR_AMPLITUDE.getAttributeName(), Double.toString(oscillatorAmplitude));
+		if (rotatorPeriod != DEFAULT_ROTATOR_PERIOD)
+			newParamMap.put(ParamRule.ROTATOR_PERIOD.getAttributeName(), Integer.toString(rotatorPeriod));
+		if (blockDelay != DEFAULT_BLOCK_DELAY)
+			newParamMap.put(ParamRule.BLOCK_DELAY.getAttributeName(), Integer.toString(blockDelay));
+		if (livingDelay != DEFAULT_LIVING_DELAY)
+			newParamMap.put(ParamRule.LIVING_DELAY.getAttributeName(), Integer.toString(livingDelay));
+		if (minecartDelay != DEFAULT_MINECART_DELAY)
+			newParamMap.put(ParamRule.MINECART_DELAY.getAttributeName(), Integer.toString(minecartDelay));
+		if (adjustIllagerY != DEFAULT_ADJUST_ILLAGER_Y)
+			newParamMap.put(ParamRule.ADJUST_ILLAGER_Y.getAttributeName(), Double.toString(adjustIllagerY));
+		if (enableRisingYWorkaround != DEFAULT_ENABLE_RISING_Y_WORKAROUND)
+			newParamMap.put(ParamRule.ENABLE_RISING_Y_WORKAROUND.getAttributeName(),
+					Boolean.toString(enableRisingYWorkaround));
+		if (enableWarnY64Walls != DEFAULT_ENABLE_WARN_Y64_WALLS)
+			newParamMap.put(ParamRule.ENABLE_WARN_Y64_WALLS.getAttributeName(), Boolean.toString(enableWarnY64Walls));
+		return newParamMap;
+	}
+
+	protected List<String> paramListAsDump() {
+		List<String> newParamListDump = new ArrayList<>();
+		for (Entry<String, String> myEntry : buildMathParamMap().entrySet())
+			newParamListDump.add(String.format("%s: %s", myEntry.getKey(), myEntry.getValue()));
+		if (!oscillatorHint.isEmpty()) {
+			newParamListDump
+					.add(String.format("%s: \"%s\"", ParamRule.OSCILLATOR_HINT.getAttributeName(), oscillatorHint));
+		}
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

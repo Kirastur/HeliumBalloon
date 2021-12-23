@@ -6,8 +6,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.helium.HeliumText;
-import de.polarwolf.heliumballoon.messages.Message;
+import de.polarwolf.heliumballoon.tools.helium.HeliumText;
+import de.polarwolf.heliumballoon.tools.messages.Message;
 
 public class ConfigMessage {
 

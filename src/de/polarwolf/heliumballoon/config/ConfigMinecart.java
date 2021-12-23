@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,17 +12,19 @@ import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.elements.MinecartElement;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigMinecart implements ConfigPart {
+
+	public static final int DEFAULT_LOAD_OFFSET = 6;
 
 	private final String name;
 	private final String fullName;
 	private Vector offset = new Vector(0, 0, 0);
 	private ConfigElement load = null;
-	private int loadOffset = 6;
+	private int loadOffset = DEFAULT_LOAD_OFFSET;
 	private String custom = null;
 
 	public ConfigMinecart(String name, String fullName) {
@@ -134,6 +137,31 @@ public class ConfigMinecart implements ConfigPart {
 		if (heliumSection.isSection(ParamMinecart.LOAD)) {
 			loadLoadConfigFromFile(fileSection);
 		}
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		if (load != null)
+			newParamListDump.add(load.toString());
+		if (loadOffset != DEFAULT_LOAD_OFFSET)
+			newParamListDump
+					.add(String.format(fb, ParamMinecart.LOAD_OFFSET.getAttributeName(), Integer.toString(loadOffset)));
+		if (offset.getX() != 0)
+			newParamListDump.add(String.format(fb, ParamMinecart.X.getAttributeName(), Double.toString(offset.getX())));
+		if (offset.getY() != 0)
+			newParamListDump.add(String.format(fb, ParamMinecart.Y.getAttributeName(), Double.toString(offset.getY())));
+		if (offset.getZ() != 0)
+			newParamListDump.add(String.format(fb, ParamMinecart.Z.getAttributeName(), Double.toString(offset.getZ())));
+		if ((custom != null) && !custom.isEmpty())
+			newParamListDump.add(String.format(fs, ParamMinecart.CUSTOM.getAttributeName(), custom));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

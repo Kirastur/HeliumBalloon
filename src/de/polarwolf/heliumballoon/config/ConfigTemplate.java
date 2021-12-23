@@ -9,8 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigTemplate implements ConfigBalloonSet {
 
@@ -189,6 +189,26 @@ public class ConfigTemplate implements ConfigBalloonSet {
 		if (heliumSection.isSection(ParamTemplate.ARMORSTAND)) {
 			loadArmorStandConfigFromFile(fileSection);
 		}
+	}
+
+	protected List<String> paramListAsDump() {
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		if (worldset != null)
+			newParamListDump.add(String.format(fb, ParamTemplate.WORLDSET.getAttributeName(), worldset.getName()));
+		if (rule != null)
+			newParamListDump.add(String.format(fb, ParamTemplate.RULE.getAttributeName(), rule.getName()));
+		if (oscillating)
+			newParamListDump
+					.add(String.format(fb, ParamTemplate.OSCILLATING.getAttributeName(), Boolean.toString(true)));
+		for (ConfigPart myPart : parts)
+			newParamListDump.add(myPart.toString());
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

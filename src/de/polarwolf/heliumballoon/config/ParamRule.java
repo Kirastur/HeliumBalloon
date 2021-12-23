@@ -1,9 +1,9 @@
 package de.polarwolf.heliumballoon.config;
 
-import static de.polarwolf.heliumballoon.helium.HeliumParamType.STRING;
+import static de.polarwolf.heliumballoon.tools.helium.HeliumParamType.STRING;
 
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumParamType;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParamType;
 
 public enum ParamRule implements HeliumParam {
 
@@ -14,6 +14,8 @@ public enum ParamRule implements HeliumParam {
 	NORMAL_SPEED(STRING, "normalSpeed"),
 	SWITCH_TO_FAST_SPEED_AT_DISTANCE(STRING, "switchToFastSpeedAtDistance"),
 	MAX_ALLOWED_DISTANCE(STRING, "maxAllowedDistance"),
+	START_MOVE_AT_DEVIATION(STRING, "startMoveAtDeviation"),
+	OSCILLATOR_HINT(STRING, "oscillatorHint"),
 	OSCILLATOR_PERIOD(STRING, "oscillatorPeriod"),
 	OSCILLATOR_AMPLITUDE(STRING, "oscillatorAmplitude"),
 	ROTATOR_PERIOD(STRING, "rotatorPeriod"),

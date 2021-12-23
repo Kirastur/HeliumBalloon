@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.oscillators;
 
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.elements.Element;
@@ -16,7 +17,7 @@ public interface Oscillator {
 
 	public Vector getCurrentDeflection(Element element);
 
-	public double getCurrentSpin(Element element);
+	public EulerAngle getCurrentSpin(Element element);
 
 	public void incrementCounters();
 

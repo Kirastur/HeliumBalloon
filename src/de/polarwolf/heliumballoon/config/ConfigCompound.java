@@ -106,4 +106,16 @@ public class ConfigCompound implements ConfigPart {
 		}
 	}
 
+	protected List<String> elementListAsDump() {
+		List<String> newElementListDump = new ArrayList<>();
+		for (ConfigElement myElement : elements.values())
+			newElementListDump.add(myElement.toString());
+		return newElementListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", elementListAsDump()));
+	}
+
 }

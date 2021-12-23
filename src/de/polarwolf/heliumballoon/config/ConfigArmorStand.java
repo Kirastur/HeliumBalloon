@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,9 +12,9 @@ import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
 import de.polarwolf.heliumballoon.elements.ArmorStandElement;
 import de.polarwolf.heliumballoon.elements.Element;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
 import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
 
 public class ConfigArmorStand implements ConfigPart {
 
@@ -122,6 +123,31 @@ public class ConfigArmorStand implements ConfigPart {
 		if (heliumSection.isSection(ParamArmorStand.LOAD)) {
 			loadLoadConfigFromFile(fileSection);
 		}
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		String fb = "%s: %s";
+		List<String> newParamListDump = new ArrayList<>();
+		if (load != null)
+			newParamListDump.add(load.toString());
+		if (offset.getX() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamArmorStand.X.getAttributeName(), Double.toString(offset.getX())));
+		if (offset.getY() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamArmorStand.Y.getAttributeName(), Double.toString(offset.getY())));
+		if (offset.getZ() != 0)
+			newParamListDump
+					.add(String.format(fb, ParamArmorStand.Z.getAttributeName(), Double.toString(offset.getZ())));
+		if ((custom != null) && !custom.isEmpty())
+			newParamListDump.add(String.format(fs, ParamArmorStand.CUSTOM.getAttributeName(), custom));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 
 }

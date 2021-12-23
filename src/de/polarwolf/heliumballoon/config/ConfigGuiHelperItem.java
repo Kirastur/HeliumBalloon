@@ -1,17 +1,19 @@
 package de.polarwolf.heliumballoon.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.helium.HeliumName;
-import de.polarwolf.heliumballoon.helium.HeliumParam;
-import de.polarwolf.heliumballoon.helium.HeliumSection;
-import de.polarwolf.heliumballoon.helium.HeliumText;
+import de.polarwolf.heliumballoon.tools.helium.HeliumName;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
+import de.polarwolf.heliumballoon.tools.helium.HeliumSection;
+import de.polarwolf.heliumballoon.tools.helium.HeliumText;
 
 public class ConfigGuiHelperItem implements HeliumName {
 
@@ -88,5 +90,24 @@ public class ConfigGuiHelperItem implements HeliumName {
 	protected void loadConfigFromFile(ConfigurationSection fileSection) throws BalloonException {
 		HeliumSection heliumSection = new HeliumSection(fileSection, getValidParams());
 		importHeliumSection(heliumSection);
+	}
+
+	protected List<String> paramListAsDump() {
+		String fs = "%s: \"%s\"";
+		List<String> newParamListDump = new ArrayList<>();
+		if (icon != null)
+			newParamListDump.add(String.format(fs, ParamGuiHelperItem.ICON.getAttributeName(), icon.toString()));
+		if (title != null)
+			for (Entry<String, String> myEntry : title.dump().entrySet())
+				newParamListDump.add(String.format(fs, myEntry.getKey(), myEntry.getValue()));
+		if (description != null)
+			for (Entry<String, String> myEntry : description.dump().entrySet())
+				newParamListDump.add(String.format(fs, myEntry.getKey(), myEntry.getValue()));
+		return newParamListDump;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s: { %s }", getName(), String.join(", ", paramListAsDump()));
 	}
 }

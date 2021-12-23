@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import de.polarwolf.heliumballoon.config.ConfigCompound;
@@ -112,7 +113,7 @@ public class CompoundElement implements Element {
 	}
 
 	@Override
-	public void setSpin(double spin) {
+	public void setSpin(EulerAngle spin) {
 		// Nothing to do
 	}
 

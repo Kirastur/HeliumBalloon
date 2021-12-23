@@ -14,11 +14,11 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.balloons.pets.PetManager;
 import de.polarwolf.heliumballoon.config.ConfigGuiHelperItem;
 import de.polarwolf.heliumballoon.config.ConfigGuiMenu;
 import de.polarwolf.heliumballoon.config.ConfigManager;
 import de.polarwolf.heliumballoon.config.ConfigPet;
-import de.polarwolf.heliumballoon.pets.PetManager;
 
 public class GuiManager {
 

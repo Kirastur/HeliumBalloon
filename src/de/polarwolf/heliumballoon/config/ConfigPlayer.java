@@ -13,7 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.players.PlayerPersistentData;
+import de.polarwolf.heliumballoon.system.players.PlayerPersistentData;
 
 public class ConfigPlayer {
 
