@@ -2,67 +2,80 @@ package de.polarwolf.heliumballoon.balloons.rotators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
-import de.polarwolf.heliumballoon.balloons.placings.Placing;
-import de.polarwolf.heliumballoon.balloons.placings.PlacingManager;
-import de.polarwolf.heliumballoon.config.ConfigPlaceableBalloonSet;
-import de.polarwolf.heliumballoon.config.ConfigRotator;
+import de.polarwolf.heliumballoon.balloons.placeable.ConfigPlaceable;
+import de.polarwolf.heliumballoon.balloons.placeable.Placeable;
+import de.polarwolf.heliumballoon.balloons.placeable.PlaceableManager;
+import de.polarwolf.heliumballoon.config.ConfigHelper;
+import de.polarwolf.heliumballoon.config.ConfigSection;
+import de.polarwolf.heliumballoon.config.balloons.ConfigBalloon;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
-public class RotatorManager extends PlacingManager {
+public class RotatorManager extends PlaceableManager {
 
-	public RotatorManager(HeliumBalloonOrchestrator orchestrator) {
-		super(orchestrator);
+	public static final String BALLOON_TYPE = "rotators";
+
+	public RotatorManager(HeliumBalloonOrchestrator orchestrator, String defaultBehaviorName) {
+		super(orchestrator, defaultBehaviorName);
 		logger.printDebug("Rotatormanager started");
 	}
 
+	//
+	// Implement the Definition
+	//
+
 	@Override
-	protected Set<String> getBalloonSetNames() {
-		return configManager.getRotatorNames();
+	public String getAttributeName() {
+		return BALLOON_TYPE;
 	}
 
 	@Override
-	protected ConfigPlaceableBalloonSet findBalloonSet(String placingName) {
-		return configManager.findRotator(placingName);
+	public ConfigBalloon createConfigBalloon(ConfigHelper configHelper, ConfigurationSection fileSection,
+			ConfigSection balloonSection) throws BalloonException {
+		return new ConfigRotator(this, configHelper, fileSection, balloonSection);
 	}
 
-	@Override
-	protected Rotator createPlacing(ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
-		return new Rotator(chunkTicketManager, observerManager, configPlaceableBalloonSet, world);
-	}
+	//
+	// Implements the placeable
+	//
 
 	@Override
-	public int reload() {
-		int count = super.reload();
-		if (count > 0) {
-			logger.printInfo(String.format("%d rotators created in total.", count));
+	protected Rotator createPlaceable(ConfigPlaceable configPlaceable, World world) {
+		return new Rotator(this, chunkTicketManager, observerManager, configPlaceable, world);
+	}
+
+	//
+	// Now the things specific for rotators
+	//
+
+	public ConfigRotator findConfigRotator(String rotatorName) {
+		ConfigPlaceable configPlaceable = findRelevantConfigBalloon(rotatorName);
+		if (configPlaceable instanceof ConfigRotator configRotator) {
+			return configRotator;
 		}
-		return count;
+		return null;
 	}
 
 	public List<Rotator> getRotators() {
 		List<Rotator> rotatorList = new ArrayList<>();
-		for (Placing myPlacing : getPlacings()) {
-			if (myPlacing instanceof Rotator) {
-				Rotator myRotator = (Rotator) myPlacing;
-				rotatorList.add(myRotator);
-			}
+		for (Placeable myPlaceable : getPlaceables()) {
+			rotatorList.add((Rotator) myPlaceable);
 		}
 		return rotatorList;
 	}
-	
-	public Rotator createRotator (ConfigRotator configRotator, World world) throws BalloonException {
-		Rotator rotator = createPlacing(configRotator, world);
-		registerPlacing(rotator);
+
+	public Rotator createRotator(ConfigRotator configRotator, World world) throws BalloonException {
+		Rotator rotator = createPlaceable(configRotator, world);
+		registerPlaceable(rotator);
 		return rotator;
 	}
-	
+
 	public void destroyRotator(Rotator rotator) {
-		unregisterPlacing(rotator);
+		unregisterPlaceable(rotator);
 	}
 
 }

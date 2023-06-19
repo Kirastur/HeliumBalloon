@@ -6,24 +6,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import de.polarwolf.heliumballoon.config.ConfigRule;
+import de.polarwolf.heliumballoon.behavior.BehaviorDefinition;
+import de.polarwolf.heliumballoon.config.rules.ConfigRule;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.spawnmodifiers.SpawnModifier;
 
 public abstract class SimpleElement implements Element {
 
 	private final Player player;
 	private final ConfigRule rule;
-	protected final SpawnModifier spawnModifier;
+	private final BehaviorDefinition behaviorDefinition;
 
-	protected SimpleElement(Player player, ConfigRule rule, SpawnModifier spawnModifier) {
+	protected SimpleElement(Player player, ConfigRule rule, BehaviorDefinition behaviorDefinition) {
 		this.player = player;
 		this.rule = rule;
-		this.spawnModifier = spawnModifier;
+		this.behaviorDefinition = behaviorDefinition;
 	}
 
 	public ConfigRule getRule() {
 		return rule;
+	}
+
+	public BehaviorDefinition getBehaviorDefinition() {
+		return behaviorDefinition;
 	}
 
 	protected abstract void spawn(Location targetLocation) throws BalloonException;

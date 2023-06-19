@@ -1,6 +1,6 @@
 package de.polarwolf.heliumballoon.system.listener;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
 public class ListenManager {
 
@@ -11,7 +11,6 @@ public class ListenManager {
 	protected final GuiListener guiListener;
 	protected final BalloonRebuildConfigListener balloonRebuildConfigListener;
 	protected final BalloonRefreshAllListener balloonRefreshAllListener;
-	protected final BalloonOscillatorCreateListener balloonOscillatorCreateListener;
 
 	public ListenManager(HeliumBalloonOrchestrator orchestrator) {
 		entityListener = new EntityListener(orchestrator);
@@ -21,7 +20,16 @@ public class ListenManager {
 		guiListener = new GuiListener(orchestrator);
 		balloonRebuildConfigListener = new BalloonRebuildConfigListener(orchestrator);
 		balloonRefreshAllListener = new BalloonRefreshAllListener(orchestrator);
-		balloonOscillatorCreateListener = new BalloonOscillatorCreateListener(orchestrator);
+	}
+
+	public void startup() {
+		entityListener.startup();
+		playerListener.startup();
+		vehicleListener.startup();
+		worldListener.startup();
+		guiListener.startup();
+		balloonRebuildConfigListener.startup();
+		balloonRefreshAllListener.startup();
 	}
 
 	public void disable() {
@@ -32,7 +40,6 @@ public class ListenManager {
 		guiListener.unregisterListener();
 		balloonRebuildConfigListener.unregisterListener();
 		balloonRefreshAllListener.unregisterListener();
-		balloonOscillatorCreateListener.unregisterListener();
 	}
 
 }

@@ -13,12 +13,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.balloons.pets.ConfigPet;
 import de.polarwolf.heliumballoon.balloons.pets.PetManager;
-import de.polarwolf.heliumballoon.config.ConfigGuiHelperItem;
-import de.polarwolf.heliumballoon.config.ConfigGuiMenu;
 import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.config.ConfigPet;
+import de.polarwolf.heliumballoon.config.gui.ConfigGuiHelperItem;
+import de.polarwolf.heliumballoon.config.gui.ConfigGuiMenu;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
 public class GuiManager {
 

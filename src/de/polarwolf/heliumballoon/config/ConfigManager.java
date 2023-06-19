@@ -3,28 +3,35 @@ package de.polarwolf.heliumballoon.config;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.balloons.BalloonManager;
+import de.polarwolf.heliumballoon.behavior.BehaviorDefinition;
+import de.polarwolf.heliumballoon.behavior.BehaviorManager;
+import de.polarwolf.heliumballoon.config.balloons.ConfigBalloon;
+import de.polarwolf.heliumballoon.config.gui.ConfigGuiMenu;
+import de.polarwolf.heliumballoon.elements.ElementDefinition;
+import de.polarwolf.heliumballoon.elements.ElementManager;
 import de.polarwolf.heliumballoon.events.EventManager;
 import de.polarwolf.heliumballoon.exception.BalloonException;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonStartOptions;
 import de.polarwolf.heliumballoon.system.players.PlayerPersistentData;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
 import de.polarwolf.heliumballoon.tools.helium.HeliumText;
 import de.polarwolf.heliumballoon.tools.messages.Message;
 
-public class ConfigManager {
+public class ConfigManager implements ConfigHelper {
 
 	public static final String SECTION_STARTUP = "startup";
 	public static final String SECTION_GDPR = "GDPR";
 	public static final String PARAM_STARTUP_PASSIVEMODE = "passiveMode";
 	public static final String PARAM_LOAD_LOCAL_CONFIG = "loadLocalConfig";
-	public static final String PARAM_STARTUP_WARN_ON_WRONG_PURPOSE = "warnOnWrongPurpose";
 	public static final String PARAM_STARTUP_DEBUG = "debug";
 	public static final String PARAM_STARTUP_PLACING_DELAY = "placingDelay";
 	public static final String PARAM_STARTUP_EXCEPTION_QUOTA = "exceptionQuota";
@@ -36,7 +43,6 @@ public class ConfigManager {
 	public static final boolean DEFAULT_DEBUG = false;
 	public static final int DEFAULT_PLACING_DELAY = 3;
 	public static final int DEFAULT_EXCEPTION_QUOTA = 10;
-	public static final boolean DEFAULT_WARN_ON_WRONG_PURPOSE = true;
 	public static final int DEFAULT_KEEP_PLAYER_DAYS = 30;
 	public static final int DEFAULT_RUN_PURGE_HOUR = 5;
 
@@ -46,6 +52,9 @@ public class ConfigManager {
 	protected final Plugin plugin;
 	protected final HeliumLogger logger;
 	protected final EventManager eventManager;
+	protected final ElementManager elementManager;
+	protected final BehaviorManager behaviorManager;
+	protected final BalloonManager balloonManager;
 	protected final ConfigPlayer configPlayer;
 	protected final ConfigMessage configMessage;
 	protected List<ConfigSection> sections = new ArrayList<>();
@@ -54,6 +63,9 @@ public class ConfigManager {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.eventManager = orchestrator.getEventManager();
+		this.elementManager = orchestrator.getElementManager();
+		this.behaviorManager = orchestrator.getBehaviorManager();
+		this.balloonManager = orchestrator.getBalloonManager();
 		configPlayer = buildConfigPlayer();
 		configMessage = buildConfigMessage();
 		keepPlayerDays = plugin.getConfig().getConfigurationSection(SECTION_GDPR).getInt(PARAM_GDPR_KEEP_PLAYER_DAYS,
@@ -67,29 +79,32 @@ public class ConfigManager {
 				DEFAULT_PASSIVEMODE);
 	}
 
-	public static boolean isLoadLocalConfig(Plugin startupPlugin) {
+	protected static boolean isLoadLocalConfig(Plugin startupPlugin) {
 		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_LOAD_LOCAL_CONFIG,
 				DEFAULT_LOAD_LOCAL_CONFIG);
 	}
 
-	public static boolean isInitialDebug(Plugin startupPlugin) {
+	protected static boolean isInitialDebug(Plugin startupPlugin) {
 		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getBoolean(PARAM_STARTUP_DEBUG,
 				DEFAULT_DEBUG);
 	}
 
-	public static int getPlacingDelay(Plugin startupPlugin) {
+	protected static int getPlacingDelay(Plugin startupPlugin) {
 		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_PLACING_DELAY,
 				DEFAULT_PLACING_DELAY);
 	}
 
-	public static int getExceptionQuota(Plugin startupPlugin) {
+	protected static int getExceptionQuota(Plugin startupPlugin) {
 		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP).getInt(PARAM_STARTUP_EXCEPTION_QUOTA,
 				DEFAULT_EXCEPTION_QUOTA);
 	}
 
-	public static boolean getWarnOnWrongPurpose(Plugin startupPlugin) {
-		return startupPlugin.getConfig().getConfigurationSection(SECTION_STARTUP)
-				.getBoolean(PARAM_STARTUP_WARN_ON_WRONG_PURPOSE, DEFAULT_WARN_ON_WRONG_PURPOSE);
+	public static HeliumBalloonStartOptions getStartOptions(Plugin startupPlugin) {
+		boolean loadLocalConfig = isLoadLocalConfig(startupPlugin);
+		boolean initialDebug = isInitialDebug(startupPlugin);
+		int placingDelay = getPlacingDelay(startupPlugin);
+		int exceptionQuota = getExceptionQuota(startupPlugin);
+		return new HeliumBalloonStartOptions(loadLocalConfig, initialDebug, placingDelay, exceptionQuota);
 	}
 
 	public int getKeepPlayerDays() {
@@ -100,7 +115,7 @@ public class ConfigManager {
 		return runPurgeHour;
 	}
 
-	protected ConfigSection findSection(String sectionName) {
+	public ConfigSection findSection(String sectionName) {
 		for (ConfigSection mySection : sections) {
 			if (mySection.getName().equals(sectionName)) {
 				return mySection;
@@ -109,99 +124,38 @@ public class ConfigManager {
 		return null;
 	}
 
-	public Set<String> getSectionNames() {
-		Set<String> allSectionNames = new TreeSet<>();
+	public List<String> getSectionNames() {
+		List<String> sectionNames = new ArrayList<>();
 		for (ConfigSection mySection : sections) {
-			allSectionNames.add(mySection.getName());
+			sectionNames.add(mySection.getName());
 		}
-		return allSectionNames;
+		return sectionNames;
 	}
 
 	public String dumpSection(String sectionName) {
-		for (ConfigSection mySection : sections) {
-			if (mySection.getName().equals(sectionName)) {
-				return mySection.toString();
-			}
-		}
-		return null;
-	}
-
-	public ConfigWorldset findWorldsetInSection(String sectionName, String worldsetName) {
 		ConfigSection mySection = findSection(sectionName);
 		if (mySection == null) {
 			return null;
 		}
-		return mySection.findWorldset(worldsetName);
+		return mySection.toString();
 	}
 
-	public ConfigRule findRuleInSection(String sectionName, String ruleName) {
-		ConfigSection mySection = findSection(sectionName);
-		if (mySection == null) {
-			return null;
-		}
-		return mySection.findRule(ruleName);
-	}
-
-	public ConfigTemplate findTemplateInSection(String sectionName, String templateName) {
-		ConfigSection mySection = findSection(sectionName);
-		if (mySection == null) {
-			return null;
-		}
-		return mySection.findTemplate(templateName);
-	}
-
-	public ConfigPet findPet(String petName) {
+	public ConfigBalloon findBalloon(String balloonName) {
 		for (ConfigSection mySection : sections) {
-			ConfigPet myPet = mySection.findPet(petName);
-			if (myPet != null) {
-				return myPet;
+			ConfigBalloon myBalloon = mySection.findBalloon(balloonName);
+			if (myBalloon != null) {
+				return myBalloon;
 			}
 		}
 		return null;
 	}
 
-	public Set<String> getPetNames() {
-		Set<String> allPetNames = new TreeSet<>();
+	public List<String> getBalloonNames(BalloonDefinition balloonDefinition) {
+		List<String> balloonNames = new ArrayList<>();
 		for (ConfigSection mySection : sections) {
-			allPetNames.addAll(mySection.getPetNames());
+			balloonNames.addAll(mySection.getBalloonNames(balloonDefinition));
 		}
-		return allPetNames;
-	}
-
-	public ConfigWall findWall(String wallName) {
-		for (ConfigSection mySection : sections) {
-			ConfigWall myWall = mySection.findWall(wallName);
-			if (myWall != null) {
-				return myWall;
-			}
-		}
-		return null;
-	}
-
-	public Set<String> getWallNames() {
-		Set<String> allWallNames = new TreeSet<>();
-		for (ConfigSection mySection : sections) {
-			allWallNames.addAll(mySection.getWallNames());
-		}
-		return allWallNames;
-	}
-
-	public ConfigRotator findRotator(String rotatorName) {
-		for (ConfigSection mySection : sections) {
-			ConfigRotator myRotator = mySection.findRotator(rotatorName);
-			if (myRotator != null) {
-				return myRotator;
-			}
-		}
-		return null;
-	}
-
-	public Set<String> getRotatorNames() {
-		Set<String> allRotatorNames = new TreeSet<>();
-		for (ConfigSection mySection : sections) {
-			allRotatorNames.addAll(mySection.getRotatorNames());
-		}
-		return allRotatorNames;
+		return balloonNames;
 	}
 
 	public ConfigGuiMenu getGuiMenu() {
@@ -215,24 +169,35 @@ public class ConfigManager {
 		return lastGuiMenu;
 	}
 
+	@Override
 	public ConfigSection buildConfigSectionFromFileSection(String sectionName, ConfigurationSection fileSection)
 			throws BalloonException {
-		return new ConfigSection(sectionName, fileSection);
+		return new ConfigSection(sectionName, this, fileSection);
 	}
 
+	@Override
 	public ConfigSection buildConfigSectionFromConfigFile(Plugin fileOwnerPlugin) throws BalloonException {
 		ConfigurationSection fileSection = fileOwnerPlugin.getConfig().getRoot();
 		return buildConfigSectionFromFileSection(fileOwnerPlugin.getName(), fileSection);
 	}
 
 	public String reload(List<ConfigSection> newSections) {
+		sections.clear();
 		sections = newSections;
-		int sectionCount = getSectionNames().size();
-		int petCount = getPetNames().size();
-		int wallCount = getWallNames().size();
-		int rotatorCount = getRotatorNames().size();
-		String s = String.format("%d sections, %d pets, %d walls, and %d rotators loaded", sectionCount, petCount,
-				wallCount, rotatorCount);
+		int sectionCount = sections.size();
+		String s;
+		if (sectionCount == 1) {
+			s = String.format("Loaded %d section with:", sectionCount);
+		} else {
+			s = String.format("Loaded %d sections with:", sectionCount);
+		}
+		for (BalloonDefinition myDefinition : balloonManager.listBalloonDefinitions()) {
+			int balloonCount = getBalloonNames(myDefinition).size();
+			if (balloonCount > 0) {
+				s = String.format("%s %d %s,", s, balloonCount, myDefinition.getAttributeName());
+			}
+		}
+		s = (s.substring(0, s.length() - 1));
 		plugin.getLogger().info(s);
 		return s;
 	}
@@ -307,6 +272,50 @@ public class ConfigManager {
 			return configMessage.getMessage(messageId);
 		}
 		return new HeliumText("");
+	}
+
+	@Override
+	public List<HeliumParam> getAdditionalRuleParams() {
+		return behaviorManager.getAdditionalRuleParams();
+	}
+
+	@Override
+	public List<HeliumParam> getValidElementConfigParams() {
+		return elementManager.getValidConfigParams();
+	}
+
+	@Override
+	public List<ElementDefinition> listElementDefinitions() {
+		return elementManager.listElementDefinitions();
+	}
+
+	@Override
+	public boolean hasBehavior(String name) {
+		return (behaviorManager.findBehaviorDefinition(name) != null);
+	}
+
+	@Override
+	public BehaviorDefinition getBehaviorDefinition(String name) throws BalloonException {
+		BehaviorDefinition myBehaviorDefinition = behaviorManager.findBehaviorDefinition(name);
+		if (myBehaviorDefinition == null) {
+			throw new BalloonException(null, "Behavior not found", name);
+		}
+		return myBehaviorDefinition;
+	}
+
+	@Override
+	public List<BehaviorDefinition> listBehaviorDefinitions() {
+		return behaviorManager.listBehaviorDefinitions();
+	}
+
+	@Override
+	public List<HeliumParam> getValidBalloonConfigParams() {
+		return balloonManager.getValidConfigParams();
+	}
+
+	@Override
+	public List<BalloonDefinition> listBalloonDefinitions() {
+		return balloonManager.listBalloonDefinitions();
 	}
 
 }

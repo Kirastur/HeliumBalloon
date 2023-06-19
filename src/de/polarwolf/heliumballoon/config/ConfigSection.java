@@ -3,11 +3,15 @@ package de.polarwolf.heliumballoon.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.config.balloons.ConfigBalloon;
+import de.polarwolf.heliumballoon.config.gui.ConfigGuiMenu;
+import de.polarwolf.heliumballoon.config.rules.ConfigRule;
+import de.polarwolf.heliumballoon.config.templates.ConfigTemplate;
+import de.polarwolf.heliumballoon.config.worldsets.ConfigWorldset;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.tools.helium.HeliumName;
 import de.polarwolf.heliumballoon.tools.helium.HeliumParam;
@@ -19,20 +23,23 @@ public class ConfigSection implements HeliumName {
 	protected static final String DEFAULT_WORLDSET_NAME = "default";
 
 	private final String name;
+	protected final ConfigHelper configHelper;
+
 	private List<ConfigWorldset> worldsets = new ArrayList<>();
 	private List<ConfigRule> rules = new ArrayList<>();
 	private List<ConfigTemplate> templates = new ArrayList<>();
-	private List<ConfigPet> pets = new ArrayList<>();
-	private List<ConfigWall> walls = new ArrayList<>();
-	private List<ConfigRotator> rotators = new ArrayList<>();
+	private List<ConfigBalloon> balloons = new ArrayList<>();
 	private ConfigGuiMenu guiMenu = null;
 
-	public ConfigSection(String name) {
+	public ConfigSection(String name, ConfigHelper configHelper) {
 		this.name = name;
+		this.configHelper = configHelper;
 	}
 
-	public ConfigSection(String name, ConfigurationSection fileSection) throws BalloonException {
+	public ConfigSection(String name, ConfigHelper configHelper, ConfigurationSection fileSection)
+			throws BalloonException {
 		this.name = name;
+		this.configHelper = configHelper;
 		loadConfigFromFile(fileSection);
 	}
 
@@ -65,12 +72,12 @@ public class ConfigSection implements HeliumName {
 		throw new BalloonException(ParamSection.WORLDSETS.getAttributeName(), "No default Worldset found", null);
 	}
 
-	public Set<String> getWorlsetNames() {
-		Set<String> worldsetNamesSet = new TreeSet<>();
+	public List<String> getWorlsetNames() {
+		List<String> worldsetNames = new ArrayList<>();
 		for (ConfigWorldset myWorldset : worldsets) {
-			worldsetNamesSet.add(myWorldset.getName());
+			worldsetNames.add(myWorldset.getName());
 		}
-		return worldsetNamesSet;
+		return worldsetNames;
 	}
 
 	protected void addWorldset(ConfigWorldset newWorldset) {
@@ -96,12 +103,12 @@ public class ConfigSection implements HeliumName {
 		throw new BalloonException(ParamSection.RULES.getAttributeName(), "No default rule found", null);
 	}
 
-	public Set<String> getRuleNames() {
-		Set<String> ruleNamesSet = new TreeSet<>();
+	public List<String> getRuleNames() {
+		List<String> ruleNames = new ArrayList<>();
 		for (ConfigRule myRule : rules) {
-			ruleNamesSet.add(myRule.getName());
+			ruleNames.add(myRule.getName());
 		}
-		return ruleNamesSet;
+		return ruleNames;
 	}
 
 	protected void addRule(ConfigRule newRule) {
@@ -118,91 +125,53 @@ public class ConfigSection implements HeliumName {
 		return null;
 	}
 
-	public Set<String> getTemplateNames() {
-		Set<String> templateNamesSet = new TreeSet<>();
+	public List<String> getTemplateNames() {
+		List<String> templateNames = new ArrayList<>();
 		for (ConfigTemplate myTemplate : templates) {
-			templateNamesSet.add(myTemplate.getName());
+			templateNames.add(myTemplate.getName());
 		}
-		return templateNamesSet;
+		return templateNames;
 	}
 
 	protected void addTemplate(ConfigTemplate newTemplate) {
 		templates.add(newTemplate);
 	}
 
-	// Pets
-	public ConfigPet findPet(String petName) {
-		for (ConfigPet myPet : pets) {
-			if (myPet.getName().equalsIgnoreCase(petName)) {
-				return myPet;
+	// Balloons
+	public ConfigBalloon findBalloon(String balloonName) {
+		for (ConfigBalloon myBalloon : balloons) {
+			if (myBalloon.getName().equalsIgnoreCase(balloonName)) {
+				return myBalloon;
 			}
 		}
 		return null;
 	}
 
-	public Set<String> getPetNames() {
-		Set<String> petNamesSet = new TreeSet<>();
-		for (ConfigPet myPet : pets) {
-			petNamesSet.add(myPet.getName());
+	public List<String> getBalloonNames(BalloonDefinition balloonDefinition) {
+		List<String> balloonNames = new ArrayList<>();
+		for (ConfigBalloon myBalloon : balloons) {
+			if (myBalloon.getBalloonDefinition().equals(balloonDefinition)) {
+				balloonNames.add(myBalloon.getName());
+			}
 		}
-		return petNamesSet;
+		return balloonNames;
 	}
 
-	public boolean hasPet(ConfigPet petToTest) {
-		for (ConfigPet myPet : pets) {
-			if (myPet.equals(petToTest)) {
+	public boolean hasBalloon(ConfigBalloon balloonToTest) {
+		for (ConfigBalloon myBalloon : balloons) {
+			if (myBalloon.equals(balloonToTest)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	protected void addPet(ConfigPet newPet) {
-		pets.add(newPet);
+	protected void addBalloon(ConfigBalloon newBalloon) {
+		balloons.add(newBalloon);
 	}
 
-	// Walls
-	public ConfigWall findWall(String wallName) {
-		for (ConfigWall myWall : walls) {
-			if (myWall.getName().equalsIgnoreCase(wallName)) {
-				return myWall;
-			}
-		}
-		return null;
-	}
-
-	public Set<String> getWallNames() {
-		Set<String> wallNamesSet = new TreeSet<>();
-		for (ConfigWall myWall : walls) {
-			wallNamesSet.add(myWall.getName());
-		}
-		return wallNamesSet;
-	}
-
-	protected void addWall(ConfigWall newWall) {
-		walls.add(newWall);
-	}
-
-	// Rotators
-	public ConfigRotator findRotator(String rotatorName) {
-		for (ConfigRotator myRotator : rotators) {
-			if (myRotator.getName().equalsIgnoreCase(rotatorName)) {
-				return myRotator;
-			}
-		}
-		return null;
-	}
-
-	public Set<String> getRotatorNames() {
-		Set<String> rotatorNamesSet = new TreeSet<>();
-		for (ConfigRotator myRotator : rotators) {
-			rotatorNamesSet.add(myRotator.getName());
-		}
-		return rotatorNamesSet;
-	}
-
-	protected void addRotator(ConfigRotator newRotator) {
-		rotators.add(newRotator);
+	protected void addBalloons(List<ConfigBalloon> newBalloons) {
+		balloons.addAll(newBalloons);
 	}
 
 	// GUI
@@ -216,7 +185,10 @@ public class ConfigSection implements HeliumName {
 
 	// LoadFromFile
 	protected List<HeliumParam> getValidParams() {
-		return Arrays.asList(ParamSection.values());
+		List<HeliumParam> validParams = new ArrayList<>();
+		validParams.addAll(Arrays.asList(ParamSection.values()));
+		validParams.addAll(configHelper.getValidBalloonConfigParams());
+		return validParams;
 	}
 
 	protected ConfigWorldset buildDefaultConfigWorldset() {
@@ -244,7 +216,7 @@ public class ConfigSection implements HeliumName {
 	}
 
 	protected ConfigRule buildConfigRuleFromFile(ConfigurationSection fileSection) throws BalloonException {
-		return new ConfigRule(fileSection);
+		return new ConfigRule(configHelper, fileSection);
 	}
 
 	protected void loadRulesFromFile(ConfigurationSection fileSectionRules) throws BalloonException {
@@ -260,7 +232,7 @@ public class ConfigSection implements HeliumName {
 	}
 
 	protected ConfigTemplate buildConfigTemplateFromFile(ConfigurationSection fileSection) throws BalloonException {
-		return new ConfigTemplate(fileSection, this);
+		return new ConfigTemplate(fileSection, this, configHelper);
 	}
 
 	protected void loadTemplatesFromFile(ConfigurationSection fileSectionTemplates) throws BalloonException {
@@ -275,52 +247,39 @@ public class ConfigSection implements HeliumName {
 		}
 	}
 
-	protected ConfigPet buildConfigPetFromFile(ConfigurationSection fileSection) throws BalloonException {
-		return new ConfigPet(fileSection, this);
-	}
-
-	protected void loadPetsFromFile(ConfigurationSection fileSectionPets) throws BalloonException {
-		for (String myPetName : fileSectionPets.getKeys(false)) {
-			if (!fileSectionPets.contains(myPetName, true)) { // ignore default from jar
+	protected List<ConfigBalloon> loadBalloonFromFileForDefinition(ConfigurationSection fileSection,
+			ConfigSection balloonSection, BalloonDefinition balloonDefinition) throws BalloonException {
+		List<ConfigBalloon> configBalloons = new ArrayList<>();
+		for (String myBalloonName : fileSection.getKeys(false)) {
+			if (!fileSection.contains(myBalloonName, true)) { // ignore default from jar
 				continue;
 			}
-			if (!fileSectionPets.isConfigurationSection(myPetName)) {
-				throw new BalloonException(null, "Illegal pet section", myPetName);
+			if (!fileSection.isConfigurationSection(myBalloonName)) {
+				throw new BalloonException(null, "Illegal balloon section", myBalloonName);
 			}
-			addPet(buildConfigPetFromFile(fileSectionPets.getConfigurationSection(myPetName)));
+			ConfigBalloon myConfigBalloon = balloonDefinition.createConfigBalloon(configHelper,
+					fileSection.getConfigurationSection(myBalloonName), balloonSection);
+			if (myConfigBalloon != null) {
+				configBalloons.add(myConfigBalloon);
+			}
 		}
+		return configBalloons;
+
 	}
 
-	protected ConfigWall buildConfigWallFromFile(ConfigurationSection fileSection) throws BalloonException {
-		return new ConfigWall(fileSection, this);
-	}
+	protected List<ConfigBalloon> loadBalloonsFromFile(HeliumSection heliumSection, ConfigSection balloonSection)
+			throws BalloonException {
+		List<ConfigBalloon> configBalloons = new ArrayList<>();
+		for (BalloonDefinition myDefinition : configHelper.listBalloonDefinitions()) {
+			if (heliumSection.isSection(myDefinition)) {
 
-	protected void loadWallsFromFile(ConfigurationSection fileSectionWalls) throws BalloonException {
-		for (String myWallName : fileSectionWalls.getKeys(false)) {
-			if (!fileSectionWalls.contains(myWallName, true)) { // ignore default from jar
-				continue;
+				ConfigurationSection myFileSectionBalloons = heliumSection.getfileSection()
+						.getConfigurationSection(myDefinition.getAttributeName());
+				configBalloons
+						.addAll(loadBalloonFromFileForDefinition(myFileSectionBalloons, balloonSection, myDefinition));
 			}
-			if (!fileSectionWalls.isConfigurationSection(myWallName)) {
-				throw new BalloonException(null, "Illegal wall section", myWallName);
-			}
-			addWall(buildConfigWallFromFile(fileSectionWalls.getConfigurationSection(myWallName)));
 		}
-	}
-
-	protected ConfigRotator buildConfigRotatorFromFile(ConfigurationSection fileSection) throws BalloonException {
-		return new ConfigRotator(fileSection, this);
-	}
-
-	protected void loadRotatorsFromFile(ConfigurationSection fileSectionRotators) throws BalloonException {
-		for (String myRotatorName : fileSectionRotators.getKeys(false)) {
-			if (!fileSectionRotators.contains(myRotatorName, true)) { // ignore default from jar
-				continue;
-			}
-			if (!fileSectionRotators.isConfigurationSection(myRotatorName)) {
-				throw new BalloonException(null, "Illegal rotatator section", myRotatorName);
-			}
-			addRotator(buildConfigRotatorFromFile(fileSectionRotators.getConfigurationSection(myRotatorName)));
-		}
+		return configBalloons;
 	}
 
 	protected ConfigGuiMenu buildConfigGuiMenuFromFile(ConfigurationSection fileSection) throws BalloonException {
@@ -352,17 +311,7 @@ public class ConfigSection implements HeliumName {
 			throw new BalloonException(null, "Templates definition is missing", null);
 		}
 
-		if (heliumSection.isSection(ParamSection.PETS)) {
-			loadPetsFromFile(fileSection.getConfigurationSection(ParamSection.PETS.getAttributeName()));
-		}
-
-		if (heliumSection.isSection(ParamSection.WALLS)) {
-			loadWallsFromFile(fileSection.getConfigurationSection(ParamSection.WALLS.getAttributeName()));
-		}
-
-		if (heliumSection.isSection(ParamSection.ROTATORS)) {
-			loadRotatorsFromFile(fileSection.getConfigurationSection(ParamSection.ROTATORS.getAttributeName()));
-		}
+		addBalloons(loadBalloonsFromFile(heliumSection, this));
 
 		if (heliumSection.isSection(ParamSection.GUI)) {
 			loadGuiFromFile(fileSection.getConfigurationSection(ParamSection.GUI.getAttributeName()));
@@ -390,28 +339,16 @@ public class ConfigSection implements HeliumName {
 		return newTemplateListDump;
 	}
 
-	protected List<String> petListAsDump() {
-		List<String> newPetListDump = new ArrayList<>();
-		for (ConfigPet myPet : pets)
-			newPetListDump.add(myPet.toString());
-		return newPetListDump;
+	protected List<String> balloonListAsDump(BalloonDefinition balloonDefinition) {
+		List<String> newBalloonListDump = new ArrayList<>();
+		for (ConfigBalloon myBalloon : balloons)
+			if (myBalloon.getBalloonDefinition().equals(balloonDefinition)) {
+				newBalloonListDump.add(myBalloon.toString());
+			}
+		return newBalloonListDump;
 	}
 
-	protected List<String> wallListAsDump() {
-		List<String> newWallListDump = new ArrayList<>();
-		for (ConfigWall myWall : walls)
-			newWallListDump.add(myWall.toString());
-		return newWallListDump;
-	}
-
-	protected List<String> rotatorListAsDump() {
-		List<String> newRotatorListDump = new ArrayList<>();
-		for (ConfigRotator myRotator : rotators)
-			newRotatorListDump.add(myRotator.toString());
-		return newRotatorListDump;
-	}
-
-	protected List<String> paramListAsDump() { // NOSONAR
+	protected List<String> paramListAsDump() {
 		String fl = "%s: { %s }";
 		List<String> newParamListDump = new ArrayList<>();
 		newParamListDump.add(
@@ -420,16 +357,13 @@ public class ConfigSection implements HeliumName {
 				.add(String.format(fl, ParamSection.RULES.getAttributeName(), String.join(", ", ruleListAsDump())));
 		newParamListDump.add(
 				String.format(fl, ParamSection.TEMPLATES.getAttributeName(), String.join(", ", templateListAsDump())));
-		List<String> petList = petListAsDump();
-		if (!petList.isEmpty())
-			newParamListDump.add(String.format(fl, ParamSection.PETS.getAttributeName(), String.join(", ", petList)));
-		List<String> wallList = wallListAsDump();
-		if (!wallList.isEmpty())
-			newParamListDump.add(String.format(fl, ParamSection.WALLS.getAttributeName(), String.join(", ", wallList)));
-		List<String> rotatorList = rotatorListAsDump();
-		if (!rotatorList.isEmpty())
-			newParamListDump
-					.add(String.format(fl, ParamSection.ROTATORS.getAttributeName(), String.join(", ", rotatorList)));
+		for (BalloonDefinition myDefinition : configHelper.listBalloonDefinitions()) {
+			List<String> myBalloonList = balloonListAsDump(myDefinition);
+			if (!myBalloonList.isEmpty()) {
+				newParamListDump
+						.add(String.format(fl, myDefinition.getAttributeName(), String.join(", ", myBalloonList)));
+			}
+		}
 		if (guiMenu != null)
 			newParamListDump.add(guiMenu.toString());
 		return newParamListDump;

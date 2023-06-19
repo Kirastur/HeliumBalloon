@@ -2,22 +2,22 @@ package de.polarwolf.heliumballoon.balloons.walls;
 
 import org.bukkit.World;
 
-import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
-import de.polarwolf.heliumballoon.balloons.placings.Placing;
-import de.polarwolf.heliumballoon.config.ConfigPlaceableBalloonSet;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.balloons.placeable.ConfigPlaceable;
+import de.polarwolf.heliumballoon.balloons.placeable.Placeable;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
 import de.polarwolf.heliumballoon.tools.chunktickets.ChunkTicketManager;
 
-public class Wall extends Placing {
+public class Wall extends Placeable {
 
-	public Wall(ChunkTicketManager chunkTicketManager, ObserverManager observerManager,
-			ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
-		super(chunkTicketManager, observerManager, configPlaceableBalloonSet, world);
-		if (configPlaceableBalloonSet.findTemplate(world).isOscillating()) {
+	public Wall(BalloonDefinition balloonDefinition, ChunkTicketManager chunkTicketManager,
+			ObserverManager observerManager, ConfigPlaceable configPlaceable, World world) {
+		super(balloonDefinition, chunkTicketManager, observerManager, configPlaceable, world);
+		if (configPlaceable.findTemplate(world).isOscillating()) {
 			generateOscillator();
 			getOscillator().setDeflectionState(true);
 		}
-		prepareObservers(BalloonPurpose.WALL);
+		prepareObservers();
 	}
 
 }

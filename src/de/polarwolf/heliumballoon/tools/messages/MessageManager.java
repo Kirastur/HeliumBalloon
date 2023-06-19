@@ -2,8 +2,8 @@ package de.polarwolf.heliumballoon.tools.messages;
 
 import org.bukkit.command.CommandSender;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.config.ConfigManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
 import de.polarwolf.heliumballoon.tools.helium.HeliumText;
 

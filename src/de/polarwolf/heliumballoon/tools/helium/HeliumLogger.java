@@ -2,19 +2,17 @@ package de.polarwolf.heliumballoon.tools.helium;
 
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
 public class HeliumLogger {
 
-	private final int exceptionQuota;
 	private boolean debug = true;
 	private HeliumText petErrorMessage;
 	protected final Plugin plugin;
 
-	public HeliumLogger(HeliumBalloonOrchestrator orchestrator, boolean initialDebug, int exceptionQuota) {
+	public HeliumLogger(HeliumBalloonOrchestrator orchestrator) {
 		this.plugin = orchestrator.getPlugin();
-		this.debug = initialDebug;
-		this.exceptionQuota = exceptionQuota;
+		this.debug = orchestrator.getStartOptions().initialDebug();
 	}
 
 	public boolean isDebug() {
@@ -23,10 +21,6 @@ public class HeliumLogger {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
-	}
-
-	public int getExceptionQuota() {
-		return exceptionQuota;
 	}
 
 	public void printDebug(String debugMessage) {

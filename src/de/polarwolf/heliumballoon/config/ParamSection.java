@@ -10,9 +10,6 @@ public enum ParamSection implements HeliumParam {
 	WORLDSETS(SECTION, "worldsets"),
 	RULES(SECTION, "rules"),
 	TEMPLATES(SECTION, "templates"),
-	PETS(SECTION, "pets"),
-	WALLS(SECTION, "walls"),
-	ROTATORS(SECTION, "rotators"),
 	GUI(SECTION, "gui");
 
 	private final HeliumParamType paramType;

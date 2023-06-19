@@ -11,7 +11,7 @@ import org.bukkit.inventory.Inventory;
 
 import de.polarwolf.heliumballoon.api.HeliumBalloonAPI;
 import de.polarwolf.heliumballoon.api.HeliumBalloonProvider;
-import de.polarwolf.heliumballoon.config.ConfigPet;
+import de.polarwolf.heliumballoon.balloons.pets.ConfigPet;
 import de.polarwolf.heliumballoon.exception.BalloonException;
 import de.polarwolf.heliumballoon.main.Main;
 import de.polarwolf.heliumballoon.tools.messages.Message;
@@ -64,7 +64,7 @@ public class BalloonCommand implements CommandExecutor {
 	public List<String> listPets(HeliumBalloonAPI api, CommandSender sender) {
 		List<String> names = new ArrayList<>();
 		for (String myPet : api.getConfigPetNames()) {
-			if ((!(sender instanceof Player)) || api.hasPetPermission((Player) sender, myPet)) {
+			if ((!(sender instanceof Player player)) || api.hasPetPermission(player, myPet)) {
 				names.add(myPet);
 			}
 		}

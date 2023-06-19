@@ -2,21 +2,21 @@ package de.polarwolf.heliumballoon.balloons.rotators;
 
 import org.bukkit.World;
 
-import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
-import de.polarwolf.heliumballoon.balloons.placings.Placing;
-import de.polarwolf.heliumballoon.config.ConfigPlaceableBalloonSet;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.balloons.placeable.ConfigPlaceable;
+import de.polarwolf.heliumballoon.balloons.placeable.Placeable;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
 import de.polarwolf.heliumballoon.tools.chunktickets.ChunkTicketManager;
 
-public class Rotator extends Placing {
+public class Rotator extends Placeable {
 
-	public Rotator(ChunkTicketManager chunkTicketManager, ObserverManager observerManager,
-			ConfigPlaceableBalloonSet configPlaceableBalloonSet, World world) {
-		super(chunkTicketManager, observerManager, configPlaceableBalloonSet, world);
+	public Rotator(BalloonDefinition balloonDefinition, ChunkTicketManager chunkTicketManager,
+			ObserverManager observerManager, ConfigPlaceable configPlaceable, World world) {
+		super(balloonDefinition, chunkTicketManager, observerManager, configPlaceable, world);
 		generateOscillator();
 		getOscillator().setSpinState(true);
-		getOscillator().setDeflectionState(configPlaceableBalloonSet.findTemplate(world).isOscillating());
-		prepareObservers(BalloonPurpose.ROTATOR);
+		getOscillator().setDeflectionState(configPlaceable.findTemplate(world).isOscillating());
+		prepareObservers();
 	}
 
 }

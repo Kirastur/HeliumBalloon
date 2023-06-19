@@ -13,27 +13,35 @@ import de.polarwolf.heliumballoon.exception.BalloonException;
 public class HeliumSection {
 
 	private final String name;
+	private final ConfigurationSection fileSection;
 	protected Map<HeliumParam, HeliumText> attributes = new HashMap<>();
 	protected List<HeliumParam> sections = new ArrayList<>();
 	protected List<HeliumParam> lists = new ArrayList<>();
 
 	public HeliumSection(String name) {
 		this.name = name;
+		this.fileSection = null;
 	}
 
 	public HeliumSection(ConfigurationSection fileSection, List<HeliumParam> validParams) throws BalloonException {
 		this.name = fileSection.getName();
-		loadFromConfig(fileSection, validParams, false);
+		this.fileSection = fileSection;
+		loadFromConfig(validParams, false);
 	}
 
 	public HeliumSection(ConfigurationSection fileSection, List<HeliumParam> validParams,
 			boolean ignoreUnknownAttributes) throws BalloonException {
 		this.name = fileSection.getName();
-		loadFromConfig(fileSection, validParams, ignoreUnknownAttributes);
+		this.fileSection = fileSection;
+		loadFromConfig(validParams, ignoreUnknownAttributes);
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public ConfigurationSection getfileSection() {
+		return fileSection;
 	}
 
 	protected HeliumParam findParam(String attributeName, List<HeliumParam> validParams) {
@@ -54,42 +62,39 @@ public class HeliumSection {
 		return (findParam(attributeName.substring(0, separatorPosition), validParams) != null);
 	}
 
-	protected void loadStringFromConfig(String attributeName, HeliumParam param, ConfigurationSection fileSection) {
+	protected void loadStringFromConfig(String attributeName, HeliumParam param) {
 		HeliumText myHeliumText = new HeliumText(attributeName, fileSection);
 		attributes.put(param, myHeliumText);
 	}
 
-	protected void loadSectionFromConfig(String attributeName, HeliumParam param, ConfigurationSection fileSection)
-			throws BalloonException {
+	protected void loadSectionFromConfig(String attributeName, HeliumParam param) throws BalloonException {
 		if (!fileSection.isConfigurationSection(attributeName)) {
 			throw new BalloonException(getName(), "Attribute is not a section", attributeName);
 		}
 		sections.add(param);
 	}
 
-	protected void loadListFromConfig(String attributeName, HeliumParam param, ConfigurationSection fileSection)
-			throws BalloonException {
+	protected void loadListFromConfig(String attributeName, HeliumParam param) throws BalloonException {
 		if (!fileSection.isList(attributeName)) {
 			throw new BalloonException(getName(), "Attribute is not a list", attributeName);
 		}
 		lists.add(param);
 	}
 
-	protected void dispatchParam(String attributeName, HeliumParam param, ConfigurationSection fileSection)
-			throws BalloonException {
+	protected void dispatchParam(String attributeName, HeliumParam param) throws BalloonException {
 		if (param.isType(HeliumParamType.STRING)) {
-			loadStringFromConfig(attributeName, param, fileSection);
+			loadStringFromConfig(attributeName, param);
 		}
 		if (param.isType(HeliumParamType.SECTION)) {
-			loadSectionFromConfig(attributeName, param, fileSection);
+			loadSectionFromConfig(attributeName, param);
 		}
 		if (param.isType(HeliumParamType.LIST)) {
-			loadListFromConfig(attributeName, param, fileSection);
+			loadListFromConfig(attributeName, param);
 		}
 	}
 
-	protected void loadFromConfig(ConfigurationSection fileSection, List<HeliumParam> validParams,
-			boolean ignoreUnknownAttributes) throws BalloonException {
+	protected void loadFromConfig(List<HeliumParam> validParams, boolean ignoreUnknownAttributes)
+			throws BalloonException {
 		Set<String> attributeNames = fileSection.getKeys(false);
 		for (String myAttributeName : attributeNames) {
 			if (!fileSection.contains(myAttributeName, true)
@@ -98,7 +103,7 @@ public class HeliumSection {
 			}
 			HeliumParam myParam = findParam(myAttributeName, validParams);
 			if (myParam != null) {
-				dispatchParam(myAttributeName, myParam, fileSection);
+				dispatchParam(myAttributeName, myParam);
 			} else {
 				if (!ignoreUnknownAttributes) {
 					throw new BalloonException(getName(), "Unknown attribute", myAttributeName);

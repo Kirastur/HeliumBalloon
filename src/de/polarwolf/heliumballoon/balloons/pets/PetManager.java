@@ -8,20 +8,27 @@ import java.util.UUID;
 
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
+import de.polarwolf.heliumballoon.config.ConfigHelper;
 import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.config.ConfigPet;
+import de.polarwolf.heliumballoon.config.ConfigSection;
+import de.polarwolf.heliumballoon.config.balloons.ConfigBalloon;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.system.players.PlayerManager;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
+import de.polarwolf.heliumballoon.tools.helium.HeliumParamType;
 
-public class PetManager extends BukkitRunnable {
+public class PetManager extends BukkitRunnable implements BalloonDefinition {
 
+	public static final String BALLOON_TYPE = "pets";
 	public static final String PET_PERMISSION_PREFIX = "balloon.pet.";
 
 	protected final Plugin plugin;
@@ -30,28 +37,96 @@ public class PetManager extends BukkitRunnable {
 	protected final PlayerManager playerManager;
 	protected final ObserverManager observerManager;
 	protected final int exceptionQuota;
+	protected final String defaultBehaviorName;
 	protected int exceptionCount = 0;
 	protected int exceptionCooldown = 0;
+
+	protected BukkitTask bukkitTask = null;
 	protected List<Pet> pets = new ArrayList<>();
 	protected Map<UUID, Integer> scorePlayerDelay = new HashMap<>();
 	protected Map<UUID, Double> scorePlayerCancel = new HashMap<>();
 
-	public PetManager(HeliumBalloonOrchestrator orchestrator) {
+	public PetManager(HeliumBalloonOrchestrator orchestrator, String defaultBehaviorName) {
 		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.configManager = orchestrator.getConfigManager();
 		this.playerManager = orchestrator.getPlayerManager();
 		this.observerManager = orchestrator.getObserverManager();
-		this.exceptionQuota = logger.getExceptionQuota();
-		runTaskTimer(plugin, 20, 20);
+		this.exceptionQuota = orchestrator.getStartOptions().exceptionQuata();
+		this.defaultBehaviorName = defaultBehaviorName;
+	}
+
+	public void startup() {
+		if (bukkitTask == null) {
+			bukkitTask = runTaskTimer(plugin, 20, 20);
+		}
+	}
+
+	public boolean isDisabled() {
+		return (bukkitTask == null);
 	}
 
 	public void disable() {
-		try {
-			cancel(); // Bukkit Task
-			validateAllPlayers(); // Remove all pets
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (bukkitTask != null)
+			try {
+				bukkitTask = null;
+				cancel(); // Bukkit Task
+				validateAllPlayers(); // Remove all pets
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	//
+	// Unwrap the Balloon
+	//
+
+	public List<String> getPetNames() {
+		return configManager.getBalloonNames(this);
+	}
+
+	public ConfigPet findConfigPet(String petName) {
+		ConfigBalloon configBalloon = configManager.findBalloon(petName);
+		if (configBalloon instanceof ConfigPet configPet) {
+			return configPet;
+		}
+		return null;
+	}
+
+	// Implement the Definition
+
+	@Override
+	public boolean isType(HeliumParamType paramType) {
+		return paramType == HeliumParamType.SECTION;
+	}
+
+	@Override
+	public String getAttributeName() {
+		return BALLOON_TYPE;
+	}
+
+	@Override
+	public String getDefaultBehaviorName() {
+		return defaultBehaviorName;
+	}
+
+	@Override
+	public boolean isPlayerAssignable() {
+		return true;
+	}
+
+	@Override
+	public ConfigBalloon createConfigBalloon(ConfigHelper configHelper, ConfigurationSection fileSection,
+			ConfigSection balloonSection) throws BalloonException {
+		return new ConfigPet(this, configHelper, fileSection, balloonSection);
+	}
+
+	@Override
+	public void refresh() {
+		List<Pet> petList = new ArrayList<>(pets);
+		for (Pet myPet : petList) {
+			Player myPlayer = myPet.getPlayer();
+			hideNow(myPlayer);
 		}
 	}
 
@@ -64,17 +139,16 @@ public class PetManager extends BukkitRunnable {
 		if ((petName == null) || petName.isEmpty()) {
 			return null;
 		}
-		return configManager.findPet(petName);
+		return findConfigPet(petName);
 	}
 
 	public boolean assignPersistentPet(OfflinePlayer offlinePlayer, String petName) {
-		ConfigPet pet = configManager.findPet(petName);
-		if (pet == null) {
+		ConfigPet configPet = findConfigPet(petName);
+		if (configPet == null || isDisabled()) {
 			return false;
 		}
 
-		if (offlinePlayer instanceof Player) {
-			Player player = (Player) offlinePlayer;
+		if (offlinePlayer instanceof Player player) {
 			hideNow(player);
 			removePlayerDelay(player);
 			removePlayerCancelScore(player);
@@ -84,8 +158,7 @@ public class PetManager extends BukkitRunnable {
 	}
 
 	public boolean deassignPersistentPet(OfflinePlayer offlinePlayer) {
-		if (offlinePlayer instanceof Player) {
-			Player player = (Player) offlinePlayer;
+		if (offlinePlayer instanceof Player player) {
 			hideNow(player);
 		}
 		return playerManager.removePersistentPetFromPlayer(offlinePlayer);
@@ -101,10 +174,12 @@ public class PetManager extends BukkitRunnable {
 
 	public List<ConfigPet> getConfigPetsForPlayer(Player player) {
 		List<ConfigPet> newConfigPets = new ArrayList<>();
-		for (String myConfigPetName : configManager.getPetNames()) {
+		for (String myConfigPetName : getPetNames()) {
 			if ((player == null) || hasPetPermission(player, myConfigPetName)) {
-				ConfigPet myConfigPet = configManager.findPet(myConfigPetName);
-				newConfigPets.add(myConfigPet);
+				ConfigPet myConfigPet = findConfigPet(myConfigPetName);
+				if (myConfigPet != null) {
+					newConfigPets.add(myConfigPet);
+				}
 			}
 		}
 		return newConfigPets;
@@ -197,7 +272,7 @@ public class PetManager extends BukkitRunnable {
 	//
 
 	public boolean shouldHavePet(Player player) {
-		if (!player.isValid() || !player.isOnline() || isPlayerAboveCancelScoreLimit(player)) {
+		if (!player.isValid() || !player.isOnline() || isPlayerAboveCancelScoreLimit(player) || isDisabled()) {
 			return false;
 		}
 		ConfigPet configPet = findPersistentPetForPlayer(player);
@@ -243,24 +318,16 @@ public class PetManager extends BukkitRunnable {
 
 		if (findPetForPlayer(player) == null) {
 			ConfigPet configPet = findPersistentPetForPlayer(player);
+			if (configPet == null) {
+				throw new BalloonException(getAttributeName(), "pet not found for player", player.getName());
+			}
 			logger.printDebug(String.format("Creating pet %s for player %s", configPet.getName(), player.getName()));
-			Pet pet = new Pet(player, observerManager, configPet);
+			Pet pet = new Pet(this, observerManager, configPet, player);
 			pet.show();
 			pets.add(pet);
 		}
 
 		cooldownPlayerCancelScore(player);
-	}
-
-	//
-	// Reload
-	//
-	public void reload() {
-		List<Pet> petList = new ArrayList<>(pets);
-		for (Pet myPet : petList) {
-			Player myPlayer = myPet.getPlayer();
-			hideNow(myPlayer);
-		}
 	}
 
 	//

@@ -6,31 +6,49 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.config.ConfigManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
 
 public class PlayerManager extends BukkitRunnable {
 
+	public static final long CHECK_INTERVAL_MINUTES = 30;
+
+	protected final Plugin plugin;
 	protected final HeliumLogger logger;
 	protected final ConfigManager configManager;
+
+	protected BukkitTask bukkitTask = null;
 	protected Instant lastAutoPurge = null;
 
 	public PlayerManager(HeliumBalloonOrchestrator orchestrator) {
+		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.configManager = orchestrator.getConfigManager();
-		long checkIntervalMinutes = 30;
-		runTaskTimer(orchestrator.getPlugin(), 1200, 20 * 60 * checkIntervalMinutes);
+	}
+
+	public void startup() {
+		if (bukkitTask == null) {
+			bukkitTask = runTaskTimer(plugin, 1200, 20 * 60 * CHECK_INTERVAL_MINUTES);
+		}
+	}
+
+	public boolean isDisabled() {
+		return (bukkitTask == null);
 	}
 
 	public void disable() {
-		try {
-			cancel();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (bukkitTask != null)
+			try {
+				bukkitTask = null;
+				cancel(); // Bukkit Task
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
 	public String findPersistentPetForPlayer(OfflinePlayer offlinePlayer) {
@@ -94,6 +112,7 @@ public class PlayerManager extends BukkitRunnable {
 		if ((lastAutoPurge == null) || (lastAutoPurge.compareTo(Instant.now().minus(4, ChronoUnit.HOURS)) <= 0)) {
 			logger.printInfo("Starting AutoPurge");
 			lastAutoPurge = Instant.now();
+			purgeOldPlayers();
 		}
 	}
 

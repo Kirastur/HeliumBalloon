@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
 public class ChunkTicketManager {
 

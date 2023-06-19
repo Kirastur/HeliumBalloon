@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.system.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,20 +13,24 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.pets.PetManager;
 import de.polarwolf.heliumballoon.gui.GuiManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 
 public class GuiListener implements Listener {
 
+	protected final Plugin plugin;
 	protected final PetManager petManager;
 	protected final GuiManager guiManager;
 
 	public GuiListener(HeliumBalloonOrchestrator orchestrator) {
-		Plugin plugin = orchestrator.getPlugin();
+		this.plugin = orchestrator.getPlugin();
 		this.petManager = orchestrator.getPetManager();
 		this.guiManager = orchestrator.getGuiManager();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	}
+
+	public void startup() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	public void unregisterListener() {

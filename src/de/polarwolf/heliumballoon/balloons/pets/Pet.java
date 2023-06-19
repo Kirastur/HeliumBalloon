@@ -6,15 +6,13 @@ import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 
-import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
-import de.polarwolf.heliumballoon.config.ConfigPart;
-import de.polarwolf.heliumballoon.config.ConfigPet;
-import de.polarwolf.heliumballoon.config.ConfigTemplate;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.behavior.observers.Observer;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
+import de.polarwolf.heliumballoon.behavior.oscillators.Oscillator;
+import de.polarwolf.heliumballoon.config.templates.ConfigElement;
+import de.polarwolf.heliumballoon.config.templates.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.observers.Observer;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
-import de.polarwolf.heliumballoon.observers.PetObserver;
-import de.polarwolf.heliumballoon.oscillators.Oscillator;
 import de.polarwolf.heliumballoon.tools.helium.HeliumName;
 
 public class Pet implements HeliumName {
@@ -24,22 +22,26 @@ public class Pet implements HeliumName {
 	protected final ConfigPet configPet;
 	protected final Oscillator oscillator;
 	protected final ConfigTemplate template;
-	protected Map<ConfigPart, Observer> observers = new HashMap<>();
+	protected final BalloonDefinition balloonDefinition;
+	protected Map<ConfigElement, Observer> observers = new HashMap<>();
 
-	public Pet(Player player, ObserverManager observerManager, ConfigPet configPet) {
-		this.player = player;
+	public Pet(BalloonDefinition balloonDefinition, ObserverManager observerManager, ConfigPet configPet,
+			Player player) {
+		this.balloonDefinition = balloonDefinition;
 		this.observerManager = observerManager;
 		this.configPet = configPet;
+		this.player = player;
 		this.template = configPet.findTemplate(player.getWorld());
 		if (template.isOscillating()) {
-			oscillator = observerManager.getOscillator(template.getRule());
+			oscillator = configPet.getBehavior().createOscillator(template.getRule());
 			oscillator.setDeflectionState(true);
 		} else {
 			oscillator = null;
 		}
-		for (ConfigPart configPart : template.getParts()) {
-			if (configPart.isSuitableFor(BalloonPurpose.PET)) {
-				observers.put(configPart, null);
+		for (ConfigElement configElement : template.getElements()) {
+			if (observerManager.isCompatible(configElement.getElementDefinition(), configPet.getBehavior(),
+					balloonDefinition)) {
+				observers.put(configElement, null);
 			}
 		}
 	}
@@ -69,7 +71,7 @@ public class Pet implements HeliumName {
 	}
 
 	public void hide() {
-		for (Entry<ConfigPart, Observer> myEntry : observers.entrySet()) {
+		for (Entry<ConfigElement, Observer> myEntry : observers.entrySet()) {
 			Observer myObserver = myEntry.getValue();
 			if (myObserver != null) {
 				myObserver.cancel();
@@ -80,11 +82,12 @@ public class Pet implements HeliumName {
 
 	public void show() throws BalloonException {
 		try {
-			for (Entry<ConfigPart, Observer> myEntry : observers.entrySet()) {
-				ConfigPart myConfigPart = myEntry.getKey();
+			for (Entry<ConfigElement, Observer> myEntry : observers.entrySet()) {
+				ConfigElement myConfigElement = myEntry.getKey();
 				Observer myObserver = myEntry.getValue();
 				if ((myObserver == null) || (myObserver.isCancelled())) {
-					Observer newObserver = new PetObserver(player, template, myConfigPart, oscillator);
+					Observer newObserver = configPet.getBehavior().createObserver(configPet, myConfigElement,
+							oscillator, player);
 					myEntry.setValue(newObserver);
 					observerManager.addObserver(newObserver);
 				}

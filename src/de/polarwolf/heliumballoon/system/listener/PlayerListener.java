@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.system.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -18,26 +19,30 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.balloons.pets.PetManager;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.system.players.PlayerManager;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
 
 public class PlayerListener implements Listener {
 
+	protected final Plugin plugin;
 	protected final HeliumLogger logger;
 	protected final PlayerManager playerManager;
 	protected final ObserverManager observerManager;
 	protected final PetManager petManager;
 
 	public PlayerListener(HeliumBalloonOrchestrator orchestrator) {
-		Plugin plugin = orchestrator.getPlugin();
+		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.playerManager = orchestrator.getPlayerManager();
 		this.observerManager = orchestrator.getObserverManager();
 		this.petManager = orchestrator.getPetManager();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	}
+
+	public void startup() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	public void unregisterListener() {

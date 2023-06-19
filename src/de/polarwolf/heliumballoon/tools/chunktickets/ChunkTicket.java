@@ -45,12 +45,7 @@ public class ChunkTicket {
 	}
 
 	public boolean hasOwner(ChunkTicketOwner testOwner) {
-		for (ChunkTicketOwner myOwner : owners) {
-			if (myOwner == testOwner) {
-				return true;
-			}
-		}
-		return false;
+		return owners.contains(testOwner);
 	}
 
 	public boolean isEmpty() {

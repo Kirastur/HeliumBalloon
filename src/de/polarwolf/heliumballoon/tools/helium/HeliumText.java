@@ -109,8 +109,7 @@ public class HeliumText {
 
 	public String findLocalizedforSender(CommandSender sender) {
 		String s;
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
+		if (sender instanceof Player player) {
 			String locale = player.getLocale();
 			s = findLocalizedText(locale);
 		} else {

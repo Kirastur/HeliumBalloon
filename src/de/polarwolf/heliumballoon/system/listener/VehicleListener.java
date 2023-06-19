@@ -1,5 +1,6 @@
 package de.polarwolf.heliumballoon.system.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,21 +9,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.api.HeliumBalloonOrchestrator;
-import de.polarwolf.heliumballoon.observers.Observer;
-import de.polarwolf.heliumballoon.observers.ObserverManager;
+import de.polarwolf.heliumballoon.behavior.observers.Observer;
+import de.polarwolf.heliumballoon.behavior.observers.ObserverManager;
+import de.polarwolf.heliumballoon.orchestrator.HeliumBalloonOrchestrator;
 import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
 
 public class VehicleListener implements Listener {
 
+	protected final Plugin plugin;
 	protected final HeliumLogger logger;
 	protected final ObserverManager observerManager;
 
 	public VehicleListener(HeliumBalloonOrchestrator orchestrator) {
-		Plugin plugin = orchestrator.getPlugin();
+		this.plugin = orchestrator.getPlugin();
 		this.logger = orchestrator.getHeliumLogger();
 		this.observerManager = orchestrator.getObserverManager();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	}
+
+	public void startup() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	public void unregisterListener() {

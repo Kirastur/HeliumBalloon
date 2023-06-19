@@ -3,35 +3,41 @@ package de.polarwolf.heliumballoon.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 
-import de.polarwolf.heliumballoon.balloons.BalloonPurpose;
-import de.polarwolf.heliumballoon.config.ConfigManager;
-import de.polarwolf.heliumballoon.config.ConfigPet;
-import de.polarwolf.heliumballoon.config.ConfigRotator;
+import de.polarwolf.heliumballoon.balloons.BalloonDefinition;
+import de.polarwolf.heliumballoon.compatibility.CompatibilityManager;
+import de.polarwolf.heliumballoon.config.ConfigHelper;
 import de.polarwolf.heliumballoon.config.ConfigSection;
-import de.polarwolf.heliumballoon.config.ConfigWall;
+import de.polarwolf.heliumballoon.config.balloons.ConfigBalloon;
+import de.polarwolf.heliumballoon.config.templates.ConfigElement;
+import de.polarwolf.heliumballoon.config.templates.ConfigTemplate;
 import de.polarwolf.heliumballoon.exception.BalloonException;
-import de.polarwolf.heliumballoon.tools.helium.HeliumLogger;
 
 public class BalloonRebuildConfigEvent extends Event implements Cancellable {
 
 	private static final HandlerList HANDLERS = new HandlerList();
 	private boolean isCancelled = false;
-	protected final Plugin plugin;
-	protected final HeliumLogger logger;
-	protected final ConfigManager configManager;
+	protected final CompatibilityManager compatibilityManager;
+	protected final ConfigHelper configHelper;
+	protected final boolean initial;
 	protected BalloonException cancelReason = null;
 	protected List<ConfigSection> sections = new ArrayList<>();
 
-	BalloonRebuildConfigEvent(Plugin plugin, HeliumLogger logger, ConfigManager configManager) {
-		this.plugin = plugin;
-		this.logger = logger;
-		this.configManager = configManager;
+	BalloonRebuildConfigEvent(CompatibilityManager compatibilityManager, ConfigHelper configHelper, boolean initial) {
+		this.compatibilityManager = compatibilityManager;
+		this.configHelper = configHelper;
+		this.initial = initial;
+	}
+
+	public ConfigHelper getConfigHelper() {
+		return configHelper;
+	}
+
+	public boolean isInitial() {
+		return initial;
 	}
 
 	List<ConfigSection> getSections() {
@@ -50,85 +56,46 @@ public class BalloonRebuildConfigEvent extends Event implements Cancellable {
 		}
 	}
 
-	protected void checkPets(ConfigSection newSection) throws BalloonException {
-		for (String myPetName : newSection.getPetNames()) {
-			for (ConfigSection mySection : sections) {
-				if (mySection.findPet(myPetName) != null) {
-					throw new BalloonException(newSection.getFullName(), "Duplicate Pet Name", myPetName);
+	protected void checkBalloons(ConfigSection newSection) throws BalloonException {
+		for (BalloonDefinition myBalloonDefinition : configHelper.listBalloonDefinitions()) {
+			for (String myBalloonName : newSection.getBalloonNames(myBalloonDefinition)) {
+				for (ConfigSection mySection : sections) {
+					if (mySection.findBalloon(myBalloonName) != null) {
+						throw new BalloonException(newSection.getFullName(), "Duplicate Balloon Name", myBalloonName);
+					}
 				}
 			}
 		}
 	}
 
-	protected void checkWalls(ConfigSection newSection) throws BalloonException {
-		for (String myWallName : newSection.getWallNames()) {
-			for (ConfigSection mySection : sections) {
-				if (mySection.findWall(myWallName) != null) {
-					throw new BalloonException(newSection.getFullName(), "Duplicate Wall Name", myWallName);
+	protected void checkCompatibility(ConfigSection newSection) throws BalloonException {
+		for (BalloonDefinition myBalloonDefinition : configHelper.listBalloonDefinitions()) {
+			for (String myBalloonName : newSection.getBalloonNames(myBalloonDefinition)) {
+				ConfigBalloon myConfigBalloon = newSection.findBalloon(myBalloonName);
+				for (ConfigTemplate myTemplate : myConfigBalloon.listUsedTemplates()) {
+					for (ConfigElement myElement : myTemplate.getElements()) {
+						if (!compatibilityManager.isCompatible(myElement.getElementDefinition(),
+								myConfigBalloon.getBehavior(), myBalloonDefinition)) {
+							String s = String.format("(%s => %s => %s)", myElement.getName(),
+									myConfigBalloon.getBehavior().getName(), myBalloonDefinition.getAttributeName());
+							throw new BalloonException(newSection.getFullName(),
+									"Balloon uses inadequate behavior or element", s);
+						}
+					}
 				}
-			}
-		}
-	}
-
-	protected void checkRotators(ConfigSection newSection) throws BalloonException {
-		for (String myRotatorName : newSection.getRotatorNames()) {
-			for (ConfigSection mySection : sections) {
-				if (mySection.findRotator(myRotatorName) != null) {
-					throw new BalloonException(newSection.getFullName(), "Duplicate Rotator Name", myRotatorName);
-				}
-			}
-
-		}
-	}
-
-	protected void checkForWrongPurpose(ConfigSection newSection) {
-		if (!ConfigManager.getWarnOnWrongPurpose(plugin)) {
-			return;
-		}
-		for (String myPetName : newSection.getPetNames()) {
-			ConfigPet myConfigPet = newSection.findPet(myPetName);
-			if (!myConfigPet.isSuitableFor(BalloonPurpose.PET)) {
-				String s = String.format("Template is not completely suitable for pet %s", myConfigPet.getName());
-				logger.printWarning(s);
-			}
-		}
-		for (String myWallName : newSection.getWallNames()) {
-			ConfigWall myConfigWall = newSection.findWall(myWallName);
-			if (!myConfigWall.isSuitableFor(BalloonPurpose.WALL)) {
-				String s = String.format("Template is not completely suitable for wall %s", myConfigWall.getName());
-				logger.printWarning(s);
-			}
-		}
-		for (String myRotatorName : newSection.getRotatorNames()) {
-			ConfigRotator myConfigRotator = newSection.findRotator(myRotatorName);
-			if (!myConfigRotator.isSuitableFor(BalloonPurpose.ROTATOR)) {
-				String s = String.format("Template is not completely suitable as rotator in %s",
-						myConfigRotator.getName());
-				logger.printWarning(s);
 			}
 		}
 	}
 
 	protected void checkNewSection(ConfigSection newSection) throws BalloonException {
 		checkName(newSection);
-		checkPets(newSection);
-		checkWalls(newSection);
-		checkRotators(newSection);
-		checkForWrongPurpose(newSection);
+		checkBalloons(newSection);
+		checkCompatibility(newSection);
 	}
 
 	public void addSection(ConfigSection newSection) throws BalloonException {
 		checkNewSection(newSection);
 		sections.add(newSection);
-	}
-
-	public ConfigSection buildConfigSectionFromFileSection(String sectionName, ConfigurationSection fileSection)
-			throws BalloonException {
-		return configManager.buildConfigSectionFromFileSection(sectionName, fileSection);
-	}
-
-	public ConfigSection buildConfigSectionFromConfigFile(Plugin fileOwnerPlugin) throws BalloonException {
-		return configManager.buildConfigSectionFromConfigFile(fileOwnerPlugin);
 	}
 
 	@Override

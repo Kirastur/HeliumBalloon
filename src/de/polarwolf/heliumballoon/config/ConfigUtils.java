@@ -14,6 +14,7 @@ import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
@@ -480,4 +481,24 @@ public class ConfigUtils {
 
 		return myVillagerProfession;
 	}
+
+	public static Frog.Variant getFrogVariantFromName(String contextName, String frogVariantName)
+			throws BalloonException {
+		if ((frogVariantName == null) || (frogVariantName.isEmpty())) {
+			return null;
+		}
+
+		Frog.Variant myFrogVariant = null;
+		try {
+			myFrogVariant = Frog.Variant.valueOf(frogVariantName);
+		} catch (Exception e) {
+			myFrogVariant = null;
+		}
+		if (myFrogVariant == null) { // exception or null return
+			throw new BalloonException(contextName, "Unknown frog variant", frogVariantName);
+		}
+
+		return myFrogVariant;
+	}
+
 }
